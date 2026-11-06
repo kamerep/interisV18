@@ -34,8 +34,8 @@
 
 	<!--Demonstration Data For Property Configuration -->
 	<record id="tenant1" model="tenant.partner">
-		<field name="name">SerpentCS</field>
-		<field name="email">contact@serpentcs.com</field>
+		<field name="name">Demo Tenant</field>
+		<field name="email">demo.tenant@example.com</field>
 		<field name="tenant">True</field>
 	</record>
 

@@ -41,7 +41,7 @@ class PropertyCreated(models.Model):
     lable_bool = fields.Boolean(string='Label Boolean')
     parent_related = fields.Many2one(
         comodel_name='account.asset',
-        string='Parent Property',
+        string='Parent Property (Related)',
         related='asset_id.property_parent_id',
         ondelete='restrict')
     parent_property_rel = fields.Many2one(

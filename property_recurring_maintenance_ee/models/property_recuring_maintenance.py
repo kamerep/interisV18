@@ -94,7 +94,7 @@ class AccountAnalyticAccount(models.Model):
         inverse_name='tenancy',
         string='Recurring Maintenance Costs')
     maintenance_cost = fields.Monetary(
-        string='Maintenance Cost',
+        string='Recurring Maintenance Cost',
         store=True,
         currency_field='currency_id',
         compute='_compute_total_cost_maint')

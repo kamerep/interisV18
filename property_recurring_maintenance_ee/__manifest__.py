@@ -1,7 +1,7 @@
 # See LICENSE file for full copyright and licensing details
 {
     'name': 'Property Recurring Maintenance EE',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Real Estate',
     'summary': """
 This module allows to manage the Recurring Maintenance

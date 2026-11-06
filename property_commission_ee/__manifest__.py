@@ -2,7 +2,7 @@
 
 {
     'name': 'Commission Management for Property Management System EE',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Real Estate',
     'summary': """
         property commission
@@ -28,7 +28,10 @@
             'views/property_commission_view.xml',
             'views/property_res_partner_views.xml',
             'report/commission_report_template2.xml',
-            # 'views/report_configuration.xml',
+            'report/report_commission_invoice_owner_template.xml',
+            'views/report_configuration.xml',
+            'wizard/commission_report_view.xml',
+            'wizard/commission_invoice_owner_view.xml',
 
     ],
     'license': 'LGPL-3',

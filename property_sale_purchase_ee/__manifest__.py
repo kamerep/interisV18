@@ -1,7 +1,7 @@
 # See LICENSE file for full copyright and licensing details
 {
     'name': 'Property Sales And Purchase EE',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Real Estate',
     'summary': """
         Property Sales And Purchase
@@ -16,6 +16,7 @@
     'data': [
         'security/ir.model.access.csv',
         'report/investment_report_view.xml',
+        'report/report_property_chart_templates.xml',
         'views/sale_purchase_asset.xml',
     ],
     'images': ['static/description/banner.png'],

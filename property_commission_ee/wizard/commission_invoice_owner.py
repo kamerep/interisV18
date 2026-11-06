@@ -12,7 +12,9 @@ class CommissionInvoiceOwner(models.TransientModel):
     end_date = fields.Date(string='End Date', required=True)
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Owner Company")
+        string="Owner Company",
+        required=True,
+        default=lambda self: self.env.company)
 
     @api.constrains('start_date', 'end_date')
     def check_date_overlap(self):
@@ -37,7 +39,7 @@ class CommissionInvoiceOwner(models.TransientModel):
             raise ValidationError(_(
                 'No commission records found in this period for this company.'))
         return self.env.ref(
-            'property_commission_ee.commission_invoice_owner'
+            'property_commission_ee.commission_owner_invoice_report'
         ).report_action(self, data=datas)
 
     def action_invoice_sent(self):

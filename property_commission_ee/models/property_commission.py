@@ -39,6 +39,7 @@ class CommissionInvoiceLine(models.Model):
 
 class CommissionInvoice(models.Model):
     _name = "commission.invoice"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'number'
     _description = "Commission Invoice"
 
@@ -69,6 +70,7 @@ class CommissionInvoice(models.Model):
          ('invoice', 'Invoiced')],
         string='State',
         readonly=True,
+        tracking=True,
         default='draft')
     commission_type = fields.Selection(
         selection=[('fixed', 'Fixed Percentage'),
@@ -131,7 +133,9 @@ class CommissionInvoice(models.Model):
                 'invoice_line_ids': [(0, 0, inv_line_values)],
                 'invoice_date': fields.Date.today(),
                 'journal_id': journal.id if journal else False,
-                'currency_id': data.currency_id.id or False,
+                'currency_id': (data.currency_id
+                                or data.tenancy.currency_id
+                                or self.env.company.currency_id).id,
             }
             acc_id = self.env['account.move'].create(inv_values)
             data.write({'inv': True, 'invc_id': acc_id.id, 'state': 'invoice'})
@@ -221,6 +225,7 @@ class AccountAnalyticAccount(models.Model):
                 'amount': data.total_commission,
             }
             self.env['commission.invoice'].create({
+                'currency_id': data.currency_id.id,
                 'partner_id': data.tenant_id.id,
                 'tenancy': data.id,
                 'property_id': data.property_id.id,

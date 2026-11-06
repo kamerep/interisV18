@@ -1,0 +1,42 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python compiles
+        run: python -m compileall -q property_*
+      - name: XML is well-formed
+        run: |
+          python - <<'PY'
+          import glob, sys
+          from xml.etree import ElementTree as ET
+          bad = []
+          for f in glob.glob('property_*/**/*.xml', recursive=True):
+              try:
+                  ET.parse(f)
+              except ET.ParseError as e:
+                  bad.append(f'{f}: {e}')
+          print('\n'.join(bad) or 'all XML files parse')
+          sys.exit(1 if bad else 0)
+          PY
+      - name: Manifests are valid and target 18.0
+        run: |
+          python - <<'PY'
+          import ast, glob, os, sys
+          bad = []
+          for m in glob.glob('property_*/__manifest__.py'):
+              d = ast.literal_eval(open(m).read())
+              mod = os.path.dirname(m)
+              if not str(d.get('version', '')).startswith('18.0.'):
+                  bad.append(f'{m}: version {d.get("version")}')
+              for f in d.get('data', []) + d.get('demo', []):
+                  if not os.path.exists(os.path.join(mod, f)):
+                      bad.append(f'{m}: missing {f}')
+          print('\n'.join(bad) or 'manifests OK')
+          sys.exit(1 if bad else 0)
+          PY

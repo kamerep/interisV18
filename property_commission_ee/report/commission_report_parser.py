@@ -21,6 +21,8 @@ class CommissionInvoiceReport(models.AbstractModel):
                 'property': value.property_id.name,
                 'tenancy': value.tenancy.name,
                 'commission': value.amount_total,
+                'currency_id': (value.currency_id
+                                or self.env.company.currency_id),
                 'agent': value.agent.name,
             })
         return datas

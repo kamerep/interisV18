@@ -1,0 +1,18 @@
+[options]
+; Odoo 18 Enterprise for the Property Management suite.
+; Copy to odoo18.conf and adjust paths/passwords.
+admin_passwd = change-me
+db_host = localhost
+db_port = 5432
+db_user = odoo
+db_password = False
+; 8069/8070 are often taken by other Odoo versions; pick a free port.
+http_port = 8018
+gevent_port = 8073
+addons_path = /usr/lib/python3/dist-packages/odoo/addons,/opt/odoo18-addons/interisV18
+data_dir = /var/lib/odoo18
+logfile = /var/log/odoo18/odoo18.log
+log_level = info
+proxy_mode = False
+workers = 0
+limit_time_real = 1200

@@ -149,6 +149,7 @@ class TestPropertyFlows(common.TransactionCase):
             self.env['property.per.location'].create({}).print_report())
         for model in ('gfa.analysis.report', 'occupancy.performance.report',
                       'operational.costs.report',
-                      'investment.analysis.report'):
+                      'investment.analysis.report',
+                      'property.finance.report'):
             self.env[model].read_group(
                 [], ['name'], ['parent_id', 'type_id'], lazy=False)

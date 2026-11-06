@@ -119,8 +119,8 @@
                                 <field name="property_manager" required="state in ['book', 'normal', 'close', 'sold']" placeholder="Owner Name" string="Owner Name"/>
                                 <field name="label_id"/>
                                 <field name="state" readonly='1' force_save='1'/>
-                                <button name="edit_status" type="object" invisible="state in ['new_draft', 'book', 'normal', 'close', 'sold', 'cancel'] or state != 'draft'" context="{'book':True}" icon="fa-check-circle"/>
-                                <button name="edit_status_book" type="object" invisible="state in ['draft', 'new_draft', 'close', 'cancel'] or state != 'Book'" context="{'book':False}" icon="fa-times-circle "/>
+                                <button name="edit_status" type="object" invisible="state != 'draft'" context="{'book':True}" icon="fa-check-circle" title="Book"/>
+                                <button name="edit_status_book" type="object" invisible="state != 'book'" context="{'book':False}" icon="fa-times-circle" title="Make Available"/>
                             </list>
                         </field><newline/>
                         <separator string="Sub Properties" invisible="is_sub_property and state in ['new_draft', 'draft', 'book', 'normal', 'close', 'sold', 'cancel']"/><newline/>
@@ -144,7 +144,7 @@
         <field name="name">property.created.kanban</field>
         <field name="model">property.created</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state">
+            <kanban default_group_by="state" highlight_color="color">
                 <field name="state"/>
                 <field name="color"/>
                 <field name="name"/>
@@ -158,92 +158,28 @@
                 <field name="image"/>
                 <field name="id"/>
                 <templates>
-                    <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_vignette oe_semantic_html_override oe_kanban_card oe_kanban_project oe_kanban_global_click">
-                            <table width="100%">
-                                <tr>
-                                    <td width="30%">
-                                        <a type="open">
-                                            <t t-if="record.image">
-                                                <div class="o_kanban_image">
-                                                    <img alt="image" style="width:100% !important;height:150% !important;" t-att-alt="record.name.raw_value" t-att-src="kanban_image('property.created', 'image', record.id.value)" class="o_image_64_contain"/>
-                                                </div>
-                                            </t>
-                                            <t t-else="">
-                                                <div class="o_kanban_image">
-                                                    <img alt="image" style="width:100% !important;height:150% !important;" t-att-alt="record.name.raw_value" t-att-src="_s + &quot;/base/static/img/company_image.png&quot;"/>
-                                                </div>
-                                            </t>
-                                        </a>
-                                    </td>
-                                    <td width="67%">
-                                        <div class="oe_kanban_details">
-                                            <h4 class="oe_partner_heading">
-                                                <a type="open">
-                                                    <field name="name"/>
-                                                </a>
-                                            </h4>
-                                            <ul>
-                                                <li t-if="record.type_id.raw_value ">
-                                                    <b>Type :
-                                                    </b>
-                                                    <field name="type_id"/>
-                                                </li>
-                                                <li t-if="record.furnished.raw_value">
-                                                    <b>Furnishing :
-                                                    </b>
-                                                    <field name="furnished"/>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td width="3%">
-                                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
-                                            <div class="o_dropdown_kanban dropdown" groups="base.group_user">
-                                                <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" role="button">
-                                                    <span class="fa fa-bars fa-lg" title="icon"/>
-                                                </a>
-                                                <ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">
-                                                    <t t-if="widget.editable">
-                                                        <li>
-                                                            <a type="edit">Edit</a>
-                                                        </li>
-                                                    </t>
-                                                    <t t-if="widget.deletable">
-                                                        <li>
-                                                            <a type="delete">Delete</a>
-                                                        </li>
-                                                    </t>
-                                                    <li>
-                                                        <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <ul>
-                                            <li style="margin-top:1px;">
-                                                <b>Address :
-                                                </b>
-                                            </li>
-                                            <li t-if="record.street.raw_value">
-                                                <field name="street"/>
-                                            </li>
-                                            <li t-if="record.state_id.raw_value and record.city.raw_value and record.country_id.raw_value">
-                                                <field name="city"/>
-                                                ,
-                                                <field name="state_id"/>
-                                                ,
-                                                <field name="country_id"/>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                    <t t-name="menu">
+                        <a t-if="widget.editable" role="menuitem" type="open" class="dropdown-item">Edit</a>
+                        <a t-if="widget.deletable" role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                        <field name="color" widget="kanban_color_picker"/>
+                    </t>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_kanban_aside_full">
+                            <field name="image" widget="image" class="d-block h-100" options="{'img_class': 'object-fit-cover h-100 w-100'}" alt="Property"/>
+                        </aside>
+                        <main class="ms-2">
+                            <field name="name" class="fw-bold fs-5"/>
+                            <div t-if="record.type_id.raw_value" class="text-muted">
+                                <i class="fa fa-building-o me-1" title="Property Type"/><field name="type_id"/>
+                            </div>
+                            <div t-if="record.furnished.raw_value">
+                                <i class="fa fa-bed me-1" title="Furnishing"/><field name="furnished"/>
+                            </div>
+                            <div t-if="record.city.raw_value or record.country_id.raw_value" class="text-muted">
+                                <i class="fa fa-map-marker me-1" title="Address"/>
+                                <field name="city"/><t t-if="record.state_id.raw_value">, <field name="state_id"/></t><t t-if="record.country_id.raw_value">, <field name="country_id"/></t>
+                            </div>
+                        </main>
                     </t>
                 </templates>
             </kanban>

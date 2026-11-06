@@ -42,3 +42,22 @@ class PropertyCommissionTestCase(common.TransactionCase):
         self.tenancy.create_rent_schedule()
         self.tenancy.calculate_commission()
         self.tenancy.create_commission()
+        commission = self.env['commission.invoice'].search(
+            [('tenancy', '=', self.tenancy.id)])
+        self.assertTrue(commission)
+        commission.create_invoice()
+        self.assertTrue(commission.commission_line.mapped('inv'))
+        self._render_reports()
+
+    def _render_reports(self):
+        Report = self.env['ir.actions.report']
+        dates = {'start_date': '2000-01-01', 'end_date': '2100-12-31'}
+        owner = self.env['commission.invoice.owner'].create(dates)
+        for action in (owner.print_yes(),
+                       self.env['commission.report'].create(
+                           dates).print_report()):
+            action = action.get('context', {}).get('report_action', action)
+            html, _fmt = Report._render_qweb_html(
+                action['report_name'], [], data=action['data'])
+            self.assertIn(b'Agent', html)
+

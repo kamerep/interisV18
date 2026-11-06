@@ -2,7 +2,7 @@
 # See LICENSE file for full copyright and licensing details
 {
     'name': 'Property Management - Odoo Enterprise Compatible (Without Portal)',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Real Estate',
     'license': 'LGPL-3',
     'summary': """

@@ -6,60 +6,13 @@
         <field name="model">maintenance.request</field>
         <field name="inherit_id" ref="maintenance.hr_equipment_request_view_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//templates" position="replace">
-                <templates>
-                    <t t-name="kanban-tooltip">
-                        <ul class="oe_kanban_tooltip">
-                            <li t-if="record.property_id.raw_value"><b>Property:</b> <t t-esc="record.property_id.value"/></li>
-                            <li t-if="record.user_id.raw_value"><b>Request to:</b> <t t-esc="record.user_id.value"/></li>
-                        </ul>
-                    </t>
-                    <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click oe_semantic_html_override">
-                            <div class="o_dropdown_kanban dropdown">
-                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
-                                    <span class="fa fa-ellipsis-v"/>
-                                </a>
-                                <div class="dropdown-menu" role="menu">
-                                    <t t-if="widget.editable">
-                                        <a role="menuitem" type="edit" class="dropdown-item">Edit...</a>
-                                    </t>
-                                    <t t-if="widget.deletable">
-                                        <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
-                                    </t>
-                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                </div>
-                            </div>
-                            <div class="oe_kanban_content" tooltip="kanban-tooltip">
-                                <div class="o_kanban_record_top">
-                                    <b class="o_kanban_record_title"><field name="name"/></b>
-                                </div>
-                                <div class="o_kanban_record_body">
-                                    <span class="oe_grey" t-if="record.property_id.raw_value">
-                                        <field name="property_id"/><br/>
-                                    </span>
-                                    <span name="owner_user_id" t-if="record.owner_user_id.raw_value">Requested by :
-                                        <field name="owner_user_id"/><br/></span>
-                                    <span class="oe_grey" t-if="record.equipment_id.raw_value"><field name="equipment_id"/><br/></span>
-                                    <span t-if="record.category_id.raw_value"><field name="category_id"/></span>
-                                </div>
-                                 <div class="o_kanban_record_bottom">
-                                    <div class="oe_kanban_bottom_left">
-                                        <field name="priority" widget="priority"/>
-                                        <div class="o_kanban_inline_block ml4 mr4">
-                                            <field name="activity_ids" widget="kanban_activity" />
-                                        </div>
-                                    </div>
-                                    <div class="oe_kanban_bottom_right">
-                                        <field name="kanban_state" widget="state_selection"/>
-                                        <field name="user_id" widget="many2one_avatar_user"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="oe_clear"/>
-                        </div>
-                    </t>
-                </templates>
+            <xpath expr="//t[@t-name='card']/field[@name='name']" position="after">
+                <span t-if="record.property_id.raw_value" class="text-muted">
+                    <i class="fa fa-building-o me-1" title="Property"/><field name="property_id"/>
+                </span>
+                <span t-if="record.tenant_id.raw_value">
+                    <i class="fa fa-user me-1" title="Tenant"/><field name="tenant_id"/>
+                </span>
             </xpath>
         </field>
     </record>

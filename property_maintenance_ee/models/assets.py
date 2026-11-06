@@ -11,7 +11,7 @@ class AccountAsset(models.Model):
             asset.maint_request = len(asset.maintenance_ids)
 
     maint_request = fields.Integer(
-        string='Maintenance Requests',
+        string='Maintenance Count',
         compute='_compute_request_count',
         help='Number of maintenance requests for this property.')
     maintenance_ids = fields.One2many(
