@@ -164,7 +164,7 @@
 
 	<!-- Demonstration Data For Account Asset Asset (Property) -->
 
-	<record id="account_asset.account_asset_model_sale" model="account.asset">
+	<record id="property_silver_palace" model="account.asset">
 		<field name="journal_id" model="account.journal" search="[
 			('type', '=', 'general'),
 			('id', '!=', obj().env.user.company_id.currency_exchange_journal_id.id)]"/>

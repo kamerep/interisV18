@@ -42,7 +42,9 @@ class MaintenanceRequest(models.Model):
         default=False)
     account_id = fields.Many2one(
         comodel_name='account.account',
-        string='Maintenance Account')
+        string='Maintenance Account',
+        check_company=True,
+        domain="[('deprecated', '=', False)]")
     city = fields.Char(related='property_id.city', string='City')
     street = fields.Char(related='property_id.street', string='Street')
     street2 = fields.Char(related='property_id.street2', string='Street2')

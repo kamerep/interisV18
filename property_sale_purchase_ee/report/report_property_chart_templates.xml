@@ -37,8 +37,8 @@
         <field name="name">Financial Performance Analysis</field>
         <field name="res_model">property.finance.report</field>
         <field name="view_mode">graph</field>
-        <field name="search_view_id" ref="property_management_ee.view_property_finance_search"/>
-        <field name="view_id" ref="property_management_ee.view_property_finance_report_id"/>
+        <field name="search_view_id" ref="view_property_finance_search"/>
+        <field name="view_id" ref="view_property_finance_report_id"/>
     </record>
 
     <menuitem action="action_property_chart_report" id="menu_report_property_chart" parent="property_management_ee.menu_report_sub" sequence="10"/>
