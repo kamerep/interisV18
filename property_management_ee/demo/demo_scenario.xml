@@ -49,4 +49,5 @@
     </record>
 
     <function model="property.demo.loader" name="_load_core_demo"/>
+    <function model="property.demo.loader" name="_load_property_details_demo"/>
 </odoo>

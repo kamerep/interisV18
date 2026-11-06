@@ -435,3 +435,25 @@ passing) and a browser check of the main screens in light and dark mode.
   landlord demo data repaired. Testing Guide (HTML/PDF) added.
 - 16 automated tests.
 
+### Maintenance links and fuller demo data (2026-11-06)
+property_maintenance_ee
+- Equipment has a Property; a request on equipment takes its property
+  (and so the current tenant). The request form keeps Odoo's Equipment
+  field (it was replaced by Property before) and filters it by property.
+- Property form: Equipment smart button; request search by property,
+  tenant, Renter's Fault and To Invoice; group by property.
+- Renter's-fault invoices bill the tenant on the request, also after the
+  tenancy was closed.
+- Mail templates sent from the user's login instead of an e-mail
+  address; they now use the user or company e-mail.
+- Property details moved into Odoo's request notebook (no empty Notes).
+- Demo: maintenance team, building-services category, six equipment
+  items, nine requests (preventive recurring, blocked, owner's cost,
+  move-out damage invoiced and paid).
+
+property_management_ee
+- Demo: rooms with fixtures and generated floor plans for four units,
+  development phases and yield simulation for two buildings, four more
+  insurance policies.
+- 18 automated tests.
+

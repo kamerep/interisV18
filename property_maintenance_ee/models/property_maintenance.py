@@ -195,7 +195,11 @@ class MaintenanceRequest(models.Model):
                 ('property_id', '=', maintenance.property_id.id),
                 ('state', '!=', 'close'),
             ])
-            if not tenancies:
+            if maintenance.renters_fault and maintenance.tenant_id:
+                # bill the tenant recorded on the request (also works
+                # after the tenancy was closed)
+                partner_id = maintenance.tenant_id.parent_id.id
+            elif not tenancies:
                 partner_id = (
                     maintenance.property_id.company_id.partner_id.id
                     or False)

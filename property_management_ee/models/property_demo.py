@@ -4,6 +4,9 @@
 Only called from demo XML (``<function>``) so it never runs on production
 databases installed without demo data.
 """
+import base64
+import io
+
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
@@ -197,3 +200,147 @@ class PropertyDemoLoader(models.AbstractModel):
             'expiry_date': today + relativedelta(days=25),
         }])
         return True
+
+    # ------------------------------------------------------------------
+    # property details: rooms, phases, floor plans, insurance
+    # ------------------------------------------------------------------
+    def _floor_plan_png(self, rooms, title):
+        """Draw a simple labelled floor plan (PNG bytes, base64)."""
+        from PIL import Image, ImageDraw
+        img = Image.new('RGB', (640, 420), 'white')
+        draw = ImageDraw.Draw(img)
+        draw.rectangle([20, 20, 620, 400], outline='#005E7A', width=6)
+        x = 20
+        total = sum(width for _label, width in rooms)
+        for idx, (label, width) in enumerate(rooms):
+            span = int(600 * width / total)
+            top = 20 if idx % 2 == 0 else 210
+            draw.rectangle([x, top, x + span, top + 190],
+                           outline='#985184', width=3)
+            draw.text((x + 12, top + 12), label, fill='#374151')
+            x += span
+        draw.text((30, 404 - 18), title, fill='#005E7A')
+        buf = io.BytesIO()
+        img.save(buf, format='PNG')
+        return base64.b64encode(buf.getvalue())
+
+    @api.model
+    def _load_property_details_demo(self):
+        ref = self.env.ref
+        module = 'property_management_ee'
+        today = self._today()
+        bedroom = ref('%s.room_type2' % module)
+        living = ref('%s.room_type1' % module)
+        kitchen = ref('%s.room_type3' % module)
+        Room = self.env['property.room']
+
+        layouts = {
+            'childproperty1': [  # Grimfield (Alice)
+                ('Living room', living, (6.0, 4.5, 2.8),
+                 [('Sofa set', 'movable', 1), ('TV unit', 'fixed', 1)]),
+                ('Master bedroom', bedroom, (4.5, 4.0, 2.8),
+                 [('Double bed', 'movable', 1),
+                  ('Built-in wardrobe', 'fixed', 1)]),
+                ('Bedroom 2', bedroom, (3.5, 3.5, 2.8),
+                 [('Single bed', 'movable', 2)]),
+                ('Kitchen', kitchen, (4.0, 3.0, 2.8),
+                 [('Cooker', 'fixed', 1), ('Fridge', 'movable', 1)]),
+            ],
+            'childproperty2': [  # Dawson Drive (Brian)
+                ('Living room', living, (5.5, 4.0, 2.7),
+                 [('Sofa set', 'movable', 1)]),
+                ('Bedroom', bedroom, (4.0, 3.8, 2.7),
+                 [('Queen bed', 'movable', 1),
+                  ('Wardrobe', 'fixed', 1)]),
+                ('Kitchen', kitchen, (3.5, 2.8, 2.7),
+                 [('Kitchen cabinets', 'fixed', 1)]),
+            ],
+            'childproperty3': [  # Glohork Villa (Carol, starts soon)
+                ('Lounge', living, (7.0, 5.0, 3.0),
+                 [('Fireplace', 'fixed', 1)]),
+                ('Bedroom 1', bedroom, (5.0, 4.0, 3.0), []),
+                ('Bedroom 2', bedroom, (4.0, 4.0, 3.0), []),
+                ('Bedroom 3', bedroom, (3.5, 3.5, 3.0), []),
+                ('Kitchen', kitchen, (4.5, 3.5, 3.0),
+                 [('Island counter', 'fixed', 1)]),
+            ],
+            'childproperty4': [  # Cleveland flat (David)
+                ('Studio room', living, (6.0, 5.0, 2.6),
+                 [('Sofa bed', 'movable', 1), ('Desk', 'movable', 1)]),
+                ('Kitchenette', kitchen, (2.5, 2.0, 2.6),
+                 [('Hob', 'fixed', 1)]),
+            ],
+        }
+        for xmlid, rooms in layouts.items():
+            prop = ref('%s.%s' % (module, xmlid))
+            for name, rtype, (length, width, height), assets in rooms:
+                Room.create({
+                    'name': name,
+                    'type_id': rtype.id,
+                    'property_id': prop.id,
+                    'length': length,
+                    'width': width,
+                    'height': height,
+                    'attach': rtype == bedroom,
+                    'assets_ids': [(0, 0, {
+                        'name': a_name, 'type': a_type, 'qty': qty,
+                        'date': prop.acquisition_date or today,
+                    }) for a_name, a_type, qty in assets],
+                })
+            self.env['property.floor.plans'].create({
+                'property_id': prop.id,
+                'photos_description': 'Ground floor plan',
+                'doc_name': '%s floor plan.png' % prop.name,
+                'photos': self._floor_plan_png(
+                    [(r[0], r[2][0]) for r in rooms],
+                    '%s - ground floor' % prop.name),
+            })
+
+        # Development phases and sales simulation on the parent buildings
+        for xmlid, cost, phases in [
+            ('property1', 250000.0, [(-36, -24, 950.0, 60.0, 4.0),
+                                     (-24, -12, 1100.0, 78.0, 4.0),
+                                     (-12, 0, 1200.0, 92.0, 4.5)]),
+            ('property2', 180000.0, [(-30, -18, 800.0, 55.0, 4.0),
+                                     (-18, 0, 950.0, 85.0, 4.0)]),
+        ]:
+            prop = ref('%s.%s' % (module, xmlid))
+            prop.write({
+                'simulation_name': '%s yield plan' % prop.name,
+                'simulation_date': today,
+                'construction_cost': cost,
+                'property_phase_ids': [(0, 0, {
+                    'start_date': today + relativedelta(months=start),
+                    'end_date': today + relativedelta(months=end, days=-1),
+                    'lease_price': price,
+                    'occupancy_rate': occupancy,
+                    'company_income': price * 12 * occupancy / 100,
+                    'commercial_tax': tax,
+                }) for start, end, price, occupancy, tax in phases],
+            })
+
+        # Insurance on the leased buildings
+        company = self.env.company
+        for xmlid, name, policy, premium, mode in [
+            ('property1', 'Building insurance', 'BLD-2026-0141', 1800.0,
+             'yearly'),
+            ('property1', 'Public liability cover', 'PL-2026-0075', 95.0,
+             'monthly'),
+            ('childproperty1', 'Contents insurance', 'CNT-2026-3310', 240.0,
+             'semi_annually'),
+            ('childproperty2', 'Fire insurance', 'FIR-2026-4410', 310.0,
+             'yearly'),
+        ]:
+            self.env['property.insurance'].create({
+                'name': name,
+                'policy_no': policy,
+                'premium': premium,
+                'payment_mode_type': mode,
+                'property_id': ref('%s.%s' % (module, xmlid)).id,
+                'company_id': company.id,
+                'contact': company.id,
+                'start_date': today - relativedelta(months=3),
+                'end_date': today + relativedelta(months=9),
+            })
+        return True
+

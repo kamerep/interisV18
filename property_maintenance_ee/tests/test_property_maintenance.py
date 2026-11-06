@@ -22,3 +22,23 @@ class TestPropertyMaintenance(common.TransactionCase):
         self.assertTrue(request.done_notified)
         request.stage_id = self.env.ref('maintenance.stage_0')
         self.assertFalse(request.done_notified)
+
+    def test_equipment_links_request_to_property(self):
+        equipment = self.env.ref(
+            'property_maintenance_ee.demo_equipment_heater')
+        prop = equipment.property_id
+        self.assertIn(equipment, prop.equipment_ids)
+        self.assertEqual(prop.equipment_count, len(prop.equipment_ids))
+        request = self.env['maintenance.request'].create({
+            'name': 'Heater element check',
+            'equipment_id': equipment.id,
+        })
+        self.assertEqual(request.property_id, prop)
+        # the running tenancy's tenant is filled in from the property
+        self.assertTrue(request.tenant_id)
+        self.assertIn(request, prop.maintenance_ids)
+
+    def test_renters_fault_invoice_bills_request_tenant(self):
+        request = self.env.ref('property_maintenance_ee.demo_request_moveout')
+        self.assertEqual(request.invoice_id.partner_id,
+                         request.tenant_id.parent_id)

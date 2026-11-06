@@ -10,7 +10,7 @@ maintenance, penalties, purchase/sale instalments and reporting.
 | `property_booking_ee` | Create floors/units under a building, book, merge and split units |
 | `property_commission_ee` | Agent commissions on tenancies, commission bills and reports |
 | `property_landlord_management_ee` | Landlords, landlord tenancies, owner deposits and rent bills |
-| `property_maintenance_ee` | Property maintenance requests, invoicing, tenant/manager notifications |
+| `property_maintenance_ee` | Property maintenance requests and equipment per property, invoicing, tenant/manager notifications |
 | `property_recurring_maintenance_ee` | Recurring maintenance costs added to rent invoices |
 | `property_penalty_ee` | Late-payment penalties on rent invoices |
 | `property_rent_report_ee` | Rent voucher report |
@@ -65,10 +65,12 @@ cluster, so it never touches the system Odoo service or database.
 
 Install with demo data to get a complete, date-relative test scenario:
 five tenants and tenancies (running with overdue rent, expiring soon, draft,
-weekly, closed), deposits, a CRM rent lead, maintenance requests, an agent
+weekly, closed), deposits, a CRM rent lead, rooms, floor plans, phases and
+insurance, maintenance equipment linked to properties with requests in
+every stage (preventive, recurring, blocked, invoiced), an agent
 commission, a landlord lease, a 12-unit building for bookings, purchase and
 sale instalments, and expiring documents. `docs/Testing_Guide` lists every
-demo record and 13 step-by-step test scenarios with expected results.
+demo record and 14 step-by-step test scenarios with expected results.
 
 ## Documentation
 

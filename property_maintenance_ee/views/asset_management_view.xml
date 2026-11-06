@@ -10,6 +10,9 @@
                 <button class="oe_inline oe_stat_button" name="open_maintenance" type="object" icon="fa-wrench">
                     <field string="Maintenance" name="maint_request" widget="statinfo"/>
                 </button>
+                <button class="oe_stat_button" name="open_equipment" type="object" icon="fa-cogs">
+                    <field string="Equipment" name="equipment_count" widget="statinfo"/>
+                </button>
             </xpath>
         </field>
     </record>

@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 class AccountAsset(models.Model):
     _inherit = 'account.asset'
 
+    @api.depends('maintenance_ids')
     def _compute_request_count(self):
         for asset in self:
             asset.maint_request = len(asset.maintenance_ids)

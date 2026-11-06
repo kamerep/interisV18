@@ -28,8 +28,12 @@
                 <button name="open_invoice" string="Open Invoice" type="object" class="btn-primary" invisible="not invoice_check and not invoice_id"/>
             </xpath>
             
-            <field name='equipment_id' position='replace'>
+            <field name='equipment_id' position='before'>
                 <field name='property_id' context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+            </field>
+            <field name='equipment_id' position='attributes'>
+                <attribute name="domain">['|', ('property_id', '=', False), ('property_id', '=', property_id)]</attribute>
+                <attribute name="context">{'default_company_id': company_id, 'default_category_id': category_id, 'default_property_id': property_id}</attribute>
             </field>
             <button name='archive_equipment_request' position='after'>
                 <button name="open_google_map" string="Get Location"
@@ -49,30 +53,26 @@
                 <field name="is_in_progress" invisible="1"/>
                 <field name='company_currency_id' invisible='1'/>
             </field>
-            <xpath expr="//sheet" position="inside">
-                <notebook>
-                    <page string="Property Details">
-                        <!-- <button name="open_google_map" string="Get Location" type="object" icon="fa-location-arrow" colspan="2" class="oe_inline oe_stat_button"/> -->
-                        <separator string="Property Address"/>
-                        <group colspan="4" col="4">
+            <xpath expr="//notebook" position="inside">
+                <page string="Property Details" name="property_details">
+                    <group>
+                        <group string="Property Address">
                             <label for="street" string="Address"/>
                             <div class="o_address_format">
-                                <field name="street" class="o_address_street"  placeholder="Street.."/>
-                                <field name="street2" class="o_address_street" placeholder="Street2..." />
-                                <field name="township" placeholder="Township..."/>
-                                <field name="city" placeholder="City"  class="o_address_city" style="width: 35%%"/>
-                                <field name="state_id" class="o_address_state oe_no_button" placeholder="State" style="width: 35%%" options='{"no_open": True}'/>
-                                <field name="zip" placeholder="ZIP" class="o_address_zip" style="width: 25%%"/>
-                                <field name="country_id" placeholder="Country" class="o_address_country oe_no_button" options='{"no_open": True, "no_create": True}'/>
+                                <field name="street" class="o_address_street" placeholder="Street..."/>
+                                <field name="street2" class="o_address_street" placeholder="Street 2..."/>
+                                <field name="township" class="o_address_street" placeholder="Township..."/>
+                                <field name="city" class="o_address_city" placeholder="City"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True}"/>
+                                <field name="zip" class="o_address_zip" placeholder="ZIP"/>
+                                <field name="country_id" class="o_address_country" placeholder="Country" options="{'no_open': True, 'no_create': True}"/>
                             </div>
+                        </group>
+                        <group string="Accounting">
                             <field name="account_id"/>
                         </group>
-                    </page>
-                    <page string="Description">
-                        <separator string="Maintenance Description"/>
-                        <field name='description' placeholder="Internal Note..."/>
-                    </page>
-                </notebook>
+                    </group>
+                </page>
             </xpath>
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="readonly">done</attribute>
@@ -95,8 +95,6 @@
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="readonly">done</attribute>
             </xpath>
-            <field name="category_id" position="replace"/>
-            <field name="description" position="replace"/>
         </field>
     </record>
 
@@ -129,6 +127,64 @@
             <field name ='user_id' position='attributes'>
                 <attribute name="string">Responsible</attribute>
             </field>
+        </field>
+    </record>
+
+    <!-- Request : search by property -->
+    <record id="maintenance_request_search_view_inherit" model="ir.ui.view">
+        <field name="name">property.maintenance.request.search</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_search"/>
+        <field name="arch" type="xml">
+            <field name="equipment_id" position="before">
+                <field name="property_id"/>
+                <field name="tenant_id"/>
+            </field>
+            <filter name="high_priority" position="after">
+                <separator/>
+                <filter string="Renter's Fault" name="renters_fault" domain="[('renters_fault', '=', True)]"/>
+                <filter string="To Invoice" name="to_invoice" domain="[('renters_fault', '=', True), ('done', '=', True), ('invoice_check', '=', False)]"/>
+            </filter>
+            <xpath expr="//group" position="inside">
+                <filter string="Property" name="group_property" context="{'group_by': 'property_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Equipment : property link -->
+    <record id="maintenance_equipment_form_view_inherit" model="ir.ui.view">
+        <field name="name">property.maintenance.equipment.form</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <field name="category_id" position="after">
+                <field name="property_id" options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_list_view_inherit" model="ir.ui.view">
+        <field name="name">property.maintenance.equipment.list</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="category_id" position="after">
+                <field name="property_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_search_view_inherit" model="ir.ui.view">
+        <field name="name">property.maintenance.equipment.search</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_search"/>
+        <field name="arch" type="xml">
+            <field name="category_id" position="after">
+                <field name="property_id"/>
+            </field>
+            <filter name="category" position="after">
+                <filter string="Property" name="group_property" context="{'group_by': 'property_id'}"/>
+            </filter>
         </field>
     </record>
 
