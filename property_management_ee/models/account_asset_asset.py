@@ -332,6 +332,15 @@ class AccountAssetAsset(models.Model):
                 raise ValidationError(
                     _('You cannot enter a negative Unit Price.'))
 
+    @api.model
+    def _cron_refresh_occupancy_rates(self):
+        """Daily: occupancy depends on today's date, so refresh it."""
+        properties = self.search([('is_property', '=', True)])
+        field = self._fields['occupancy_rates']
+        self.env.add_to_compute(field, properties)
+        properties.flush_recordset(['occupancy_rates'])
+        return True
+
     def _get_tenancy_count(self):
         for rec in self:
             rec.tenancy_entries_count = len(rec.tenancy_property_ids)

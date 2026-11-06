@@ -21,6 +21,7 @@
     'author': 'Geronimo',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee'],
+    'demo': ['demo/demo_commission.xml'],
     'data': [
             'data/commission_seq.xml',
             'security/res_groups.xml',

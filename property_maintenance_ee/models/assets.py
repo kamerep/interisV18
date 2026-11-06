@@ -33,13 +33,20 @@ class AccountAsset(models.Model):
             'context': ctx,
         }
 
-    @api.depends('tenancy_property_ids', 'tenancy_property_ids.rent',
-                 'maintenance_ids', 'maintenance_ids.cost')
-    def roi_calculation(self):
+    maintenance_cost_total = fields.Float(
+        string='Maintenance Cost',
+        compute='_compute_net_income',
+        store=True,
+        help='Total cost of all maintenance requests on this property.')
+    net_income = fields.Float(
+        string='Net Income (after maintenance)',
+        compute='_compute_net_income',
+        store=True,
+        help='Tenancy rent (the ROI figure) minus maintenance cost.')
+
+    @api.depends('roi', 'maintenance_ids', 'maintenance_ids.cost')
+    def _compute_net_income(self):
         for prop_rec in self:
-            cost = sum(m.cost for m in prop_rec.maintenance_ids)
-            gain = sum(t.rent for t in prop_rec.tenancy_property_ids)
-            if cost and gain and cost != gain:
-                prop_rec.roi = (gain - cost) / cost
-            else:
-                prop_rec.roi = 0.0
+            cost = sum(prop_rec.maintenance_ids.mapped('cost'))
+            prop_rec.maintenance_cost_total = cost
+            prop_rec.net_income = prop_rec.roi - cost

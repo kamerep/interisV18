@@ -19,4 +19,24 @@
         </field>
     </record>
 
+    <record id="mail_tenant_rent_overdue" model="mail.template">
+        <field name="name">Tenancy: Overdue Rent Reminder</field>
+        <field name="model_id" ref="property_management_ee.model_tenancy_rent_schedule"/>
+        <field name="subject">Reminder: rent due on {{ object.start_date }} is unpaid</field>
+        <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.tenancy_id.tenant_id.name or ''">Tenant</t>,<br/><br/>
+                Our records show that the rent of
+                <strong><t t-out="format_amount(object.amount, object.currency_id)">0.00</t></strong>
+                for <t t-out="object.tenancy_id.property_id.name or ''">your property</t>,
+                due on <t t-out="format_date(object.start_date)"/>, is still unpaid.
+                Please settle it at your earliest convenience.<br/><br/>
+                Regards,<br/>
+                <t t-out="object.tenancy_id.property_id.property_manager.name or object.company_id.name"/>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
 </odoo>

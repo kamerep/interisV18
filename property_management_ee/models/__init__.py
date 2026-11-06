@@ -10,3 +10,4 @@ from . import account
 from . import crm_lead
 from . import sale
 # For is_property not not use in sale and sale.order.line
+from . import property_demo

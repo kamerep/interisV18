@@ -13,6 +13,7 @@
     'author': 'Geronimo',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee'],
+    'demo': ['demo/demo_sale_purchase.xml'],
     'data': [
         'security/ir.model.access.csv',
         'report/investment_report_view.xml',

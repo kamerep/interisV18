@@ -153,3 +153,25 @@ class TestPropertyFlows(common.TransactionCase):
                       'property.finance.report'):
             self.env[model].read_group(
                 [], ['name'], ['parent_id', 'type_id'], lazy=False)
+
+    def test_demo_scenario_and_reminder_wizard(self):
+        alice = self.env.ref('property_management_ee.demo_tenancy_alice')
+        overdue = alice.rent_schedule_ids.filtered(
+            lambda s: s.start_date < fields.Date.today() and not s.paid)
+        self.assertTrue(overdue, 'demo tenancy must have overdue rent')
+        self.assertTrue(alice.deposit_received)
+        wizard = self.env['tenant.wizard.mail'].with_context(
+            active_model='tenancy.rent.schedule',
+            active_ids=overdue.ids).create({})
+        self.assertEqual(wizard.schedule_ids, overdue)
+        mails_before = self.env['mail.mail'].search_count([])
+        action = wizard.mass_mail_send()
+        self.assertEqual(action['tag'], 'display_notification')
+        self.assertGreater(
+            self.env['mail.mail'].search_count([]), mails_before)
+
+    def test_occupancy_cron(self):
+        grimfield = self.env.ref('property_management_ee.childproperty1')
+        self.env['account.asset']._cron_refresh_occupancy_rates()
+        self.assertGreater(grimfield.occupancy_rates, 0)
+        self.assertLessEqual(grimfield.occupancy_rates, 100)

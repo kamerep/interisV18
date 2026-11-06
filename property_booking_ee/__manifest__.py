@@ -21,6 +21,7 @@
     'author': 'Geronimo',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee'],
+    'demo': ['demo/demo_booking.xml'],
     'data': [
         'security/ir.model.access.csv',
         'views/view_property_booking.xml',

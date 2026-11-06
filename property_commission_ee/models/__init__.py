@@ -2,3 +2,4 @@
 
 from . import property_commission
 from . import res_partner
+from . import property_demo

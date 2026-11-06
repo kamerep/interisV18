@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_landlord_lucy" model="landlord.partner">
+        <field name="name">Lucy Achieng (Landlord)</field>
+        <field name="email">lucy.landlord@example.com</field>
+        <field name="phone">+254 700 000 201</field>
+        <field name="is_owner">True</field>
+    </record>
+    <function model="property.demo.loader" name="_load_landlord_demo"/>
+</odoo>

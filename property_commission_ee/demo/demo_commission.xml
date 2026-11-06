@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="demo_agent" model="res.partner">
+        <field name="name">Kevin Mutua (Agent)</field>
+        <field name="email">kevin.agent@example.com</field>
+        <field name="agent">True</field>
+    </record>
+    <function model="property.demo.loader" name="_load_commission_demo"/>
+</odoo>

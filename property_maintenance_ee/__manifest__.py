@@ -17,6 +17,7 @@
     'license': 'LGPL-3',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee', 'maintenance'],
+    'demo': ['demo/demo_maintenance.xml'],
     'data': [
         'security/maint_security.xml',
         'security/ir.model.access.csv',

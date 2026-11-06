@@ -420,3 +420,17 @@ passing) and a browser check of the main screens in light and dark mode.
 
 ### Deployment
 - `deploy/` scripts and config template; GitHub Actions static checks.
+
+### Follow-ups completed
+- Rent reminder wizard rebuilt for Odoo 18 (bound to rent schedules,
+  overdue-rent mail template, menu under Tenant Details).
+- Daily cron refreshes property occupancy rates.
+- Maintenance: Maintenance Cost and Net Income (after maintenance) on
+  properties; ROI itself is unchanged.
+- Rent lines count as paid when the invoice is in payment (V18 payments
+  without journal entry).
+- Booking: generated units are flagged as properties.
+- Demo scenario for every module, generated relative to the install date;
+  landlord demo data repaired. Testing Guide (HTML/PDF) added.
+- 16 automated tests.
+

@@ -2,3 +2,4 @@
 from . import sale_purchase_asset
 from . import sale_cost
 from . import cost_cost
+from . import property_demo

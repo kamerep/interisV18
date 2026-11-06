@@ -11,6 +11,7 @@
     'license': 'LGPL-3',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee'],
+    'demo': ['demo/demo_landlord.xml'],
     'data': [
         'data/data_landlord_sequence.xml',
         'security/ir.model.access.csv',

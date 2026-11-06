@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Property Management — Testing Guide</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.5; }
+  h1 { color: #714B67; font-size: 20pt; border-bottom: 3px solid #714B67; padding-bottom: 6px; margin-top: 0; }
+  h2 { color: #714B67; font-size: 14.5pt; border-bottom: 1px solid #c9b3c4; padding-bottom: 3px; margin-top: 24px; }
+  h3 { color: #017E84; font-size: 12pt; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+  th { background: #714B67; color: #fff; text-align: left; padding: 5px 8px; }
+  td { border: 1px solid #ccc; padding: 5px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f3f6; }
+  .step { background: #f0f7f7; border-left: 4px solid #017E84; padding: 10px 14px; margin: 10px 0; }
+  .step b.n { display:inline-block; background:#017E84; color:#fff; border-radius:50%; width:20px; height:20px; text-align:center; line-height:20px; font-size:10pt; margin-right:6px;}
+  .note { background: #fff8e6; border-left: 4px solid #e0a800; padding: 9px 13px; margin: 9px 0; }
+  .warn { background: #fdeeee; border-left: 4px solid #c0392b; padding: 9px 13px; margin: 9px 0; }
+  .tip  { background: #eef7ee; border-left: 4px solid #2e8b57; padding: 9px 13px; margin: 9px 0; }
+  .pagebreak { page-break-before: always; }
+  .cover { text-align: center; margin-top: 200px; }
+  .cover h1 { border: none; font-size: 28pt; }
+  .cover p { font-size: 13pt; color: #555; }
+  ul { margin: 6px 0 6px 18px; padding-left: 12px; }
+  li { margin-bottom: 4px; }
+  .kbd { background:#eee; border:1px solid #bbb; border-radius:3px; padding:0 5px; }
+  .arrow { color:#017E84; font-weight:bold; }
+  .faq dt { font-weight: bold; color:#714B67; margin-top: 10px;}
+  .faq dd { margin: 2px 0 8px 0; }
+
+  code { background:#f4f4f4; padding:0 3px; font-size:9.5pt; }
+</style></head><body>
+<div class="cover"><h1>Property Management</h1>
+<p style="font-size:16pt;">Testing Guide &amp; Demo Data</p>
+<p>Odoo 18 Enterprise &middot; Release 18.0.1.1.0</p><br><br><p>November 2026</p></div>
+
+<div class="pagebreak"></div>
+<h1>1. Test instance</h1>
+<table>
+<tr><th>Item</th><th>Value</th></tr>
+<tr><td>URL</td><td><code>http://localhost:8018</code></td></tr>
+<tr><td>Database</td><td><code>property18</code> (installed with demo data)</td></tr>
+<tr><td>Login / password</td><td><code>admin</code> / <code>admin</code></td></tr>
+<tr><td>Master password</td><td><code>admin</code> (database manager)</td></tr>
+<tr><td>Start / stop</td><td><code>~/odoo18ee/odoo18ctl.sh start|stop|restart|status</code></td></tr>
+</table>
+<div class="warn">These are demo credentials. Change the admin password and <code>admin_passwd</code> before the instance is reachable by others.</div>
+<p>A fresh test database with the same data: create a database with demo data and install <b>property_ee</b>
+(<code>deploy/deploy.sh -c CONF -d NEWDB --install</code>). All dates are relative to the install day, so
+“overdue”, “expiring soon” and “this month” are always meaningful.</p>
+
+<h1>2. Demo data</h1>
+<h2>2.1 Properties</h2>
+<table>
+<tr><th>Property</th><th>Used for</th></tr>
+<tr><td>Golden Villa, Diamond Crest, Royal Manor, Cloud Haven, Trek Rise, White Villa (+ child units)</td><td>Buildings with photos, rooms, utilities, insurance; purchased 3 years ago (KPIs)</td></tr>
+<tr><td>Grimfield, Dawson Drive, Glohork Villa, Cleveland, New Plazza</td><td>Units leased in the tenancy scenarios below</td></tr>
+<tr><td>Silver Palace</td><td>Free property, fully configured, ready for a new tenancy</td></tr>
+<tr><td>Sunrise Towers (12 units)</td><td>Booking, merge/split</td></tr>
+<tr><td>Trek Rise / White Villa</td><td>Purchase instalments / sale instalments</td></tr>
+</table>
+<h2>2.2 People</h2>
+<table>
+<tr><th>Name</th><th>Role</th><th>Email</th></tr>
+<tr><td>Alice Wanjiru</td><td>Tenant, Grimfield (overdue rent, penalty)</td><td>alice.tenant@example.com</td></tr>
+<tr><td>Brian Otieno</td><td>Tenant, Dawson Drive (expires soon, agent commission)</td><td>brian.tenant@example.com</td></tr>
+<tr><td>Carol Mwangi</td><td>Tenant, Glohork Villa (draft, starts next month)</td><td>carol.tenant@example.com</td></tr>
+<tr><td>David Kimani</td><td>Tenant, Cleveland (weekly rent, recurring maintenance; no email)</td><td>&mdash;</td></tr>
+<tr><td>Eva Njeri</td><td>Former tenant, New Plazza (closed tenancy)</td><td>eva.tenant@example.com</td></tr>
+<tr><td>Frank Mutiso</td><td>CRM rent lead for Royal Manor</td><td>frank.prospect@example.com</td></tr>
+<tr><td>Kevin Mutua (Agent)</td><td>Commission agent</td><td>kevin.agent@example.com</td></tr>
+<tr><td>Lucy Achieng (Landlord)</td><td>Owner of Royal Manor</td><td>lucy.landlord@example.com</td></tr>
+</table>
+<h2>2.3 Tenancies</h2>
+<table>
+<tr><th>Tenancy</th><th>State</th><th>What is in it</th></tr>
+<tr><td>Grimfield - Alice Wanjiru</td><td>In Progress</td><td>1,200/month, deposit 2,400 received; 6 months paid, 1 invoiced unpaid, last and current month not invoiced; penalty 5 % after 5 days</td></tr>
+<tr><td>Dawson Drive - Brian Otieno</td><td>In Progress</td><td>950/month, ends in 3 weeks, all invoiced and paid; 10 % agent commission invoiced</td></tr>
+<tr><td>Glohork Villa - Carol Mwangi</td><td>New</td><td>Starts next month, deposit 2,200 not yet received</td></tr>
+<tr><td>Cleveland - David Kimani</td><td>In Progress</td><td>300/week, started 3 weeks ago; recurring maintenance 500</td></tr>
+<tr><td>New Plazza - Eva Njeri</td><td>Closed</td><td>Last year's tenancy, fully paid</td></tr>
+<tr><td>Royal Manor - landlord lease</td><td>In Progress</td><td>Landlord Lucy, 5,000/month, 3 owner bills posted</td></tr>
+</table>
+<h2>2.4 Other records</h2>
+<ul>
+<li>Maintenance: <i>Leaking kitchen tap</i> (repaired, invoiced to tenant), <i>Air conditioner service</i> (in progress), <i>Broken window in lobby</i> (new).</li>
+<li>Documents expiring: Fire insurance policy (15 days), Lift inspection report (40 days); safety certificates: Gas (10 days), Electrical (25 days).</li>
+</ul>
+
+<div class="pagebreak"></div>
+<h1>3. Test scenarios</h1>
+<h3>T1. Rent invoicing and payment</h3><ol><li>Property Management <span class="arrow">&rarr;</span> Tenant Details <span class="arrow">&rarr;</span> Tenancies; open <b>Grimfield - Alice Wanjiru</b>.</li><li>Open the <b>Rent Schedule</b> tab. Six months are paid, one is invoiced but unpaid (overdue), last month and the current month are not invoiced yet.</li><li>On the current month line click <b>Create Invoice</b>, then <b>Confirm</b> the invoice and <b>Pay</b> it.</li></ol><div class="tip"><b>Expected:</b> The line shows <i>Paid</i>; Total Rent stays 14,400.</div>
+<h3>T2. Late-payment penalty</h3><ol><li>Alice's tenancy has <b>Penalty 5 %</b> after <b>5 days</b> (Penalty tab).</li><li>On <b>last month's</b> line (not invoiced, more than 5 days late) click <b>Create Invoice</b>.</li></ol><div class="tip"><b>Expected:</b> The invoice amount is rent + 5 % (1,260.00 for a 1,200.00 line) and the line shows the Penalty Amount.</div>
+<h3>T3. Overdue rent reminders</h3><ol><li>Tenant Details <span class="arrow">&rarr;</span> <b>Send Rent Reminders</b> (or select rent lines in a list and use <i>Actions</i>).</li><li>Leave the list empty and click <b>Send Reminders</b>.</li></ol><div class="tip"><b>Expected:</b> A notification reports the reminders queued; Settings <span class="arrow">&rarr;</span> Technical <span class="arrow">&rarr;</span> Emails shows a mail to alice.tenant@example.com. Tenants without email are reported as skipped.</div>
+<h3>T4. Deposit received and returned</h3><ol><li>On <b>Glohork Villa - Carol Mwangi</b> (draft) click <b>Start</b>, then <b>Deposit Receive</b> and <b>Confirm</b> the payment.</li><li>Click <b>Deposit Return</b>, confirm and pay the vendor bill.</li></ol><div class="tip"><b>Expected:</b> <i>Deposit Received?</i> then <i>Deposit Returned?</i> become ticked; the property moves to <i>On Lease</i>.</div>
+<h3>T5. Contract expiry and renewal</h3><ol><li>Reporting <span class="arrow">&rarr;</span> Contract Expiry, range today to +1 month, <b>Print</b>.</li><li>Open <b>Dawson Drive - Brian Otieno</b> (expires in ~3 weeks; all rent lines are invoiced), click <b>Close</b>, then <b>Renew</b>.</li></ol><div class="tip"><b>Expected:</b> Brian's tenancy is listed in the report; the renew wizard proposes the new period.</div>
+<h3>T6. CRM rent lead to tenancy</h3><ol><li>CRM: open <b>2-bedroom flat at Royal Manor</b> (Frank Mutiso).</li><li>Click <b>Create Contract</b>, set an end date, confirm.</li></ol><div class="tip"><b>Expected:</b> A tenancy for Royal Manor is created; Frank becomes a tenant (contact + tenant record); the lead description is unchanged.</div>
+<h3>T7. Weekly rent</h3><ol><li>Open <b>Cleveland - David Kimani</b> (Rent Type 1 Weekly, 300 per week).</li></ol><div class="tip"><b>Expected:</b> The schedule has one line per week; the last part-week is charged at 300 / 7 per day. Recurring maintenance (500) is shown and added to rent invoices.</div>
+<h3>T8. Maintenance</h3><ol><li>Property Maintenance <span class="arrow">&rarr;</span> Maintenance Requests.</li><li><b>Leaking kitchen tap</b> is Repaired and invoiced to the tenant (renter's fault). Move <b>Broken window in lobby</b> to <i>Repaired</i>, set a cost and click <b>Create Invoice</b>.</li></ol><div class="tip"><b>Expected:</b> The tenant/manager receives the done e-mail once; on the property form, <i>Maintenance Cost</i> and <i>Net Income (after maintenance)</i> update.</div>
+<h3>T9. Agent commission</h3><ol><li>Commissions <span class="arrow">&rarr;</span> Commission Invoice: <b>COM/00001</b> (Kevin Mutua, 10 % of Brian's rent = 1,140.00) is invoiced.</li><li>Reporting <span class="arrow">&rarr;</span> Commission details report / Commission invoices report, wide date range, <b>Print</b>.</li></ol><div class="tip"><b>Expected:</b> Both PDFs list Brian's tenancy and the 1,140.00 commission.</div>
+<h3>T10. Landlord payouts</h3><ol><li>Landlord Details <span class="arrow">&rarr;</span> Landlord Tenancy: <b>Royal Manor - landlord lease</b> (Lucy Achieng, 5,000/month).</li><li>Three monthly owner bills are posted; on the next line click <b>Create Invoice</b>. Try <b>Pay Deposit</b> twice.</li></ol><div class="tip"><b>Expected:</b> A vendor bill to Lucy is created; the second deposit click opens the same payment (no duplicate).</div>
+<h3>T11. Booking units</h3><ol><li>Property Booking <span class="arrow">&rarr;</span> Sub Property: <b>Sunrise Towers</b> has 12 units (3 floors &times; 4).</li><li>Unit 1 is booked; click <i>Make Available</i> on it, then <i>Book</i> on another unit. Select two units of the same floor and use <b>Merge</b>.</li></ol><div class="tip"><b>Expected:</b> Only the clicked unit changes state; merged units get a combined BHK label; units appear in the Properties list.</div>
+<h3>T12. Purchase and sale instalments</h3><ol><li>Open <b>Trek Rise</b>: 24 monthly purchase instalments (1,800,000). Open <b>White Villa</b>: sale instalments from the payment term (2,500,000).</li><li>Create a vendor bill / customer invoice from an instalment line.</li></ol><div class="tip"><b>Expected:</b> The bill/invoice is created for the line amount; the company currency is unchanged.</div>
+<h3>T13. Reports and KPIs</h3><ol><li>Reporting: Income &amp; Expenditure, Tenancy by Property/Tenant, Document and Safety Certificate expiry (Fire insurance policy in 15 days, Gas safety certificate in 10 days), Property per Location, GFA / Occupancy / Operational cost / Investment analysis, Financial Performance Analysis.</li><li>Open <b>Grimfield</b> and <b>Dawson Drive</b>: Occupancy Rate is between 0 and 100 %.</li></ol><div class="tip"><b>Expected:</b> Every report opens or prints without error and shows the demo records.</div>
+
+
+<h1>4. Automated tests</h1>
+<p>16 automated tests cover the flows above. Run them on a throw-away database:</p>
+<p><code>deploy/deploy.sh -c CONF -d test_db --install --test</code></p>
+</body></html>

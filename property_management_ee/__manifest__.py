@@ -41,7 +41,7 @@
         'wizard/view_safety_certificate_report.xml',
         'wizard/view_tenancy_property_report.xml',
         'wizard/view_tenancy_tenant_report.xml',
-        # 'wizard/view_tenant_wizard_mail.xml',
+        'wizard/view_tenant_wizard_mail.xml',
         'views/view_lead.xml',
         # 'views/view_sale.xml',
         'views/view_res_partner.xml',
@@ -61,7 +61,10 @@
         'views/report_tenancy_detail_by_tenant_templates.xml'
     ],
     'images': ['static/description/banner.png'],
-    'demo': ['demo/account_asset_demo.xml'],
+    'demo': [
+        'demo/account_asset_demo.xml',
+        'demo/demo_scenario.xml',
+    ],
     'auto_install': False,
     'installable': True,
     'application': True,

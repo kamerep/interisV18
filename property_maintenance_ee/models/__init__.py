@@ -3,3 +3,4 @@
 
 from . import property_maintenance
 from . import assets
+from . import property_demo

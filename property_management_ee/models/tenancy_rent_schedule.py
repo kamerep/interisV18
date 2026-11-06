@@ -18,12 +18,14 @@ class TenancyRentSchedule(models.Model):
             if data.invoice_id and data.invoice_id.state == 'posted':
                 data.move_check = True
 
-    @api.depends('invoice_id', 'invoice_id.amount_residual')
+    @api.depends('invoice_id', 'invoice_id.payment_state')
     def compute_paid(self):
+        # V18: a payment without journal entry marks the invoice
+        # 'in_payment' while amount_residual stays unchanged
         for data in self:
             data.paid = bool(
                 data.invoice_id
-                and data.invoice_id.amount_residual == 0)
+                and data.invoice_id.payment_state in ('in_payment', 'paid'))
 
     note = fields.Text(string='Notes', help='Additional Notes.')
     company_id = fields.Many2one(

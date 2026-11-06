@@ -61,6 +61,15 @@ cluster, so it never touches the system Odoo service or database.
 - Custom views, reports or server actions that used `parent_id` for the
   property hierarchy must switch to `property_parent_id`.
 
+## Demo data and testing
+
+Install with demo data to get a complete, date-relative test scenario:
+five tenants and tenancies (running with overdue rent, expiring soon, draft,
+weekly, closed), deposits, a CRM rent lead, maintenance requests, an agent
+commission, a landlord lease, a 12-unit building for bookings, purchase and
+sale instalments, and expiring documents. `docs/Testing_Guide` lists every
+demo record and 13 step-by-step test scenarios with expected results.
+
 ## Documentation
 
 `docs/` holds HTML and PDF versions of:
@@ -68,6 +77,7 @@ cluster, so it never touches the system Odoo service or database.
 - **Property_Management_Suite_Documentation** – functional and technical reference
 - **Property_Management_End_User_Guide** – day-to-day user guide
 - **Deployment_and_Release_Notes** – installation, upgrade, deployment and the 18.0.1.1.0 fixes
+- **Testing_Guide** – test instance access, demo data inventory and test scenarios
 
 See `CHANGES_LOG.md` for the full change history.
 

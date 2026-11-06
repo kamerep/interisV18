@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Testing scenario: see docs/Testing_Guide -->
+    <record id="demo_rent_type_weekly" model="rent.type">
+        <field name="name">1</field>
+        <field name="renttype">Weekly</field>
+        <field name="sequence_in_view">0</field>
+    </record>
+
+    <record id="demo_tenant_alice" model="tenant.partner">
+        <field name="name">Alice Wanjiru</field>
+        <field name="email">alice.tenant@example.com</field>
+        <field name="phone">+254 700 000 101</field>
+        <field name="occupation">Engineer</field>
+        <field name="tenant">True</field>
+    </record>
+    <record id="demo_tenant_brian" model="tenant.partner">
+        <field name="name">Brian Otieno</field>
+        <field name="email">brian.tenant@example.com</field>
+        <field name="phone">+254 700 000 102</field>
+        <field name="tenant">True</field>
+    </record>
+    <record id="demo_tenant_carol" model="tenant.partner">
+        <field name="name">Carol Mwangi</field>
+        <field name="email">carol.tenant@example.com</field>
+        <field name="tenant">True</field>
+    </record>
+    <record id="demo_tenant_david" model="tenant.partner">
+        <field name="name">David Kimani</field>
+        <field name="tenant">True</field>
+    </record>
+    <record id="demo_tenant_eva" model="tenant.partner">
+        <field name="name">Eva Njeri</field>
+        <field name="email">eva.tenant@example.com</field>
+        <field name="tenant">True</field>
+    </record>
+
+    <!-- CRM rent lead to convert into a tenancy -->
+    <record id="demo_lead_rent" model="crm.lead">
+        <field name="name">2-bedroom flat at Royal Manor</field>
+        <field name="type">opportunity</field>
+        <field name="is_rent">True</field>
+        <field name="contact_name">Frank Mutiso</field>
+        <field name="email_from">frank.prospect@example.com</field>
+        <field name="phone">+254 700 000 106</field>
+        <field name="property_id" ref="property3"/>
+        <field name="min_bedroom">2</field>
+        <field name="max_price">1300</field>
+    </record>
+
+    <function model="property.demo.loader" name="_load_core_demo"/>
+</odoo>

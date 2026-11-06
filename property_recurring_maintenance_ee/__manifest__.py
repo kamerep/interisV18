@@ -19,7 +19,7 @@ maintenance account
         'views/property_recuring_maintenance_view.xml'
     ],
     'images': ['static/description/banner.png'],
-    'demo': ['data/recurring_maintenance_data.xml'],
+    'demo': ['data/recurring_maintenance_data.xml', 'demo/demo_recurring.xml'],
     'auto_install': False,
     'installable': True,
     'application': True,

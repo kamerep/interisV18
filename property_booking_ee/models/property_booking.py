@@ -99,6 +99,7 @@ class PropertyCreated(models.Model):
                 'furnished': property_rec.furnished,
                 'type_id': property_rec.type_id.id,
                 'property_parent_id': property_rec.asset_id.id,
+                'is_property': True,
                 'ground_rent': property_rec.ground_rent,
                 'floor': property_rec.floor,
                 'no_of_property': 1,

@@ -14,4 +14,16 @@
         </field>
     </record>
 
+    <record id="prop_maintenance_net_income" model="ir.ui.view">
+        <field name="name">account.asset.maintenance.net.income</field>
+        <field name="model">account.asset</field>
+        <field name="inherit_id" ref="property_management_ee.property_asset_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='roi']" position="after">
+                <field name="maintenance_cost_total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="net_income" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

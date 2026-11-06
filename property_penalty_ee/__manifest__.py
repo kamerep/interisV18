@@ -13,7 +13,7 @@
     'author': 'Geronimo',
     'website': 'mailto:peterkamere@gmail.com',
     'depends': ['property_management_ee'],
-    'demo': [],
+    'demo': ['demo/demo_penalty.xml'],
     'data': [
         "views/property_penalty_view.xml"
     ],
