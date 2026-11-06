@@ -42,9 +42,10 @@ class RentType(models.Model):
     @api.constrains('sequence_in_view')
     def _check_value(self):
         for rec in self:
-            if rec.search([
+            # 0 means "no explicit sequence"; only enforce real values.
+            if rec.sequence_in_view and rec.search_count([
                     ('sequence_in_view', '=', rec.sequence_in_view),
-                    ('id', '!=', rec.id)]):
+                    ('id', '!=', rec.id)], limit=1):
                 raise ValidationError(_('Sequence should be Unique!'))
 
 

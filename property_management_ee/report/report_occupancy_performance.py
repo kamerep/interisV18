@@ -12,7 +12,6 @@ class OccupancyPerformanceReport(models.Model):
     parent_id = fields.Many2one('account.asset', 'Parent Property')
     type_id = fields.Many2one('property.type', 'Property Type')
     acquisition_date = fields.Date('Purchase Date')
-    parent_id = fields.Many2one('account.asset', 'Parent Property')
     name = fields.Char("Property Name")
     occupancy_rates = fields.Float('Occupancy Rates')
 
@@ -20,5 +19,8 @@ class OccupancyPerformanceReport(models.Model):
         tools.drop_view_if_exists(self._cr, 'occupancy_performance_report')
         self._cr.execute(
             """CREATE or REPLACE VIEW occupancy_performance_report as
-            SELECT id,name,type_id,active,parent_id,occupancy_rates,
-            acquisition_date FROM account_asset""")
+            SELECT id, name, type_id, active,
+                   property_parent_id AS parent_id, occupancy_rates,
+                   acquisition_date
+            FROM account_asset
+            WHERE is_property IS TRUE""")

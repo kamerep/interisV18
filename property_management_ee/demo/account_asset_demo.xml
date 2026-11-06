@@ -240,7 +240,7 @@
 		<field name="bathroom">2</field>
 		<field name="gfa_meter">9.29</field>
 		<field name="gfa_feet">100.00</field>
-		<field name="parent_id" ref="property1"></field>
+		<field name="property_parent_id" ref="property1"></field>
 		<field name="property_manager" ref="base.res_partner_1"/>
 		<!-- <field name='property_owner' ref="base.res_partner_1"/> -->
 		<field name="account_depreciation_id" ref='property_asset_account'/>
@@ -307,7 +307,7 @@
 		<field name="bathroom">2</field>
 		<field name="gfa_meter">9.29</field>
 		<field name="gfa_feet">100.00</field>
-		<field name="parent_id" ref="property2"></field>
+		<field name="property_parent_id" ref="property2"></field>
 		<field name="property_manager" ref="base.res_partner_1"/>
 		<!-- <field name='property_owner' ref="base.res_partner_1"/> -->
 		<field name="account_depreciation_id" ref='property_asset_account'/>
@@ -373,7 +373,7 @@
 		<field name="bathroom">2</field>
 		<field name="gfa_meter">9.29</field>
 		<field name="gfa_feet">100.00</field>
-		<field name="parent_id" ref="property3"></field>
+		<field name="property_parent_id" ref="property3"></field>
 		<field name="property_manager" ref="base.res_partner_1"/>
 		<!-- <field name='property_owner' ref="base.res_partner_1"/> -->
 		<field name="account_depreciation_id" ref='property_asset_account'/>
@@ -440,7 +440,7 @@
 		<field name="bathroom">2</field>
 		<field name="gfa_meter">9.29</field>
 		<field name="gfa_feet">100.00</field>
-		<field name="parent_id" ref="property_4"></field>
+		<field name="property_parent_id" ref="property_4"></field>
 		<field name="property_manager" ref="base.res_partner_1"/>
 		<!-- <field name='property_owner' ref="base.res_partner_1"/> -->
 		<field name="account_depreciation_id" ref='property_asset_account'/>
@@ -506,7 +506,7 @@
 		<field name="bathroom">2</field>
 		<field name="gfa_meter">9.29</field>
 		<field name="gfa_feet">100.00</field>
-		<field name="parent_id" ref="property_5"></field>
+		<field name="property_parent_id" ref="property_5"></field>
 		<field name="property_manager" ref="base.res_partner_1"/>
 		<!-- <field name='property_owner' ref="base.res_partner_1"/> -->
 		<field name="account_depreciation_id" ref='property_asset_account'/>
@@ -581,7 +581,7 @@
 		<field name="rent_type_id" ref="rent_type1"></field>
 		<field name="journal_id" model="account.journal" search="[('name', 'ilike', 'Miscellaneous Operations')]"/>
 		<field name="ground_rent">8000</field>
-		<field name="parent_id" ref="property_6"></field>
+		<field name="property_parent_id" ref="property_6"></field>
 	</record>
 	<record id="property_8" model="account.asset">
 		<field name="name">Siddhraj Zavod</field>

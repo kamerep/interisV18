@@ -42,12 +42,12 @@ class PropertyCreated(models.Model):
     parent_related = fields.Many2one(
         comodel_name='account.asset',
         string='Parent Property',
-        related='asset_id.parent_id',
+        related='asset_id.property_parent_id',
         ondelete='restrict')
     parent_property_rel = fields.Many2one(
         comodel_name='account.asset',
         string='Parent Property Relation',
-        related='parent_related.parent_id',
+        related='parent_related.property_parent_id',
         ondelete='restrict')
     total_prop_tower = fields.Float(
         compute='_compute_total_prop_tower',
@@ -76,7 +76,7 @@ class PropertyCreated(models.Model):
         extra = []
         if new_property_id:
             asset_id = self.browse(new_property_id).asset_id
-            extra += [('parent_id', '=', asset_id.id), ('state', '=', 'draft')]
+            extra += [('property_parent_id', '=', asset_id.id), ('state', '=', 'draft')]
         if main_property_id and new_property_id:
             extra += [('id', '!=', main_property_id)]
         if extra:
@@ -98,7 +98,7 @@ class PropertyCreated(models.Model):
                 'original_value': property_rec.original_value,
                 'furnished': property_rec.furnished,
                 'type_id': property_rec.type_id.id,
-                'parent_id': property_rec.asset_id.id,
+                'property_parent_id': property_rec.asset_id.id,
                 'ground_rent': property_rec.ground_rent,
                 'floor': property_rec.floor,
                 'no_of_property': 1,
@@ -151,10 +151,10 @@ class PropertyCreated(models.Model):
                 property_rec.write({'state': 'new_draft'})
         return True
 
-    @api.onchange('parent_id')
+    @api.onchange('property_parent_id')
     def parent_prop_change(self):
-        if self.parent_id:
-            p = self.parent_id
+        if self.property_parent_id:
+            p = self.property_parent_id
             self.street = p.street or False
             self.street2 = p.street2 or False
             self.township = p.township or False
@@ -202,7 +202,7 @@ class PropertyCreated(models.Model):
         floor = []
         tower = []
         for res in self:
-            prop_ids = self.search([('parent_id', '=', res.asset_id.id)])
+            prop_ids = self.search([('property_parent_id', '=', res.asset_id.id)])
             for rec in prop_ids:
                 floor.append(str(rec.floor_number))
                 tower.append(str(rec.tower_num))
@@ -300,5 +300,5 @@ class AccountAssetAsset(models.Model):
         compute='_compute_book_property')
     new_child_ids = fields.One2many(
         comodel_name='account.asset',
-        inverse_name='parent_id',
+        inverse_name='property_parent_id',
         string='Child Assets')

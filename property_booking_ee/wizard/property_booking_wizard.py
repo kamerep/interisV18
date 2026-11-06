@@ -66,7 +66,7 @@ class PropertWizard(models.TransientModel):
         if self.property_id:
             property_id2 = self.property_id.asset_id.id
             prop_ids = self.env['property.created'].search(
-                [('parent_id', '=', property_id2)])
+                [('property_parent_id', '=', property_id2)])
             self.property_created_ids = prop_ids.ids
 
     def property_method(self):
@@ -127,13 +127,13 @@ class PropertyParentMergeWizard(models.TransientModel):
             if activeids.ids:
                 for rec_brw in activeids:
                     data_prop += rec_brw.read(['state',
-                                               'parent_id', 'floor_number'])
+                                               'property_parent_id', 'floor_number'])
                 for main_rec_brw in mainid:
                     data_prop += main_rec_brw.read(
-                        ['state', 'parent_id', 'floor_number'])
+                        ['state', 'property_parent_id', 'floor_number'])
 
                 for data in data_prop:
-                    if not data['parent_id']:
+                    if not data['property_parent_id']:
                         raise ValidationError(
                             _("Please select sub properties. \n Not \
                             parent property!"))
@@ -143,7 +143,7 @@ class PropertyParentMergeWizard(models.TransientModel):
                     raise ValidationError(
                         _("Only Available state properties are allowed \
                         to be merged!"))
-                parents = list(set([x['parent_id'][0] for x in data_prop]))
+                parents = list(set([x['property_parent_id'][0] for x in data_prop]))
                 if len(parents) != 1:
                     raise ValidationError(
                         _("Please select sub properties from the same Parent \

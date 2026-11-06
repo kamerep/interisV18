@@ -74,8 +74,8 @@
                             <field name="latitude"/>
                             <field name="longitude"/>
                             <field name="acquisition_date" invisible="1"/>
-                            <field name="no_of_towers" invisible="parent_id"/>
-                            <field name="floor" invisible="not parent_id"/>
+                            <field name="no_of_towers" invisible="property_parent_id"/>
+                            <field name="floor" invisible="not property_parent_id"/>
                             <field name="gfa_feet"/>
                             <field name="gfa_meter"/>
                             <field name="unit_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -84,7 +84,7 @@
                             <field name="active" invisible="1"/>
                         </group>
                         <group>
-                            <field name="parent_id" placeholder="Parent Property" domain="[('id','!=',id)]" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+                            <field name="property_parent_id" placeholder="Parent Property" domain="[('id','!=',id)]" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
                             <field name="type_id" required="1" placeholder="Property Type"/>
                             <field name="property_manager" required="1" placeholder="Property Manager"/>
                             <field name="furnished"/>
@@ -100,7 +100,7 @@
                             <field name="company_id" string="Property Management Company" groups="base.group_multi_company"/>							
                             <field name="video_url" placeholder="//www.youtube.com/embed/mwuPTI8AT7M?rel=0"/>
                             <field name="currency_id" groups="base.group_multi_currency" readonly='1'/>
-                            <field name="no_of_property" invisible="not parent_id"/>
+                            <field name="no_of_property" invisible="not property_parent_id"/>
                             <field name="simulation" invisible="1"/>
                             <field name="revenue" invisible="1"/>
                             <field name="current_tenant_id" invisible="1"/>
@@ -526,8 +526,8 @@
                             <field name="latitude"/>
                             <field name="longitude"/>
                             <field name="acquisition_date"/>
-                            <field name="no_of_towers" attrs="{'invisible':[('parent_id','!=',False)]}"/>
-                            <field name="floor" attrs="{'invisible':[('parent_id','=',False)]}"/>
+                            <field name="no_of_towers" attrs="{'invisible':[('property_parent_id','!=',False)]}"/>
+                            <field name="floor" attrs="{'invisible':[('property_parent_id','=',False)]}"/>
                             <field name="gfa_feet"/>
                             <field name="gfa_meter"/>
                             <field name="unit_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -537,7 +537,7 @@
                             <field name="active"/>
                         </group>
                         <group>
-                            <field name="parent_id" placeholder="Parent Property"/>
+                            <field name="property_parent_id" placeholder="Parent Property"/>
                             <field name="type_id" required="1" placeholder="Property Type"/>
                             <field name="property_manager" required="1" placeholder="Property Manager"/>
                             <field name="furnished"/>
@@ -551,7 +551,7 @@
                             <field name="company_id" string="Property Management Company"/>
                             <field name="video_url" placeholder="//www.youtube.com/embed/mwuPTI8AT7M?rel=0"/>
                             <field name="currency_id"/>
-                            <field name="no_of_property" attrs="{'invisible':[('parent_id','=',False)]}"/>
+                            <field name="no_of_property" attrs="{'invisible':[('property_parent_id','=',False)]}"/>
                             <field name="simulation" invisible="1"/>
                             <field name="revenue" invisible="1"/>
                         </group>
@@ -963,17 +963,17 @@
                 <filter string="Cancel" name="cancel" domain="[('state','=','cancel')]"/>
                 <filter string="Sale" name="sale" domain="[('state','=','close')]"/>
                 <filter string="Sold" name="sold" domain="[('state','=','sold')]"/>
-                <filter string="Parent Property" name="property" domain="[('parent_id','=',False)]"/>
-                <filter string="Child Property" name="property" domain="[('parent_id','!=',False)]"/>
+                <filter string="Parent Property" name="property" domain="[('property_parent_id','=',False)]"/>
+                <filter string="Child Property" name="property" domain="[('property_parent_id','!=',False)]"/>
                 <field name="name"/>
                 <field name="type_id"/>
-                <field name="parent_id"/>
+                <field name="property_parent_id"/>
                 <field name="furnished"/>
                 <field name="ground_rent"/>
                 <field name="acquisition_date"/>
                 <newline/>
                 <group expand="0" string="Group By..." colspan="4" col="10">
-                    <filter string="Parent Property" name="parentproperty" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
+                    <filter string="Parent Property" name="parentproperty" icon="terp-personal" domain="[]" context="{'group_by':'property_parent_id'}"/>
                     <filter name="property_type" string="Property Type" icon="terp-personal" domain="[]" context="{'group_by':'type_id'}"/>
                     <filter name="furnish_type" string="Furnish Type" icon="terp-personal" domain="[]" context="{'group_by':'furnished'}"/>
                     <filter string="State" name="grpstate" icon="terp-personal" domain="[]" context="{'group_by':'state'}"/>
@@ -981,7 +981,7 @@
                     <filter name="acquisition_date" string="Date" context="{'group_by':'acquisition_date'}"/>
                 </group>
                 <searchpanel view_types="kanban,list">
-                    <field name="parent_id" filter_domain="[('child_ids', '!=', False)]"/>
+                    <field name="property_parent_id" filter_domain="[('child_ids', '!=', False)]"/>
                 </searchpanel>
             </search>
         </field>
@@ -997,7 +997,7 @@
                 <field name="color"/>
                 <field name="name"/>
                 <field name="id"/>
-                <field name="parent_id"/>
+                <field name="property_parent_id"/>
                 <field name="type_id"/>
                 <field name="furnished"/>
                 <field name="country_id"/>
@@ -1194,7 +1194,7 @@
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_account_asset_hirarch_tree"/>
         <field name="search_view_id" ref="property_management_ee.view_account_asset_search"/>
-        <field name="domain">[('parent_id','!=',False)]</field>
+        <field name="domain">[('property_parent_id','!=',False)]</field>
         <field name="context">{'search_default_parentproperty':1}</field>
     </record>
 

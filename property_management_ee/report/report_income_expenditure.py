@@ -14,7 +14,8 @@ class IncomeExpenditure(models.AbstractModel):
         total_in = 0.00
         total_ex = 0.00
         currency = False
-        properties = self.env['account.asset'].search([])
+        properties = self.env['account.asset'].search(
+            [('is_property', '=', True)])
         for prop in properties:
             currency = prop.currency_id
             tenancies = self.env['tenancy.rent.schedule'].search([
@@ -22,11 +23,22 @@ class IncomeExpenditure(models.AbstractModel):
                 ('start_date', '<=', end_date),
                 ('tenancy_id', 'in', prop.tenancy_property_ids.ids),
             ])
-            total_income = sum(t.amount for t in tenancies)
+            total_income = sum(tenancies.mapped('amount'))
+            # Expenditure: posted vendor bills/refunds booked on the property
+            bills = self.env['account.move'].search([
+                ('property_id', '=', prop.id),
+                ('move_type', 'in', ('in_invoice', 'in_refund')),
+                ('state', '=', 'posted'),
+                ('invoice_date', '>=', start_date),
+                ('invoice_date', '<=', end_date),
+            ])
+            total_expence = -sum(bills.mapped('amount_total_signed'))
+            total_in += total_income
+            total_ex += total_expence
             report_rec.append({
                 'property': prop.name,
                 'total_income': total_income,
-                'total_expence': 0.00,
+                'total_expence': total_expence,
                 'currency_id': prop.currency_id,
                 'total_in': '',
                 'total_ex': '',

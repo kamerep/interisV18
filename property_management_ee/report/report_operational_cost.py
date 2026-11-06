@@ -20,5 +20,7 @@ class OperationalCostsReport(models.Model):
         tools.drop_view_if_exists(self._cr, 'operational_costs_report')
         self._cr.execute(
             """CREATE or REPLACE VIEW operational_costs_report as
-            SELECT id,name,active,parent_id,type_id,operational_costs,
-            acquisition_date FROM account_asset""")
+            SELECT id, name, active, property_parent_id AS parent_id,
+                   type_id, operational_costs, acquisition_date
+            FROM account_asset
+            WHERE is_property IS TRUE""")

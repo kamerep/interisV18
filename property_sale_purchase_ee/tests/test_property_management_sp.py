@@ -35,7 +35,7 @@ class PropertyManagementSPTestCase(common.TransactionCase):
                 'bathroom': self.property_demo.bathroom,
                 'gfa_meter': self.property_demo.gfa_meter,
                 'gfa_feet': self.property_demo.gfa_feet,
-                'parent_id': self.property_demo.parent_id.id,
+                'property_parent_id': self.property_demo.property_parent_id.id,
                 'property_manager': self.property_demo.property_manager.id,
                 'income_acc_id': self.property_demo.income_acc_id.id,
                 'rent_type_id': self.rent_type.id,

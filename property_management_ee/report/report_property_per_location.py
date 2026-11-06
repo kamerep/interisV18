@@ -9,14 +9,10 @@ class property_per_location_report(models.AbstractModel):
     def property_location(self, data, state):
         property_obj = self.env['account.asset']
 
-        if not data:
-            if state and state.id:
-                domain = [('state_id', '=', state.id)]
-            else:
-                domain = []
-        elif data:
-            domain = [('state_id', '=', data['state_id'][0])]
-
+        domain = [('is_property', '=', True),
+                  ('property_parent_id', '=', False)]
+        if state:
+            domain.append(('state_id', '=', state))
         property_ids = property_obj.search(domain)
         property_list = []
         sub_property_list = []
@@ -47,7 +43,9 @@ class property_per_location_report(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         docs = self.env['account.asset'].browse(docids)
-        state_id = data.get('state_id')[0]
+        data = data or {}
+        state = data.get('state_id')
+        state_id = state[0] if isinstance(state, (list, tuple)) else state
         detail_res = self.with_context(
             data.get('used_context', {})).property_location(data, state_id)
         docargs = {

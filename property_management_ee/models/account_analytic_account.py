@@ -41,24 +41,16 @@ class AccountAnalyticAccount(models.Model):
         for tennancy in self:
             tennancy.deposit_received = bool(
                 tennancy.acc_pay_dep_rec_id
-                and tennancy.acc_pay_dep_rec_id.state == 'posted'
+                and tennancy.acc_pay_dep_rec_id.state in ('in_process', 'paid')
                 and tennancy.acc_pay_dep_rec_id.payment_type == 'inbound'
             )
-
-    @api.depends('prop_ids', 'multi_prop', 'property_id')
-    def _total_prop_rent(self):
-        for pro_record in self:
-            if pro_record.multi_prop and pro_record.prop_ids:
-                pro_record.rent = sum(
-                    p.ground for p in pro_record.prop_ids)
-            else:
-                pro_record.rent = pro_record.property_id.ground_rent or 0.0
 
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
-        if res.get('date_start'):
-            res['date'] = res['date_start'] + relativedelta(years=1)
+        if res.get('date_start') and 'date' in fields_list:
+            res['date'] = fields.Date.to_date(
+                res['date_start']) + relativedelta(years=1)
         return res
 
     def _get_property_analytic_plan(self):
@@ -293,9 +285,9 @@ class AccountAnalyticAccount(models.Model):
                 raise UserError(_(
                     'You cannot delete a tenancy record which '
                     'is in "%s" state.') % state_label)
-            analytic_line_rec = self.env['account.analytic.line'].search(
-                [('account_id', '=', tenancy_rec.id)])
-            analytic_line_rec.unlink()
+            # V18: analytic lines reference the account through the
+            # plan column (x_plan<id>_id); line_ids resolves it for us.
+            tenancy_rec.line_ids.unlink()
             rent_ids = self.env['tenancy.rent.schedule'].search(
                 [('tenancy_id', '=', tenancy_rec.id)])
             if any(rent.move_check for rent in rent_ids):
@@ -363,7 +355,7 @@ class AccountAnalyticAccount(models.Model):
                 'partner_type': 'customer',
                 'journal_id': account_jrnl_obj.id,
                 'payment_type': 'inbound',
-                'ref': 'Deposit Received',
+                'memo': _('Deposit Received'),
                 'tenancy_id': tenancy_rec.id,
                 'amount': tenancy_rec.deposit,
                 'property_id': tenancy_rec.property_id.id,
@@ -410,6 +402,8 @@ class AccountAnalyticAccount(models.Model):
             }
             acc_id = invoice_obj.create(inv_values)
             rec.write({'invoice_id': acc_id.id})
+        if len(self) != 1:
+            return True
         return {
             'view_id': wiz_form_id,
             'view_mode': 'form',
@@ -420,6 +414,7 @@ class AccountAnalyticAccount(models.Model):
         }
 
     def button_open_recived(self):
+        self.ensure_one()
         wiz_form_id = self.env.ref('account.view_move_form').id
         return {
             'view_id': wiz_form_id,
@@ -490,6 +485,15 @@ class AccountAnalyticAccount(models.Model):
     def create_rent_schedule(self):
         rent_obj = self.env['tenancy.rent.schedule']
         for tenancy_rec in self:
+            if not (tenancy_rec.date_start and tenancy_rec.date
+                    and tenancy_rec.rent_type_id):
+                raise UserError(_(
+                    'Please set the Start Date, Expiration Date and Rent '
+                    'Type of tenancy "%s" before creating the rent '
+                    'schedule.') % tenancy_rec.display_name)
+            if tenancy_rec.date < tenancy_rec.date_start:
+                raise ValidationError(
+                    _('End date must be greater than start date.'))
             if tenancy_rec.rent_type_id.renttype == 'Weekly':
                 d1 = tenancy_rec.date_start
                 d2 = tenancy_rec.date
@@ -513,9 +517,9 @@ class AccountAnalyticAccount(models.Model):
                     })
                     d1 = d1 + relativedelta(days=(7 * interval))
                 if wek_tot > 0:
+                    # rent is per week; charge the leftover days pro rata
                     one_day_rent = (
-                        tenancy_rec.rent / (7 * interval)
-                        if tenancy_rec.rent else 0.0)
+                        tenancy_rec.rent / 7 if tenancy_rec.rent else 0.0)
                     rent_obj.create({
                         'start_date': d1,
                         'amount': one_day_rent * wek_tot or 0.0,

@@ -11,6 +11,13 @@ class document_expiry(models.AbstractModel):
     _name = 'report.property_management_ee.report_document_expiry'
     _description = 'Document Expiry Report'
 
+    def _fmt_date(self, value):
+        """Format a date with the user's language date format."""
+        if not value:
+            return ''
+        lang = self.env['res.lang']._lang_get(self.env.user.lang)
+        return value.strftime(lang.date_format if lang else '%Y-%m-%d')
+
     def get_details(self, start_date, end_date):
         data_1 = []
         certificate_obj = self.env["property.attachment"]
@@ -18,17 +25,8 @@ class document_expiry(models.AbstractModel):
             [('expiry_date', '>=', start_date),
              ('expiry_date', '<=', end_date)])
         for data in certificate_ids:
-            if data.expiry_date:
-                user_lang = self.env.user.lang
-                lang = self.env['res.lang'].search(
-                    [('code', '=', user_lang)])
-                expiry_date = data.expiry_date.strftime(lang.date_format)
-            property_str = ''
-            if data.multi_prop:
-                property_str = '%s' % ', '.join(
-                    doc.property_id.name for doc in data.prop_ids)
-            else:
-                property_str = data.property_id.name
+            expiry_date = self._fmt_date(data.expiry_date)
+            property_str = data.property_id.name or ''
             data_1.append({
                 'name': data.name,
                 'property_id': property_str,

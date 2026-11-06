@@ -1,5 +1,7 @@
 # See LICENSE file for full copyright and licensing details
 
+from dateutil.relativedelta import relativedelta
+
 from odoo import _, api, fields, models
 
 
@@ -112,6 +114,8 @@ class TenancyRentSchedule(models.Model):
             }
             invoice_id = inv_obj.create(inv_values)
             rec.write({'invoice_id': invoice_id.id, 'is_invoiced': True})
+        if len(self) != 1:
+            return True
         return {
             'view_id': inv_form_id,
             'view_mode': 'form',
@@ -122,6 +126,7 @@ class TenancyRentSchedule(models.Model):
         }
 
     def open_invoice(self):
+        self.ensure_one()
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',
@@ -131,19 +136,30 @@ class TenancyRentSchedule(models.Model):
             'target': 'current',
         }
 
+    @api.model
     def send_mail_tenant_rent_schedule(self):
-        template_id = self.env.ref('property_management_ee.mail_tenant_rent')
-        today = fields.Date.today()
-        rent_ids = self.env['tenancy.rent.schedule'].search(
-            [('paid', '=', False)])
-        for schedule in rent_ids:
-            if (schedule.start_date - today).days <= 7:
-                from_email = (
-                    schedule.tenancy_id.property_id.property_manager.email)
-                to_email = schedule.tenancy_id.tenant_id.email
-                template_id.write({
-                    'email_to': to_email,
-                    'email_from': from_email,
-                })
-                template_id.send_mail(schedule.id, force_send=True)
+        """Cron: remind tenants of unpaid rent due within the next 7 days."""
+        template = self.env.ref(
+            'property_management_ee.mail_tenant_rent',
+            raise_if_not_found=False)
+        if not template:
+            return True
+        today = fields.Date.context_today(self)
+        schedules = self.search([
+            ('paid', '=', False),
+            ('start_date', '>=', today),
+            ('start_date', '<=', today + relativedelta(days=7)),
+            ('tenancy_id.state', '=', 'open'),
+        ])
+        for schedule in schedules:
+            to_email = schedule.tenancy_id.tenant_id.email
+            if not to_email:
+                continue
+            email_values = {'email_to': to_email}
+            manager_email = (
+                schedule.tenancy_id.property_id.property_manager.email)
+            if manager_email:
+                email_values['email_from'] = manager_email
+            # Per-mail values: never write recipients on the shared template
+            template.send_mail(schedule.id, email_values=email_values)
         return True

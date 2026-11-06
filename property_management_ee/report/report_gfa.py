@@ -20,5 +20,7 @@ class GfaAnalysisReport(models.Model):
         tools.drop_view_if_exists(self._cr, 'gfa_analysis_report')
         self._cr.execute(
             """CREATE or REPLACE VIEW gfa_analysis_report as
-            SELECT id,name,active,parent_id,type_id,gfa_feet
-            FROM account_asset """)
+            SELECT id, name, active, property_parent_id AS parent_id,
+                   type_id, gfa_feet, acquisition_date AS date
+            FROM account_asset
+            WHERE is_property IS TRUE""")

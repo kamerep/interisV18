@@ -18,6 +18,8 @@ class PropertyFinanceReports(models.Model):
         tools.drop_view_if_exists(self.env.cr, 'property_finance_report')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW property_finance_report AS
-            SELECT id, name, type_id, purchase_price, acquisition_date AS date
+            SELECT id, name, type_id, purchase_price,
+                   property_parent_id AS parent_id, acquisition_date AS date
             FROM account_asset
+            WHERE is_property IS TRUE
         """)

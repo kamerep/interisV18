@@ -8,7 +8,7 @@
         <field name="inherit_id" ref="property_management_ee.property_asset_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group/group/field[@name='active']" position="after">
-                <field invisible="not parent_id" name="label_id"/>
+                <field invisible="not property_parent_id" name="label_id"/>
                 <field invisible="1" name="available_property"/>
                 <field invisible="1" name="book_property"/>
             </xpath>
@@ -69,7 +69,7 @@
                             </h1>
                             <h4>
                                 <field
-                                    name="parent_id"
+                                    name="property_parent_id"
                                     placeholder="Parent Property Name"
                                     context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"
                                     invisible="not is_sub_property" required="is_sub_property" readonly="state == 'new_draft'"/>
@@ -148,7 +148,7 @@
                 <field name="state"/>
                 <field name="color"/>
                 <field name="name"/>
-                <field name="parent_id"/>
+                <field name="property_parent_id"/>
                 <field name="type_id"/>
                 <field name="furnished"/>
                 <field name="country_id"/>
@@ -263,12 +263,12 @@
                 <filter name="book" string="Book" domain="[('state','=','book')]"/>
                 <filter name="property" string="Property" domain="[('lable_bool','=',False)]"/>
                 <field name="name"/>
-                <field name="parent_id"/>
+                <field name="property_parent_id"/>
                 <field name="furnished"/>
                 <field name="ground_rent" string="Ground rent"/>
                 <newline/>
                 <group col="10" colspan="4" expand="0" string="Group By...">
-                    <filter name="parentproperty" string="Parent Property" context="{'group_by':'parent_id'}" domain="[]" icon="terp-personal"/>
+                    <filter name="parentproperty" string="Parent Property" context="{'group_by':'property_parent_id'}" domain="[]" icon="terp-personal"/>
                     <filter name="furnish_type" string="Furnish Type" context="{'group_by':'furnished'}" domain="[]" icon="terp-personal"/>
                     <filter name="label" string="Label" context="{'group_by':'label_id'}" domain="[]" icon="terp-personal"/>
                     <filter name="state" string="State" context="{'group_by':'state'}" domain="[]" icon="terp-personal" />

@@ -22,24 +22,16 @@ class ResPartner(models.Model):
         agent_group = self.env.ref(
             'property_management_ee.group_property_agent',
             raise_if_not_found=False)
-        for partner in self:
-            if 'tenant' in vals and tenant_group:
-                cmd = (4 if partner.tenant else 3)
-                if not partner.tenant and partner.user_ids.has_group(
-                        'property_management_ee.group_property_user'):
-                    partner.user_ids.write(
-                        {'groups_id': [(3, tenant_group.id)]})
-                elif partner.tenant:
-                    partner.user_ids.write(
-                        {'groups_id': [(4, tenant_group.id)]})
-            if 'agent' in vals and agent_group:
-                if not partner.agent and partner.user_ids.has_group(
-                        'property_management_ee.group_property_agent'):
-                    partner.user_ids.write(
-                        {'groups_id': [(3, agent_group.id)]})
-                elif partner.agent:
-                    partner.user_ids.write(
-                        {'groups_id': [(4, agent_group.id)]})
+        # Keep the portal/internal users of tenants and agents in the
+        # matching property groups. Removing a group a user does not have is
+        # a no-op, so no has_group() check is needed (it requires a single
+        # user record in V18).
+        for flag, group in (('tenant', tenant_group), ('agent', agent_group)):
+            if flag not in vals or not group:
+                continue
+            for partner in self.filtered('user_ids'):
+                cmd = 4 if partner[flag] else 3
+                partner.user_ids.write({'groups_id': [(cmd, group.id)]})
         return res
 
 

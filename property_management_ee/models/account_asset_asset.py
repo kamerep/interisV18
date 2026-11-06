@@ -31,7 +31,7 @@ class AccountAssetAsset(models.Model):
                 g.rent for g in prop_rec.tenancy_property_ids)
 
     @api.depends('tenancy_property_ids', 'tenancy_property_ids.rent',
-                 'property_phase_ids')
+                 'property_phase_ids', 'property_phase_ids.lease_price')
     def _compute_operational_costs(self):
         for prop_rec in self:
             gain = sum(g.rent for g in prop_rec.tenancy_property_ids)
@@ -40,25 +40,29 @@ class AccountAssetAsset(models.Model):
             prop_rec.operational_costs = (
                 op_cost / gain if gain and op_cost else 0.0)
 
-    @api.depends('tenancy_property_ids',
+    @api.depends('acquisition_date',
+                 'tenancy_property_ids',
                  'tenancy_property_ids.date',
                  'tenancy_property_ids.date_start')
     def _compute_occupancy_rates(self):
+        """Share (%) of the days since acquisition covered by tenancies."""
+        today = fields.Date.today()
         for prop_rec in self:
             occ_rate = 0.0
             if prop_rec.acquisition_date:
-                purchase_diff = (
-                    fields.Date.today() - prop_rec.acquisition_date).days
-                diffrnc = sum(
-                    (t.date - t.date_start).days
+                owned_days = (today - prop_rec.acquisition_date).days
+                occupied_days = sum(
+                    (min(t.date, today) - max(t.date_start,
+                                              prop_rec.acquisition_date)).days
                     for t in prop_rec.tenancy_property_ids
-                    if t.date and t.date_start)
-                if purchase_diff and diffrnc:
-                    occ_rate = (purchase_diff * 100) / diffrnc
+                    if t.date and t.date_start and t.date_start <= today)
+                if owned_days > 0 and occupied_days > 0:
+                    occ_rate = min(occupied_days * 100.0 / owned_days, 100.0)
             prop_rec.occupancy_rates = occ_rate
 
     @api.depends('tenancy_property_ids',
-                 'tenancy_property_ids.rent_schedule_ids')
+                 'tenancy_property_ids.rent_schedule_ids',
+                 'tenancy_property_ids.rent_schedule_ids.amount')
     def _compute_simulation(self):
         for pd in self:
             pd.simulation = sum(
@@ -68,7 +72,8 @@ class AccountAssetAsset(models.Model):
 
     @api.depends('tenancy_property_ids',
                  'tenancy_property_ids.rent_schedule_ids',
-                 'tenancy_property_ids.rent_schedule_ids.move_check')
+                 'tenancy_property_ids.rent_schedule_ids.move_check',
+                 'tenancy_property_ids.rent_schedule_ids.amount')
     def _compute_revenue(self):
         for pd in self:
             pd.revenue = sum(
@@ -192,9 +197,15 @@ class AccountAssetAsset(models.Model):
         comodel_name='account.account',
         string='Income Account',
         help='Income Account of Property.')
-    parent_id = fields.Many2one(
+    # V18 EE uses parent_id/children_ids for gross-increase assets (they
+    # feed the parent's book value and depreciation), so the property
+    # hierarchy lives on dedicated fields.
+    property_parent_id = fields.Many2one(
         comodel_name='account.asset',
-        string='Parent Property')
+        string='Parent Property',
+        index=True,
+        ondelete='restrict',
+        domain="[('is_property', '=', True)]")
     maint_account_id = fields.Many2one(
         comodel_name='account.account',
         string='Maintenance Account')
@@ -255,7 +266,7 @@ class AccountAssetAsset(models.Model):
         string='Documents')
     child_ids = fields.One2many(
         comodel_name='account.asset',
-        inverse_name='parent_id',
+        inverse_name='property_parent_id',
         string='Child Properties')
     property_insurance_ids = fields.One2many(
         comodel_name='property.insurance',
@@ -332,11 +343,13 @@ class AccountAssetAsset(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'account.move',
             'view_mode': 'list,form',
-            'domain': [('asset_id', '=', self.id)],
+            'domain': ['|', ('asset_id', '=', self.id),
+                       ('property_id', '=', self.id)],
             'context': {'create': False},
         }
 
     def open_tenancy(self):
+        self.ensure_one()
         action = self.env["ir.actions.act_window"]._for_xml_id(
             'property_management_ee.action_property_analytic_view')
         action['domain'] = [
@@ -355,8 +368,8 @@ class AccountAssetAsset(models.Model):
         for vals in vals_list:
             if 'message_follower_ids' in vals:
                 del vals['message_follower_ids']
-            if vals.get('parent_id'):
-                parent = self.browse(vals['parent_id'])
+            if vals.get('property_parent_id'):
+                parent = self.browse(vals['property_parent_id'])
                 if parent.rent_type_id:
                     vals.setdefault('rent_type_id', parent.rent_type_id.id)
         assets = super().create(vals_list)
@@ -405,10 +418,10 @@ class AccountAssetAsset(models.Model):
             'target': 'current',
         }
 
-    @api.onchange('parent_id')
+    @api.onchange('property_parent_id')
     def parent_property_onchange(self):
-        if self.parent_id:
-            p = self.parent_id
+        if self.property_parent_id:
+            p = self.property_parent_id
             self.street = p.street or ''
             self.street2 = p.street2 or ''
             self.township = p.township or ''

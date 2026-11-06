@@ -22,9 +22,9 @@ class MergePropertyWizard(models.TransientModel):
             property_rec = property_obj.browse(context['active_ids'])
             for propert_brw in property_rec:
                 data_prop += propert_brw.read(
-                    ['state', 'parent_id', 'floor_number'])
+                    ['state', 'property_parent_id', 'floor_number'])
             for data in data_prop:
-                if not data['parent_id']:
+                if not data['property_parent_id']:
                     raise ValidationError(
                         _("Please select sub properties. \n \
                         Not parent property!"))
@@ -34,7 +34,7 @@ class MergePropertyWizard(models.TransientModel):
                 raise ValidationError(
                     _("Only Available state properties are allowed to be \
                     merged!"))
-            parents = list(set([x['parent_id'][0] for x in data_prop]))
+            parents = list(set([x['property_parent_id'][0] for x in data_prop]))
             if len(parents) != 1:
                 raise ValidationError(
                     _("Please select sub properties from the same Parent \

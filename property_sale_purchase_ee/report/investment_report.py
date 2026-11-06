@@ -21,7 +21,9 @@ class InvestmentAnalysisReport(models.Model):
         tools.drop_view_if_exists(self.env.cr, 'investment_analysis_report')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW investment_analysis_report AS
-            SELECT id, name, active, type_id, parent_id,
+            SELECT id, name, active, type_id,
+                   property_parent_id AS parent_id,
                    purchase_price, acquisition_date, roi, return_period
             FROM account_asset
+            WHERE is_property IS TRUE
         """)

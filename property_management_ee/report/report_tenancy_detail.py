@@ -10,6 +10,13 @@ class TenancyDetailProperty(models.AbstractModel):
     _name = 'report.property_management_ee.report_tenancy_by_property'
     _description = 'Tenancy by Property'
 
+    def _fmt_date(self, value):
+        """Format a date with the user's language date format."""
+        if not value:
+            return ''
+        lang = self.env['res.lang']._lang_get(self.env.user.lang)
+        return value.strftime(lang.date_format if lang else '%Y-%m-%d')
+
     def get_details(self, start_date, end_date, property_id):
         data_1 = []
         tenancy_obj = self.env["account.analytic.account"]
@@ -19,14 +26,9 @@ class TenancyDetailProperty(models.AbstractModel):
             ('date', '<=', end_date),
             ('resident_type', '=', 'tenant_tenancy')])
         for data in tenancy_ids:
-            if data.currency_id:
-                cur = data.currency_id.symbol
-            if data.date_start and data.date:
-                user_lang = self.env.user.lang
-                lang = self.env['res.lang'].search(
-                    [('code', '=', user_lang)])
-                start_date = data.date_start.strftime(lang.date_format)
-                date = data.date.strftime(lang.date_format)
+            cur = data.currency_id.symbol or ''
+            start_date = self._fmt_date(data.date_start)
+            date = self._fmt_date(data.date)
             data_1.append({
                 'name': data.name,
                 'tenant_id': data.tenant_id.name,

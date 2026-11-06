@@ -1,6 +1,8 @@
 # See LICENSE file for full copyright and licensing details
 
-from odoo import _, api, fields, models, tools
+from markupsafe import Markup
+
+from odoo import _, fields, models
 
 
 class CrmLead(models.Model):
@@ -36,37 +38,33 @@ class CrmLead(models.Model):
 
     def _prepare_customer_values(self, partner_name, is_company=False,
                                  parent_id=False):
-        if self.is_rent:
-            email_split = tools.email_split(self.email_from)
-            vals = {
-                'name': partner_name,
-                'user_id': (
-                    self.env.context.get('default_user_id')
-                    or self.user_id.id),
-                'comment': self.description,
-                'team_id': self.team_id.id,
-                'parent_id': parent_id,
-                'phone': self.phone,
-                'mobile': self.mobile,
-                'email': email_split[0] if email_split else False,
-                'title': self.title.id,
-                'function': self.function,
-                'street': self.street,
-                'street2': self.street2,
-                'zip': self.zip,
-                'city': self.city,
-                'country_id': self.country_id.id,
-                'state_id': self.state_id.id,
-                'website': self.website,
-                'is_company': is_company,
-                'type': 'contact',
-                'tenant': True,
-            }
-            tenant = self.env['tenant.partner'].create(vals)
-            tenant.parent_id.write({'tenant': True})
-            return tenant
-        return super()._prepare_customer_values(
+        """Flag partners created from rent leads as tenants.
+
+        Core CRM expects a dict of res.partner values here (it is also used
+        by chatter suggestions and mail templates), so no record may be
+        created in this method.
+        """
+        vals = super()._prepare_customer_values(
             partner_name, is_company=is_company, parent_id=parent_id)
+        if self.is_rent:
+            vals['tenant'] = True
+        return vals
+
+    def _get_or_create_tenant(self):
+        """Return the tenant.partner linked to the lead customer."""
+        self.ensure_one()
+        Tenant = self.env['tenant.partner']
+        if not self.partner_id:
+            self._handle_partner_assignment(create_missing=True)
+        partner = self.partner_id
+        if not partner:
+            return Tenant
+        tenant = Tenant.search([('parent_id', '=', partner.id)], limit=1)
+        if not tenant:
+            tenant = Tenant.create({'parent_id': partner.id})
+        if not partner.tenant:
+            partner.tenant = True
+        return tenant
 
 
 class CrmMakeContract(models.TransientModel):
@@ -94,19 +92,12 @@ class CrmMakeContract(models.TransientModel):
         for make in self:
             case = None
             for case in lead_obj.browse(active_ids):
-                tenant = case._prepare_customer_values(
-                    case.contact_name or case.partner_name or '',
-                    is_company=False)
-                if hasattr(tenant, 'parent_id'):
-                    case.partner_id = tenant.parent_id.id
+                tenant = case._get_or_create_tenant()
                 vals = {
                     'name': case.name,
-                    'partner_id': (
-                        tenant.parent_id.id
-                        if hasattr(tenant, 'parent_id')
-                        else (tenant.id if tenant else False)),
+                    'partner_id': case.partner_id.id or False,
                     'property_id': case.property_id.id or False,
-                    'tenant_id': tenant.id if hasattr(tenant, 'parent_id') else False,
+                    'tenant_id': tenant.id or False,
                     'company_id': self.env.company.id,
                     'date_start': make.date_start or False,
                     'date': make.date or False,
@@ -115,13 +106,10 @@ class CrmMakeContract(models.TransientModel):
                     'resident_type': 'tenant_tenancy',
                 }
                 new_rec = self.env['account.analytic.account'].create(vals)
-                case.write({
-                    'description': (
-                        'account.analytic.account,%s' % new_rec.id)})
                 new_ids.append(new_rec.id)
-                case.message_post(body=_(
+                case.message_post(body=Markup(_(
                     "Opportunity converted to Contract <em>%s</em>."
-                ) % new_rec.name)
+                )) % new_rec.name)
             if make.close and case:
                 case.action_set_won()
 
