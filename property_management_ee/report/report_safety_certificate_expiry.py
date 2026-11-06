@@ -34,7 +34,7 @@ class safety_certificate(models.AbstractModel):
         return data_1
 
     def date_format(self, date):
-        from_date = datetime.strptime(date, '%Y-%m-%d')
+        from_date = fields.Date.to_date(date)
         user_lang = self.env.user.lang
         lang = self.env['res.lang'].search(
             [('code', '=', user_lang)])

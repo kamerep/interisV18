@@ -37,7 +37,7 @@ class CommissionInvoiceOwner(models.AbstractModel):
             'end_date',
             str(fields.Date.today() + relativedelta(months=1, day=1, days=-1)))
         company = form.get('company_id')
-        company_id = company[1] if isinstance(company, (list, tuple)) else company
+        company_id = company[0] if isinstance(company, (list, tuple)) else company
         invoices = self.get_data(start_date, end_date, company_id)
         form['start_date'] = self._parse_date(start_date)
         form['end_date'] = self._parse_date(end_date)

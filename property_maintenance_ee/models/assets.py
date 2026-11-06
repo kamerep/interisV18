@@ -21,6 +21,7 @@ class AccountAsset(models.Model):
         help='All maintenance requests for this property.')
 
     def open_maintenance(self):
+        self.ensure_one()
         ctx = dict(self._context or {})
         ctx['default_property_id'] = self.id
         return {

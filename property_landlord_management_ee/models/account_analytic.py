@@ -8,21 +8,32 @@ from odoo.exceptions import ValidationError
 class AccountAnalyticAccount(models.Model):
     _inherit = "account.analytic.account"
 
-    @api.depends('acc_pay_dep_rec_id', 'acc_pay_dep_rec_id.state',
+    _PAYMENT_DONE_STATES = ('in_process', 'paid')
+
+    @api.depends('resident_type',
+                 'acc_pay_dep_rec_id', 'acc_pay_dep_rec_id.state',
                  'acc_pay_dep_ret_id', 'acc_pay_dep_ret_id.state')
     def _compute_payment_type(self):
+        """Landlord tenancies: the deposit is paid out to the owner."""
         super()._compute_payment_type()
-        if self._context.get('is_landlord_rent'):
-            for tenancy in self:
-                payments = self.env['account.payment'].search([
-                    ('tenancy_id', '=', tenancy.id),
-                    ('state', '=', 'posted'),
-                ])
-                for payment in payments:
-                    if payment.payment_type == 'outbound':
-                        tenancy.deposit_received = True
-                    if payment.payment_type == 'inbound':
-                        tenancy.deposit_return = True
+        for tenancy in self.filtered(
+                lambda t: t.resident_type == 'landlord_partner'):
+            payment = tenancy.acc_pay_dep_ret_id
+            tenancy.deposit_received = bool(
+                payment and payment.payment_type == 'outbound'
+                and payment.state in self._PAYMENT_DONE_STATES)
+
+    @api.depends('resident_type', 'invoice_id', 'invoice_id.payment_state',
+                 'acc_pay_dep_rec_id', 'acc_pay_dep_rec_id.state')
+    def compute_amount_return(self):
+        """Landlord tenancies: the deposit comes back from the owner."""
+        super().compute_amount_return()
+        for tenancy in self.filtered(
+                lambda t: t.resident_type == 'landlord_partner'):
+            payment = tenancy.acc_pay_dep_rec_id
+            tenancy.deposit_return = bool(
+                payment and payment.payment_type == 'inbound'
+                and payment.state in self._PAYMENT_DONE_STATES)
 
     property_owner_id = fields.Many2one(
         comodel_name='landlord.partner',
@@ -44,6 +55,14 @@ class AccountAnalyticAccount(models.Model):
         rent_obj = self.env['tenancy.rent.schedule']
         for tenancy_rec in self:
             amount = tenancy_rec.landlord_rent
+            if not (tenancy_rec.date_start and tenancy_rec.date
+                    and tenancy_rec.rent_type_id):
+                raise ValidationError(_(
+                    'Please set the Start Date, Expiration Date and Rent '
+                    'Type before creating the rent schedule.'))
+            if tenancy_rec.date < tenancy_rec.date_start:
+                raise ValidationError(_(
+                    'End date must be greater than start date.'))
             if tenancy_rec.rent_type_id.renttype == 'Weekly':
                 d1 = tenancy_rec.date_start
                 d2 = tenancy_rec.date
@@ -67,7 +86,7 @@ class AccountAnalyticAccount(models.Model):
                     })
                     d1 = d1 + relativedelta(days=(7 * interval))
                 if wek_tot > 0:
-                    one_day_rent = amount / (7 * interval) if amount else 0.0
+                    one_day_rent = amount / 7 if amount else 0.0
                     rent_obj.create({
                         'start_date': d1,
                         'amount': one_day_rent * wek_tot or 0.0,
@@ -128,8 +147,7 @@ class AccountAnalyticAccount(models.Model):
     def unlink(self):
         if self._context.get('is_landlord_rent'):
             for tenancy_rec in self:
-                self.env['account.analytic.line'].search(
-                    [('account_id', '=', tenancy_rec.id)]).unlink()
+                tenancy_rec.line_ids.unlink()
                 rent_ids = self.env['tenancy.rent.schedule'].search(
                     [('tenancy_id', '=', tenancy_rec.id)])
                 if any(r.move_check for r in rent_ids):
@@ -150,12 +168,14 @@ class AccountAnalyticAccount(models.Model):
         context = dict(self._context, close_after_process=True)
         payment_id = False
         for tenancy_rec in self:
-            if tenancy_rec.acc_pay_dep_rec_id:
+            # outbound deposit payments are linked as acc_pay_dep_ret_id
+            # by account.payment.create()
+            if tenancy_rec.acc_pay_dep_ret_id:
                 return {
                     'view_id': acc_pay_form.id,
                     'view_mode': 'form',
                     'res_model': 'account.payment',
-                    'res_id': tenancy_rec.acc_pay_dep_rec_id.id,
+                    'res_id': tenancy_rec.acc_pay_dep_ret_id.id,
                     'type': 'ir.actions.act_window',
                     'target': 'current',
                     'context': context,
@@ -172,7 +192,7 @@ class AccountAnalyticAccount(models.Model):
                 'partner_type': 'supplier',
                 'journal_id': journal.id,
                 'payment_type': 'outbound',
-                'ref': 'Deposit Payment',
+                'memo': _('Deposit Payment'),
                 'tenancy_id': tenancy_rec.id,
                 'amount': tenancy_rec.deposit,
                 'property_id': tenancy_rec.property_id.id,
@@ -217,7 +237,7 @@ class AccountAnalyticAccount(models.Model):
                 'partner_type': 'customer',
                 'journal_id': journal.id,
                 'payment_type': 'inbound',
-                'ref': 'Deposit Received',
+                'memo': _('Deposit Received'),
                 'tenancy_id': tenancy_rec.id,
                 'amount': tenancy_rec.deposit,
                 'property_id': tenancy_rec.property_id.id,
@@ -254,6 +274,7 @@ class TenancyRentSchedule(models.Model):
     _rec_name = "tenancy_id"
 
     def create_landlord_invoice(self):
+        self.ensure_one()
         if self.tenancy_id.resident_type != 'landlord_partner':
             return
         journal = self.env['account.journal'].search(
@@ -291,6 +312,7 @@ class TenancyRentSchedule(models.Model):
         }
 
     def open_landlord_invoice(self):
+        self.ensure_one()
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',

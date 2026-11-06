@@ -37,19 +37,19 @@ class document_expiry(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         docs = self.env['account.asset'].browse(docids)
-        start_date_obj = datetime.strptime(
-            data['form'].get('start_date'), '%Y-%m-%d')
+        start_date_obj = fields.Date.to_date(
+            data['form'].get('start_date'))
         start_date_report = start_date_obj.strftime('%m-%d-%Y')
-        end_date_obj = datetime.strptime(
-            data['form'].get('end_date'), '%Y-%m-%d')
+        end_date_obj = fields.Date.to_date(
+            data['form'].get('end_date'))
         end_date_report = end_date_obj.strftime('%m-%d-%Y')
         start_date_report = start_date_obj.strftime('%m-%d-%Y')
         user_lang = self.env.user.lang
         lang = self.env['res.lang'].search(
             [('code', '=', user_lang)])
         start_date_report = start_date_obj.strftime(lang.date_format)
-        end_date_obj = datetime.strptime(
-            data['form'].get('end_date'), '%Y-%m-%d')
+        end_date_obj = fields.Date.to_date(
+            data['form'].get('end_date'))
         end_date_report = end_date_obj.strftime('%m-%d-%Y')
         end_date_report = end_date_obj.strftime(lang.date_format)
         start_date = data['form'].get('start_date', fields.Date.today())

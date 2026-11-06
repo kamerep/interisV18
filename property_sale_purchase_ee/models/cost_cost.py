@@ -21,13 +21,10 @@ class CostCost(models.Model):
         comodel_name='res.company',
         string='Company',
         related='property_id.company_id',
-        required=True,
-        default=lambda self: self.env.company)
+        store=True)
     currency_id = fields.Many2one(
         'res.currency',
         related="company_id.currency_id",
-        required=True,
-        readonly=False,
         string='Currency')
     move_id = fields.Many2one(
         comodel_name='account.move',
@@ -87,6 +84,8 @@ class CostCost(models.Model):
             }
             invoice = self.env['account.move'].create(inv_values)
             cost.write({'invc_id': invoice.id, 'move_check': True})
+        if len(self) != 1:
+            return True
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',
@@ -97,6 +96,7 @@ class CostCost(models.Model):
         }
 
     def open_invoice(self):
+        self.ensure_one()
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',

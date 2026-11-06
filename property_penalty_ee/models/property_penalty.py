@@ -22,7 +22,7 @@ class TenancyRentSchedule(models.Model):
     def calculate_penalty(self):
         today = fields.Date.today()
         for tenancy in self:
-            if tenancy.paid:
+            if tenancy.paid or not tenancy.start_date:
                 continue
             effective_date = tenancy.start_date
             if tenancy.tenancy_id.penalty_day:

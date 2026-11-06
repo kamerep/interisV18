@@ -2,7 +2,6 @@
 
 from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models
-from odoo.tools.misc import formatLang
 
 
 class IncomeExpenditure(models.AbstractModel):
@@ -10,21 +9,23 @@ class IncomeExpenditure(models.AbstractModel):
     _description = 'Income Expenditure Report'
 
     def get_details(self, start_date, end_date):
-        report_rec = []
-        total_in = 0.00
-        total_ex = 0.00
-        currency = False
+        """Income (rent schedule) and expenditure (vendor bills) per property.
+
+        :return: (rows, totals) where rows is a list of dicts per property and
+            totals holds total_in, total_ex, total_gr and currency_id.
+        """
+        rows = []
+        currency = self.env.company.currency_id
+        total_in = total_ex = 0.0
         properties = self.env['account.asset'].search(
             [('is_property', '=', True)])
         for prop in properties:
-            currency = prop.currency_id
-            tenancies = self.env['tenancy.rent.schedule'].search([
+            schedules = self.env['tenancy.rent.schedule'].search([
                 ('start_date', '>=', start_date),
                 ('start_date', '<=', end_date),
                 ('tenancy_id', 'in', prop.tenancy_property_ids.ids),
             ])
-            total_income = sum(tenancies.mapped('amount'))
-            # Expenditure: posted vendor bills/refunds booked on the property
+            total_income = sum(schedules.mapped('amount'))
             bills = self.env['account.move'].search([
                 ('property_id', '=', prop.id),
                 ('move_type', 'in', ('in_invoice', 'in_refund')),
@@ -35,34 +36,24 @@ class IncomeExpenditure(models.AbstractModel):
             total_expence = -sum(bills.mapped('amount_total_signed'))
             total_in += total_income
             total_ex += total_expence
-            report_rec.append({
+            rows.append({
                 'property': prop.name,
                 'total_income': total_income,
                 'total_expence': total_expence,
-                'currency_id': prop.currency_id,
-                'total_in': '',
-                'total_ex': '',
-                'total_gr': '',
+                'currency_id': prop.currency_id or currency,
             })
-        total_gr = total_in - total_ex
-        if total_in or total_ex:
-            report_rec.append({
-                'property': '',
-                'total_income': '',
-                'total_expence': '',
-                'currency_id': currency,
-                'total_in': formatLang(self.env, total_in, currency_obj=currency),
-                'total_ex': formatLang(self.env, total_ex, currency_obj=currency),
-                'total_gr': formatLang(self.env, total_gr, currency_obj=currency),
-            })
-        return report_rec
+        totals = {
+            'total_in': total_in,
+            'total_ex': total_ex,
+            'total_gr': total_in - total_ex,
+            'currency_id': currency,
+        }
+        return rows, totals
 
     def _format_date(self, date_val):
         if not date_val:
             return ''
-        if isinstance(date_val, str):
-            from datetime import datetime
-            date_val = datetime.strptime(date_val, '%Y-%m-%d').date()
+        date_val = fields.Date.to_date(date_val)
         lang = self.env['res.lang'].search(
             [('code', '=', self.env.user.lang)], limit=1)
         if lang:
@@ -77,7 +68,7 @@ class IncomeExpenditure(models.AbstractModel):
         end_date = form_data.get(
             'end_date',
             str(fields.Date.today() + relativedelta(months=1, day=1, days=-1)))
-        detail_res = self.get_details(start_date, end_date)
+        detail_res, totals = self.get_details(start_date, end_date)
         form_data['start_date'] = self._format_date(start_date)
         form_data['end_date'] = self._format_date(end_date)
         return {
@@ -86,4 +77,5 @@ class IncomeExpenditure(models.AbstractModel):
             'data': form_data,
             'docs': docs,
             'get_details': detail_res,
+            'totals': totals,
         }

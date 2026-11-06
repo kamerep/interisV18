@@ -22,7 +22,9 @@ class MaintenanceRequest(models.Model):
         default=0.0,
         currency_field='company_currency_id',
         help='Overall maintenance cost.')
-    done = fields.Boolean(string='Stage Done', default=False)
+    # V18 core already defines done = related('stage_id.done'); track the
+    # "done" notification separately so it is sent exactly once.
+    done_notified = fields.Boolean(string='Done Notified', copy=False)
     renters_fault = fields.Boolean(
         string="Renter's Fault",
         default=False,
@@ -140,39 +142,43 @@ class MaintenanceRequest(models.Model):
                         '.mail_maintenance_tenant_inprogress_template',
                         raise_if_not_found=False)
                     if template and rec.tenant_id.email:
-                        template.write({'email_to': rec.tenant_id.email})
-                        template.send_mail(rec.id, force_send=True)
+                        template.send_mail(
+                            rec.id, force_send=True,
+                            email_values={'email_to': rec.tenant_id.email})
                 else:
                     template = self.env.ref(
                         'property_maintenance_ee'
                         '.mail_maintenance_manager_inprogress_template',
                         raise_if_not_found=False)
                     if template and rec.property_id.property_manager.email:
-                        template.write({
-                            'email_to': rec.property_id.property_manager.email})
-                        template.send_mail(rec.id, force_send=True)
+                        template.send_mail(
+                            rec.id, force_send=True,
+                            email_values={'email_to': rec.property_id.property_manager.email})
             elif not rec.stage_id.is_in_progress:
                 rec.is_in_progress = False
 
-            if rec.stage_id.done and not rec.done:
-                rec.done = True
+            if not rec.stage_id.done:
+                rec.done_notified = False
+            elif not rec.done_notified:
+                rec.done_notified = True
                 if rec.renters_fault:
                     template = self.env.ref(
                         'property_maintenance_ee'
                         '.mail_maintenance_tenant_done_template',
                         raise_if_not_found=False)
                     if template and rec.tenant_id.email:
-                        template.write({'email_to': rec.tenant_id.email})
-                        template.send_mail(rec.id, force_send=True)
+                        template.send_mail(
+                            rec.id, force_send=True,
+                            email_values={'email_to': rec.tenant_id.email})
                 else:
                     template = self.env.ref(
                         'property_maintenance_ee'
                         '.mail_maintenance_manager_done_template',
                         raise_if_not_found=False)
                     if template and rec.property_id.property_manager.email:
-                        template.write({
-                            'email_to': rec.property_id.property_manager.email})
-                        template.send_mail(rec.id, force_send=True)
+                        template.send_mail(
+                            rec.id, force_send=True,
+                            email_values={'email_to': rec.property_id.property_manager.email})
         return res
 
     def create_invoice(self):
@@ -215,6 +221,7 @@ class MaintenanceRequest(models.Model):
             })
 
     def open_invoice(self):
+        self.ensure_one()
         wiz_form_id = self.env.ref('account.view_move_form').id
         return {
             'view_id': wiz_form_id,

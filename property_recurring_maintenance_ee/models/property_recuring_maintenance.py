@@ -60,13 +60,10 @@ class MaintenanceCost(models.Model):
         comodel_name='res.company',
         string='Company',
         related='tenancy.company_id',
-        required=True,
-        default=lambda self: self.env.company)
+        store=True)
     currency_id = fields.Many2one(
         'res.currency',
         related="company_id.currency_id",
-        required=True,
-        readonly=False,
         string='Currency')
 
     @api.constrains('cost')

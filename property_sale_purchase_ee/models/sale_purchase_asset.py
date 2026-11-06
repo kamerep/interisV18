@@ -101,7 +101,6 @@ class AccountAsset(models.Model):
                 remain_amnt = abs(amount - amnt)
                 remain_amnt_per = abs((remain_amnt / res.purchase_price) * 100)
                 year_create.append((0, 0, {
-                    'currency_id': res.currency_id.id or False,
                     'date': dates,
                     'property_id': res.id,
                     'amount': amnt,
@@ -141,7 +140,6 @@ class AccountAsset(models.Model):
                     (remain_amnt / data.sale_price) * 100
                     if data.sale_price else 0.0)
                 year_create.append((0, 0, {
-                    'currency_id': data.currency_id.id or False,
                     'date': line_date,
                     'property_id': data.id,
                     'amount': lst,

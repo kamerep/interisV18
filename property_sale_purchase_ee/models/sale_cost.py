@@ -21,13 +21,10 @@ class SaleCost(models.Model):
         comodel_name='res.company',
         string='Company',
         related='property_id.company_id',
-        required=True,
-        default=lambda self: self.env.company)
+        store=True)
     currency_id = fields.Many2one(
         'res.currency',
         related="company_id.currency_id",
-        required=True,
-        readonly=False,
         string='Currency')
     move_id = fields.Many2one(
         comodel_name='account.move',
@@ -63,6 +60,7 @@ class SaleCost(models.Model):
                     'You cannot enter a negative Amount.'))
 
     def create_invoice(self):
+        self.ensure_one()
         if not self.property_id.customer_id:
             raise UserError(_('Please Select a Customer!'))
         if not self.property_id.income_acc_id:
@@ -95,6 +93,7 @@ class SaleCost(models.Model):
         }
 
     def open_invoice(self):
+        self.ensure_one()
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',

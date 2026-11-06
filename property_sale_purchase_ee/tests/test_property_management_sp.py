@@ -1,7 +1,8 @@
 # See LICENSE file for full copyright and licensing details
-from odoo.tests import common
+from odoo.tests import common, tagged
 
 
+@tagged('post_install', '-at_install')
 class PropertyManagementSPTestCase(common.TransactionCase):
 
     def setUp(self):
@@ -19,6 +20,8 @@ class PropertyManagementSPTestCase(common.TransactionCase):
         self.asset = self.env['account.asset'].sudo().create(
             {
                 'name': 'Radhika Recidency',
+                'is_property': True,
+                'acquisition_date': '2017-07-17',
                 'state': self.property_demo.state,
                 'street': self.property_demo.street,
                 'city': self.property_demo.city,

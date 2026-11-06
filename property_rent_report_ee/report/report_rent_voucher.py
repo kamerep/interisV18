@@ -7,34 +7,13 @@ class PaymentParser(models.AbstractModel):
     _description = 'Property Rent Report'
 
     def get_amount(self, data):
-        """
-        This method is used to get total amount
-        -----------------------------------
-        @param self: The object pointer
-        """
-        tot_amount = 0.0
-        rent_amt = data.total_rent
-        for line in data.rent_schedule_ids:
-            if line.paid is True:
-                tot_amount = tot_amount + line.amount
-        return tot_amount
+        """Total rent already paid on the tenancy."""
+        return sum(data.rent_schedule_ids.filtered('paid').mapped('amount'))
 
     def get_amount_due(self, data):
-        """
-        This method is used to get total amount due
-        -------------------------------------------
-        @param self: The object pointer
-        """
-        tot_amount = 0.0
-        tot_paid_amount = 0.0
-        due_amt = 0.0
-        upto_rent = data.rent
-        for line in data.rent_schedule_ids:
-            if line.paid is True:
-                tot_paid_amount = tot_paid_amount + line.amount
-                tot_amount = tot_amount + upto_rent
-        due_amt = tot_amount - tot_paid_amount
-        return due_amt
+        """Rent still to be paid (scheduled but unpaid lines)."""
+        return sum(data.rent_schedule_ids.filtered(
+            lambda line: not line.paid).mapped('amount'))
 
     @api.model
     def _get_report_values(self, docids, data=None):

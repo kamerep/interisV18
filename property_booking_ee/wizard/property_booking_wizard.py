@@ -166,8 +166,7 @@ class PropertyParentMergeWizard(models.TransientModel):
                         'state': 'cancel',
                     }
 
-                    floor_no = list(
-                        set([x['floor_number'][0] for x in data_prop]))
+                    floor_no = list(set(x['floor_number'] or '' for x in data_prop))
                     if len(floor_no) != 1:
                         if int(prop.floor_number) in (prop_f_no + 1,
                                                       prop_f_no - 1) and \
@@ -179,17 +178,12 @@ class PropertyParentMergeWizard(models.TransientModel):
                                 _('Please select sub properties from the same '
                                   'Floors!'))
                     prop.write(vals)
-                requ_id = self.env['property.label'].search(
-                    [('name', '=', int(maxm))])
-                label = False
-                if not requ_id:
-                    label_obj = self.env['property.label']
-                    vals_label = {
-                        'name': maxm,
-                        'code': 'BHK'
-                    }
-                    label = label_obj.create(vals_label)
-                    check_property.write({'label_id': label.id})
+                label = self.env['property.label'].search(
+                    [('name', '=', int(maxm))], limit=1)
+                if not label:
+                    label = self.env['property.label'].create(
+                        {'name': maxm, 'code': 'BHK'})
+                check_property.write({'label_id': label.id})
                 # if len(requ_id.ids) != 1 and int(maxm) != 0:
                 #     raise ValidationError(
                 #         _('Please Create label of %s ' % (

@@ -1,47 +1,37 @@
 # See LICENSE file for full copyright and licensing details
-from odoo.tests import common
+from odoo.tests import common, tagged
 
 
+@tagged('post_install', '-at_install')
 class PropertyRecurringTestCase(common.TransactionCase):
 
-    def setup(self):
-        super(PropertyRecurringTestCase, self).setup()
-
     def test_recurring_maintenance(self):
-        self.details = self.browse_ref(
-            'property_management_ee.property_tenancy_t0')
-        self.property_id = self.browse_ref('property_management_ee.property_8')
-        self.tenant_id = self.browse_ref('property_management_ee.tenant2')
-        self.rent_type = self.browse_ref("property_management_ee.rent_type1")
-        self.maint1 = self.browse_ref(
-            'property_recurring_maintenance.maintenance_type6')
-        self.maint2 = self.browse_ref(
-            'property_recurring_maintenance.maintenance_type7')
-        self.recurring1 = {
-            'maint_type': self.maint1.id,
-        }
-        self.recurring2 = {
-            'maint_type': self.maint2.id,
-        }
-
-        self.tenancy = self.env['account.analytic.account'].sudo().create(
-            {
-                'name': 'Tenancy for Radhika Recidency',
-                'property_id': self.property_id.id,
-                'state': 'draft',
-                'is_property': True,
-                'tenant_id': self.tenant_id.id,
-                'deposit': 5000.00,
-                'rent': 8000.00,
-                'rent_entry_chck': False,
-                'date_start': '07/17/2016',
-                'date': '07/07/2017',
-                'rent_type_id': self.rent_type.id,
-                'cost_id': [(0, 0, self.recurring1),
-                            (0, 0, self.recurring2)],
-            })
-        self.tenancy.cost_id.onchange_property_id()
-        self.tenancy._total_cost_maint()
-        self.tenancy.button_start()
-        self.tenancy.create_rent_schedule()
-        self.tenancy.rent_schedule_ids[0].create_invoice()
+        property_id = self.env.ref('property_management_ee.property_8')
+        tenant = self.env.ref('property_management_ee.tenant1')
+        rent_type = self.env.ref('property_management_ee.rent_type1')
+        maint1 = self.env.ref(
+            'property_recurring_maintenance_ee.maintenance_type6')
+        maint2 = self.env.ref(
+            'property_recurring_maintenance_ee.maintenance_type7')
+        tenancy = self.env['account.analytic.account'].create({
+            'name': 'Tenancy for Radhika Recidency',
+            'property_id': property_id.id,
+            'is_property': True,
+            'resident_type': 'tenant_tenancy',
+            'tenant_id': tenant.id,
+            'deposit': 5000.00,
+            'rent': 8000.00,
+            'date_start': '2016-07-17',
+            'date': '2017-07-07',
+            'rent_type_id': rent_type.id,
+            'maintenance_cost_ids': [
+                (0, 0, {'maintenance_type': maint1.id, 'cost': 100.0}),
+                (0, 0, {'maintenance_type': maint2.id, 'cost': 50.0}),
+            ],
+        })
+        self.assertEqual(tenancy.maintenance_cost, 150.0)
+        tenancy.button_start()
+        tenancy.create_rent_schedule()
+        self.assertTrue(tenancy.rent_schedule_ids)
+        tenancy.rent_schedule_ids[0].create_invoice()
+        self.assertTrue(tenancy.rent_schedule_ids[0].invoice_id)

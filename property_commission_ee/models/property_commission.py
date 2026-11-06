@@ -135,6 +135,10 @@ class CommissionInvoice(models.Model):
             }
             acc_id = self.env['account.move'].create(inv_values)
             data.write({'inv': True, 'invc_id': acc_id.id, 'state': 'invoice'})
+            # the owner report works on invoiced commission lines
+            data.commission_line.write({'inv': True, 'invc_id': acc_id.id})
+        if len(self) != 1:
+            return True
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',
@@ -145,6 +149,7 @@ class CommissionInvoice(models.Model):
         }
 
     def open_invoice(self):
+        self.ensure_one()
         return {
             'view_id': self.env.ref('account.view_move_form').id,
             'view_mode': 'form',
@@ -175,17 +180,17 @@ class CommissionInvoice(models.Model):
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
 
-    @api.depends('commission_type', 'fix_qty', 'fix_cost', 'total_rent')
+    @api.depends('commission', 'commission_type', 'fix_qty', 'fix_cost',
+                 'total_rent')
     def calculate_commission(self):
         for data in self:
+            total = 0.0
             if data.commission:
                 if data.commission_type == 'fixed':
-                    data.total_commission = (
-                        data.total_rent * (data.fix_qty / 100.0))
+                    total = data.total_rent * (data.fix_qty / 100.0)
                 elif data.commission_type == 'fixedcost':
-                    data.total_commission = data.fix_cost
-            else:
-                data.total_commission = 0.0
+                    total = data.fix_cost
+            data.total_commission = total
 
     commission_type = fields.Selection(
         selection=[('fixed', 'Fixed Percentage'),

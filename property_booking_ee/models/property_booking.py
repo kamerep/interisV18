@@ -61,15 +61,16 @@ class PropertyCreated(models.Model):
         string="Image",
         attachment=True)
 
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
+    def copy_data(self, default=None):
         default = dict(default or {})
-        default.setdefault('name', _("%s (Copy)") % self.name)
-        return super().copy(default=default)
+        vals_list = super().copy_data(default=default)
+        if 'name' not in default:
+            for rec, vals in zip(self, vals_list):
+                vals['name'] = _("%s (Copy)", rec.name)
+        return vals_list
 
     @api.model
-    def _search(self, domain, offset=0, limit=None, order=None,
-                access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None):
         context = self._context
         new_property_id = context.get('booking_new_prop_id')
         main_property_id = context.get('booking_main_property_id')
@@ -82,8 +83,7 @@ class PropertyCreated(models.Model):
         if extra:
             domain = list(domain) + extra
         return super()._search(
-            domain, offset=offset, limit=limit, order=order,
-            access_rights_uid=access_rights_uid)
+            domain, offset=offset, limit=limit, order=order)
 
     def create_property(self):
         create_obj = self.env['property.created']
@@ -242,6 +242,7 @@ class PropertyCreated(models.Model):
         return True
 
     def merge_prop_wizzard(self):
+        self.ensure_one()
         return {
             'name': _('Merge Property'),
             'res_model': 'property.parent.merge.wizard',
@@ -257,6 +258,7 @@ class PropertyLabel(models.Model):
     _description = 'Property Label'
     _rec_names_search = ['name', 'code']
 
+    @api.depends('name', 'code')
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = '%s%s' % (

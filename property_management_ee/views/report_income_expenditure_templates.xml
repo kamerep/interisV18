@@ -18,46 +18,33 @@
 								<span t-esc="data['end_date']"/>
 							</div>
 						<br/>
-						<table class="table table-condensed" width="100%">
-							<tr style="background-color:#f9f9f9;">
-								<td width="33%">
-									<strong>Property</strong>
-								</td>
-								<td width="33%" style="text-align:right;">
-									<strong>Income</strong>
-								</td>
-								<td width="33%" style="text-align:right;">
-									<strong>Expenditure</strong>
-								</td>
-							</tr>
-							<tr t-foreach="get_details" t-as="t">
-								 <t t-set="currency_id" t-value="t.get('currency_id')"/>
-								<td width="33%"><span t-esc="t.get('property', '')"/></td>
-								<td width="33%" style="text-align:right;"><span t-esc="t.get('total_income', '')" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/></td>
-								<td width="33%" style="text-align:right;"><span t-esc="t.get('total_expence', '')" t-options='{"widget": "monetary", "display_currency": currency_id}'/></td>
-							</tr>
-						</table>
-						<table width="100%" class="table table-condensed table-striped">
-							<tr t-foreach='get_details' t-as='ti'>
-								<t t-if="ti.get('total_in', '')">
-									<td width="33%">&#160;</td>
-									<td width="33%" style="text-align:right;">Income : &#160;
-										<span t-esc="ti.get('total_in', '')"/>
-									</td>
-								</t>
-								<t t-if="ti.get('total_ex', '')">
-									<td width="33%" style="text-align:right;">Expenditure : &#160;<span t-esc="ti.get('total_ex', '')"/></td>
-								</t>
-							</tr>
-						</table>
-						<table width="100%" class="table table-condensed table-striped">
-							<tr t-foreach='get_details' t-as='g'>
-								<t t-if="g.get('total_gr')">
-									<td width="33%" style="text-align:right;">Total Income :&#160;
-										<span t-esc="g.get('total_gr')"/>
-									</td>
-								</t>
-							</tr>
+						<t t-set="currency" t-value="totals['currency_id']"/>
+						<table class="table table-sm o_main_table">
+							<thead>
+								<tr>
+									<th class="text-start">Property</th>
+									<th class="text-end">Income</th>
+									<th class="text-end">Expenditure</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr t-foreach="get_details" t-as="t">
+									<td><span t-out="t['property']"/></td>
+									<td class="text-end"><span t-out="t['total_income']" t-options="{'widget': 'monetary', 'display_currency': t['currency_id']}"/></td>
+									<td class="text-end"><span t-out="t['total_expence']" t-options="{'widget': 'monetary', 'display_currency': t['currency_id']}"/></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr class="fw-bold">
+									<td>Total</td>
+									<td class="text-end"><span t-out="totals['total_in']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+									<td class="text-end"><span t-out="totals['total_ex']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+								</tr>
+								<tr class="fw-bold">
+									<td>Net Income</td>
+									<td colspan="2" class="text-end"><span t-out="totals['total_gr']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
 				</t>
