@@ -185,7 +185,7 @@ and <i>sell</i> transactions. Commissions are then computed per tenancy/deal and
 <h1 class="pagebreak">5. Core Concepts &amp; Data Model</h1>
 <table>
 <tr><th>Business object</th><th>Technical model</th><th>What it holds</th></tr>
-<tr><td><b>Property / Unit</b></td><td><code>account.asset</code> (<code>is_property</code>)</td><td>Address &amp; geo-location, type, furnishing, bedrooms/bathrooms/parking, GFA (ft&sup2;/m&sup2;), unit price, ground rent, photos, floor plans, rooms, utilities, nearby places, safety certificates, insurance, attachments, <b>parent/child hierarchy</b> for buildings&rarr;units, depreciation board, manager, current tenant, ROI &amp; occupancy KPIs</td></tr>
+<tr><td><b>Property / Unit</b></td><td><code>account.asset</code> (<code>is_property</code>)</td><td>Address &amp; geo-location, type, furnishing, bedrooms/bathrooms/parking, GFA (ft&sup2;/m&sup2;), unit price, ground rent, photos, floor plans, rooms, utilities, nearby places, safety certificates, insurance, attachments, <b>parent/child hierarchy</b> for buildings&rarr;units (field <code>property_parent_id</code>; Odoo&nbsp;18 keeps <code>parent_id</code> for gross-increase assets), depreciation board, manager, current tenant, ROI &amp; occupancy KPIs</td></tr>
 <tr><td><b>Tenancy contract</b></td><td><code>account.analytic.account</code></td><td>Tenant, property, rent amount &amp; frequency, deposit (received/returned), start/end dates, rent schedule lines, penalty settings, contract document, state (Draft <span class="arrow">&rarr;</span> Open <span class="arrow">&rarr;</span> Close/Renew/Cancel)</td></tr>
 <tr><td><b>Rent schedule line</b></td><td><code>tenancy.rent.schedule</code></td><td>One expected rent payment: due date, amount, penalty amount, invoice link, paid flag; buttons to invoice &amp; open the invoice</td></tr>
 <tr><td><b>Tenant</b></td><td><code>tenant.partner</code> (delegates to <code>res.partner</code>)</td><td>Contact data + occupation, documents, tenancies; auto user provisioning</td></tr>
@@ -368,10 +368,12 @@ derives 1:1 from the term lines.</div>
 <tr><td>Tenancy Detail / Tenancy by Tenant</td><td>All contracts with rent &amp; deposit, filtered by property or tenant, date-ranged</td></tr>
 <tr><td>Contract Expiry</td><td>Tenancies expiring in a window &mdash; renewals pipeline</td></tr>
 <tr><td>Safety Certificate Expiry / Document Expiry</td><td>Compliance documents about to lapse per property</td></tr>
-<tr><td>Income / Expenditure</td><td>Per-property income vs expense totals with currency formatting</td></tr>
+<tr><td>Income / Expenditure</td><td>Per-property rent income vs posted vendor bills, with totals and net income</td></tr>
 <tr><td>Property per Location</td><td>Portfolio split by city/region</td></tr>
 <tr><td>Rent Voucher (rent report module)</td><td>Per-contract payment status voucher</td></tr>
-<tr><td>Commission Report</td><td>Agent commission statements</td></tr>
+<tr><td>Commission details report</td><td>Invoiced agent commissions per property and tenancy for a period</td></tr>
+<tr><td>Commission invoices report</td><td>Commission vendor bills raised for agents in a period</td></tr>
+<tr><td>Financial Performance Analysis (sale/purchase module)</td><td>Purchase price by property and type, graph view</td></tr>
 <tr><td>Property Hierarchy</td><td>Building <span class="arrow">&rarr;</span> units listing with states</td></tr>
 </table>
 <p>Plus everything native: Accounting analytic reports per tenancy/building, Maintenance KPIs, CRM pipeline analysis.</p>

@@ -13,10 +13,8 @@
                     <field name="company_id" groups="base.group_multi_company"/>
                 </group>
                 <footer>
-                    <button name="print_yes" string="Print" icon="fa-print"
-                        type="object" class="oe_highlight" />
-                    <button special="cancel" string="Cancel" icon="fa-times-circle"
-                        class="oe_highlight oe_link" />
+                    <button name="print_yes" string="Print" type="object" class="btn-primary" icon="fa-print"/>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
                 </footer>
             </form>
         </field>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Property Management — Deployment &amp; Release Notes</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.5; }
+  h1 { color: #714B67; font-size: 20pt; border-bottom: 3px solid #714B67; padding-bottom: 6px; margin-top: 0; }
+  h2 { color: #714B67; font-size: 14.5pt; border-bottom: 1px solid #c9b3c4; padding-bottom: 3px; margin-top: 24px; }
+  h3 { color: #017E84; font-size: 12pt; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+  th { background: #714B67; color: #fff; text-align: left; padding: 5px 8px; }
+  td { border: 1px solid #ccc; padding: 5px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f3f6; }
+  .step { background: #f0f7f7; border-left: 4px solid #017E84; padding: 10px 14px; margin: 10px 0; }
+  .step b.n { display:inline-block; background:#017E84; color:#fff; border-radius:50%; width:20px; height:20px; text-align:center; line-height:20px; font-size:10pt; margin-right:6px;}
+  .note { background: #fff8e6; border-left: 4px solid #e0a800; padding: 9px 13px; margin: 9px 0; }
+  .warn { background: #fdeeee; border-left: 4px solid #c0392b; padding: 9px 13px; margin: 9px 0; }
+  .tip  { background: #eef7ee; border-left: 4px solid #2e8b57; padding: 9px 13px; margin: 9px 0; }
+  .pagebreak { page-break-before: always; }
+  .cover { text-align: center; margin-top: 200px; }
+  .cover h1 { border: none; font-size: 28pt; }
+  .cover p { font-size: 13pt; color: #555; }
+  ul { margin: 6px 0 6px 18px; padding-left: 12px; }
+  li { margin-bottom: 4px; }
+  .kbd { background:#eee; border:1px solid #bbb; border-radius:3px; padding:0 5px; }
+  .arrow { color:#017E84; font-weight:bold; }
+  .faq dt { font-weight: bold; color:#714B67; margin-top: 10px;}
+  .faq dd { margin: 2px 0 8px 0; }
+
+  pre { background:#f4f4f4; border:1px solid #ddd; padding:8px 10px; font-size:9.5pt; white-space:pre-wrap; }
+  code { background:#f4f4f4; padding:0 3px; font-size:9.5pt; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <h1>Property Management</h1>
+  <p style="font-size:16pt;">Deployment &amp; Release Notes</p>
+  <p>Odoo 18 Enterprise &middot; Release 18.0.1.1.0</p>
+  <br><br>
+  <p>November 2026</p>
+</div>
+
+<div class="pagebreak"></div>
+<h1>Contents</h1>
+<ol>
+  <li>Requirements</li>
+  <li>Fresh installation</li>
+  <li>Upgrading an existing database</li>
+  <li>Running Odoo 18 next to other versions</li>
+  <li>Testing</li>
+  <li>What changed in 18.0.1.1.0</li>
+  <li>Known limitations</li>
+</ol>
+
+<h2>1. Requirements</h2>
+<table>
+<tr><th>Component</th><th>Version / note</th></tr>
+<tr><td>Odoo</td><td>18.0 <b>Enterprise</b> (uses <code>account_asset</code> and <code>web_gantt</code>)</td></tr>
+<tr><td>Python</td><td>3.10 – 3.12</td></tr>
+<tr><td>PostgreSQL</td><td>13 or newer</td></tr>
+<tr><td>Community apps</td><td>account, analytic, sale_crm, maintenance (installed automatically)</td></tr>
+</table>
+
+<h2>2. Fresh installation</h2>
+<div class="step"><b class="n">1</b> Clone the repository next to your Odoo 18 addons:
+<pre>git clone https://github.com/kamerep/interisV18.git /opt/odoo18-addons/interisV18</pre></div>
+<div class="step"><b class="n">2</b> Copy <code>deploy/odoo18.conf.example</code> to <code>/etc/odoo18.conf</code>, set
+<code>addons_path</code>, database credentials and a free <code>http_port</code>.</div>
+<div class="step"><b class="n">3</b> Install the suite:
+<pre>deploy/deploy.sh -c /etc/odoo18.conf -d mydb --install</pre></div>
+<div class="step"><b class="n">4</b> Optional: install the systemd unit
+<pre>sudo cp deploy/odoo18.service /etc/systemd/system/
+sudo systemctl daemon-reload &amp;&amp; sudo systemctl enable --now odoo18</pre></div>
+
+<h2>3. Upgrading an existing database</h2>
+<div class="step"><b class="n">1</b> Back up the database and filestore.</div>
+<div class="step"><b class="n">2</b> Pull the new code and upgrade every suite module:
+<pre>git -C /opt/odoo18-addons/interisV18 pull
+deploy/deploy.sh -c /etc/odoo18.conf -d mydb
+sudo systemctl restart odoo18</pre></div>
+<div class="warn"><b>Property hierarchy moved.</b> Sub-properties now use <code>property_parent_id</code>.
+Odoo 18 reserves <code>account.asset.parent_id</code> for gross-increase assets, which feed the parent's
+book value and depreciation. The 18.0.1.1.0 migration moves existing links automatically; update any
+custom views, filters or server actions that used <code>parent_id</code> for properties.</div>
+
+<h2>4. Running Odoo 18 next to other versions</h2>
+<p>When Odoo 19 and 20 already use ports 8069 and 8070, run Odoo 18 on <b>8018</b>
+(longpolling 8073). To test the official <code>.deb</code> without installing it system-wide:</p>
+<pre>dpkg-deb -x odoo_18.0.2024-11-25.deb ~/odoo18ee
+ODOO18_HOME=~/odoo18ee deploy/run_local.sh -d property18</pre>
+<div class="note">The <code>.deb</code> links some web assets (FontAwesome, Roboto, underscore.js) to Debian
+packages. When unpacking instead of installing, replace those symlinks with real files or install
+<code>fonts-font-awesome</code>, <code>fonts-roboto-unhinted</code> and <code>libjs-underscore</code>.</div>
+
+<h2>5. Testing</h2>
+<pre>deploy/deploy.sh -c /etc/odoo18.conf -d test_db --install --test</pre>
+<p>The regression tests cover deposit payments and journal entries, property hierarchy isolation from
+gross-increase assets, weekly rent proration, CRM lead to contract, partner group sync, the rent
+reminder cron, every wizard report, the commission reports, penalties, recurring maintenance and
+purchase/sale instalments.</p>
+
+<h2>6. What changed in 18.0.1.1.0</h2>
+<h3>Crashes fixed</h3>
+<ul>
+<li>Every payment raised a TypeError (payment journal entry API changed in 18).</li>
+<li>Deposit buttons used the removed payment field <code>ref</code> (now <code>memo</code>).</li>
+<li>Converting rent leads, opening their chatter or mail templates failed.</li>
+<li>Searching booked units failed; un-ticking Tenant/Agent on a contact without a user failed.</li>
+<li>Several reports failed on multi-property tenancies, missing dates or no state filter.</li>
+<li>Commission bills failed with an empty currency.</li>
+</ul>
+<h3>Wrong results fixed</h3>
+<ul>
+<li>Deposit received/returned flags, weekly part-period rent, occupancy rate.</li>
+<li>Income &amp; expenditure totals (expenses now come from posted vendor bills).</li>
+<li>Rent voucher balance due; commission owner report; maintenance done notifications.</li>
+<li>Unbook button never visible and acted on the parent property.</li>
+<li>Rent reminders: only unpaid rent due in the next 7 days, sent to the tenant without changing the template.</li>
+</ul>
+<h3>Enabled and improved</h3>
+<ul>
+<li>Commission details and commission invoices reports; Financial Performance Analysis graph.</li>
+<li>Odoo 18 kanban cards; chatter on commission invoices.</li>
+<li>App icons redrawn as square, rounded icons that read well in light and dark mode.</li>
+</ul>
+
+<h2>7. Known limitations</h2>
+<ul>
+<li>The tenant mass-mailing wizard and the landlord demo data remain disabled (they need a redesign for Odoo 18).</li>
+<li>Stored KPIs that depend on today's date (occupancy rate) refresh when tenancies change, not daily.</li>
+</ul>
+</body>
+</html>

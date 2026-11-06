@@ -370,3 +370,53 @@ Files touched include (non-exhaustive):
   report actions and will only work if that file is re-enabled.
 - Demo data is optional and loads only in demo mode; production installs are
   unaffected by demo records.
+
+---
+
+## 7. Release 18.0.1.1.0 — runtime fixes on Odoo 18 Enterprise (2026-11-06)
+
+All modules were installed with demo data on Odoo 18.0 Enterprise
+(build 20241125) and exercised with the bundled tests (12 tests, all
+passing) and a browser check of the main screens in light and dark mode.
+
+### Install blockers
+- Demo data wrote into a non-existent `account_asset` record.
+- Maintenance stat button xpath targeted a commented-out button.
+- `account.account` has `company_ids` in 18; domain on `company_id` failed.
+- Finance analysis views referenced XML IDs of another module.
+
+### Crashes fixed
+| Area | Problem | Fix |
+| --- | --- | --- |
+| Payments | `_prepare_move_line_default_vals` missed `force_balance` → every payment raised `TypeError` | V18 signature; property set in `_generate_journal_entry` |
+| Deposits | `ref` field no longer exists on payments | use `memo` |
+| CRM | `_prepare_customer_values` returned a record → lead conversion, chatter and templates crashed | returns a dict; wizard creates/reuses the tenant |
+| Partners | `has_group` on several/no users raised “Expected singleton” | write group commands directly |
+| Booking | `_search(access_rights_uid=…)` → every search on units failed | V18 signature |
+| Landlord | payments with `ref`; duplicate deposit payments | `memo`; reuse linked payment |
+| Commission | compute left value unset; bills with NULL currency | always assign; tenancy/company currency |
+| Reports | `multi_prop` on wrong models, unset variables, missing SQL columns, `state_id[0]` on empty value | rewritten helpers and SQL views |
+| Rent schedule | missing dates → `TypeError` | clear validation message |
+
+### Wrong results fixed
+- Deposit flags used the removed payment state `posted`.
+- Property hierarchy used Odoo 18 gross-increase `parent_id`, distorting
+  book value/depreciation → new `property_parent_id` + migration.
+- Weekly part-period rent divided by the interval twice.
+- Occupancy rate formula was inverted (could exceed 100 %).
+- Income/expenditure totals were never summed; expenses now come from posted vendor bills.
+- Rent voucher “Balance Due” was always ~0.
+- Maintenance “done” e-mails never sent (core `done` field shadowed).
+- Commission owner report always empty; unbook button never visible;
+  unbook wizard acted on the parent property instead of the unit.
+- Rent reminder cron mailed overdue rent daily and rewrote the shared template.
+- Cost lines could write the company currency through an editable related field.
+
+### Features enabled / UI
+- Commission details and commission invoices reports (were disconnected).
+- Financial Performance Analysis graph (sale/purchase).
+- Odoo 18 kanban `card` templates in all modules; chatter on commission invoices.
+- New square app icons that work in light and dark mode.
+
+### Deployment
+- `deploy/` scripts and config template; GitHub Actions static checks.
