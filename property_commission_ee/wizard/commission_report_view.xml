@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Commission report wizard Form View -->
+    <record id="commission_report" model="ir.ui.view">
+        <field name="name">Commission Report</field>
+        <field name="model">commission.report</field>
+        <field name="arch" type="xml">
+            <form string="Commission Report">
+                <separator string="Commission Details" colspan="4" />
+                <group colspan="4" col="4">
+                    <field name="start_date" />
+                    <field name="end_date" />
+                </group>
+                <footer>
+                    <button special="cancel" string="Cancel" icon="fa-times-circle"
+                        class="oe_highlight oe_link" />
+                    <button name="print_report" string="Print" icon="fa-print"
+                        type="object" class="oe_highlight" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+        <!--Action for Contract expiry wizard -->
+    <record id="action_commissions" model="ir.actions.act_window">
+        <field name="name">Commission Report</field>
+        <field name="res_model">commission.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+       id="menu_commission_report"
+       name="Commission details report"
+       parent="property_management_ee.menu_report_sub"
+       action="action_commissions"/>
+
+</odoo>

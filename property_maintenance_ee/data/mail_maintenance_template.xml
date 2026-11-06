@@ -1,0 +1,66 @@
+<odoo>
+    <record id="mail_maintenance_tenant_inprogress_template" model="mail.template">
+        <field name="name">Mail To Tenant Maintenance In progress.</field>
+        <field name="model_id" ref='property_maintenance_ee.model_maintenance_request'/>
+        <field name='email_from'>{{object.user_id.login}}</field>
+        <field name="lang">{{object.tenant_id.lang}}</field>
+        <field name="subject">Maintenance Progress for Property {{object.property_id.name}}</field>
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.tenant_id.name"></t><br/> 
+                Maintenance of <t t-out="object.property_id.name"></t> property is in progress.<br/>
+                Which will be done by <t t-out="object.maintenance_team_id.name"></t> team. And supervised by <t t-out="object.user_id.name"></t>. <br/>
+                Thank You
+                <br/>
+            </div>
+        </field>
+    </record>
+    <record id="mail_maintenance_manager_inprogress_template" model="mail.template">
+        <field name="name">Mail To Manager Maintenance In progress.</field>
+        <field name="model_id" ref='property_maintenance_ee.model_maintenance_request'/>
+        <field name='email_from'>{{object.user_id.login}}</field>
+        <field name="lang">{{object.property_id.property_manager.lang}}</field>
+        <field name="subject">Maintenance Progress for Property {{object.property_id.name}}</field>
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.property_id.property_manager.name"></t><br/> 
+                Maintenance of <t t-out="object.property_id.name"></t> property is in progress.<br/>
+                Which will be done by <t t-out="object.maintenance_team_id.name"></t> team. And supervised by <t t-out="object.user_id.name"></t>. <br/>
+                Thank You
+                <br/>
+            </div>
+        </field>
+    </record>
+    <record id="mail_maintenance_tenant_done_template" model="mail.template">
+        <field name="name">Mail To Tenant Maintenance Is Done.</field>
+        <field name="model_id" ref='property_maintenance_ee.model_maintenance_request'/>
+        <field name='email_from'>{{object.user_id.login}}</field>
+        <field name="lang">{{object.tenant_id.lang}}</field>
+        <field name="subject">Maintenance Progress for Property {{object.property_id.name}}</field>
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.tenant_id.name"></t><br/> 
+                Maintenance of <t t-out="object.property_id.name"></t> property is done.<br/>
+                Which is done by <t t-out="object.maintenance_team_id.name"></t> team. And supervised by <t t-out="object.user_id.name"></t>. <br/>
+                Thank You
+                <br/>
+            </div>
+        </field>
+    </record>
+    <record id="mail_maintenance_manager_done_template" model="mail.template">
+        <field name="name">Mail To Manager Maintenance Is Done.</field>
+        <field name="model_id" ref='property_maintenance_ee.model_maintenance_request'/>
+        <field name='email_from'>{{object.user_id.login}}</field>
+        <field name="lang">{{object.property_id.property_manager.lang}}</field>
+        <field name="subject">Maintenance Progress for Property {{object.property_id.name}}</field>
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.property_id.property_manager.name"></t><br/> 
+                Maintenance of <t t-out="object.property_id.name"></t> property is done.<br/>
+                Which is done by <t t-out="object.maintenance_team_id.name"></t> team. And supervised by <t t-out="object.user_id.name"></t>. <br/>
+                Thank You
+                <br/>
+            </div>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Property Management — End User Guide</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.5; }
+  h1 { color: #714B67; font-size: 20pt; border-bottom: 3px solid #714B67; padding-bottom: 6px; margin-top: 0; }
+  h2 { color: #714B67; font-size: 14.5pt; border-bottom: 1px solid #c9b3c4; padding-bottom: 3px; margin-top: 24px; }
+  h3 { color: #017E84; font-size: 12pt; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+  th { background: #714B67; color: #fff; text-align: left; padding: 5px 8px; }
+  td { border: 1px solid #ccc; padding: 5px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f3f6; }
+  .step { background: #f0f7f7; border-left: 4px solid #017E84; padding: 10px 14px; margin: 10px 0; }
+  .step b.n { display:inline-block; background:#017E84; color:#fff; border-radius:50%; width:20px; height:20px; text-align:center; line-height:20px; font-size:10pt; margin-right:6px;}
+  .note { background: #fff8e6; border-left: 4px solid #e0a800; padding: 9px 13px; margin: 9px 0; }
+  .warn { background: #fdeeee; border-left: 4px solid #c0392b; padding: 9px 13px; margin: 9px 0; }
+  .tip  { background: #eef7ee; border-left: 4px solid #2e8b57; padding: 9px 13px; margin: 9px 0; }
+  .pagebreak { page-break-before: always; }
+  .cover { text-align: center; margin-top: 200px; }
+  .cover h1 { border: none; font-size: 28pt; }
+  .cover p { font-size: 13pt; color: #555; }
+  ul { margin: 6px 0 6px 18px; padding-left: 12px; }
+  li { margin-bottom: 4px; }
+  .kbd { background:#eee; border:1px solid #bbb; border-radius:3px; padding:0 5px; }
+  .arrow { color:#017E84; font-weight:bold; }
+  .faq dt { font-weight: bold; color:#714B67; margin-top: 10px;}
+  .faq dd { margin: 2px 0 8px 0; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>Property Management</h1>
+  <p style="font-size:16pt;">End User Guide</p>
+  <p>For Property Managers, Front-Desk Staff, Tenants &amp; Landlords</p>
+  <br><br>
+  <p><b>Techverse Online Limited</b> &middot; odooerp.co.ke<br>
+  June 2026</p>
+</div>
+
+<!-- TOC -->
+<div class="pagebreak"></div>
+<h1>Contents</h1>
+<ol>
+  <li>Getting Started — Logging In &amp; Finding Your Way</li>
+  <li>For Property Managers &amp; Front-Desk Staff
+    <ul>
+      <li>2.1 Registering a New Tenant</li>
+      <li>2.2 Creating a Tenancy (Rental Contract)</li>
+      <li>2.3 Collecting the Deposit</li>
+      <li>2.4 Monthly Rent: Invoicing &amp; Receiving Payments</li>
+      <li>2.5 Late Payments &amp; Penalties</li>
+      <li>2.6 Handling Maintenance Requests</li>
+      <li>2.7 When a Tenant Moves Out</li>
+      <li>2.8 Renewing a Contract</li>
+      <li>2.9 Paying the Property Owner (Landlord)</li>
+      <li>2.10 Everyday Reports</li>
+    </ul>
+  </li>
+  <li>For Tenants (Portal Guide)</li>
+  <li>For Landlords / Property Owners (Portal Guide)</li>
+  <li>Frequently Asked Questions</li>
+  <li>Quick Reference Card</li>
+</ol>
+
+<!-- 1 -->
+<div class="pagebreak"></div>
+<h1>1. Getting Started</h1>
+<h3>Logging in</h3>
+<div class="step">
+<b class="n">1</b> Open your browser and go to <b>https://odooerp.co.ke</b>.<br>
+<b class="n">2</b> Enter the email address and password you were given. First time? Use the invitation
+email&rsquo;s <i>&ldquo;Accept invitation&rdquo;</i> link to set your password.<br>
+<b class="n">3</b> Staff land on the main apps screen — click <b>Property Management</b>.
+Tenants and landlords land directly on their portal page.
+</div>
+<h3>Finding your way (staff)</h3>
+<table>
+<tr><th>Menu</th><th>What you do there</th></tr>
+<tr><td><b>Property Details</b></td><td>All buildings and units — addresses, photos, who lives where, unit status</td></tr>
+<tr><td><b>Tenancy Details</b></td><td>All rental contracts — rent, deposits, schedules, invoices</td></tr>
+<tr><td><b>Tenant Details</b></td><td>The tenant register — contacts, documents, their contracts</td></tr>
+<tr><td><b>Reporting</b></td><td>Printable reports: contracts, expiries, income, rent status</td></tr>
+<tr><td><b>Configuration</b></td><td>Settings (managers only): property types, rent types, labels</td></tr>
+</table>
+<div class="tip"><b>Searching:</b> every list has a search box — type a tenant name, unit number or phone
+number and press <span class="kbd">Enter</span>. Use <b>Filters</b> and <b>Group By</b> to slice lists
+(e.g. Group By <span class="arrow">&rarr;</span> Property to see contracts per building).</div>
+
+<!-- 2 -->
+<div class="pagebreak"></div>
+<h1>2. For Property Managers &amp; Front-Desk Staff</h1>
+
+<h2>2.1 Registering a New Tenant</h2>
+<div class="step">
+<b class="n">1</b> Property Management <span class="arrow">&rarr;</span> <b>Tenant Details</b> <span class="arrow">&rarr;</span> <b>New</b>.<br>
+<b class="n">2</b> Fill in: full name, phone, email, occupation. Attach a copy of their ID/passport
+(drag the file into the attachments / chatter area).<br>
+<b class="n">3</b> <b>Save</b>. The system automatically creates their contact card and portal login —
+the tenant receives an email invitation to set a password.
+</div>
+<div class="note">Use the tenant&rsquo;s <b>real email address</b> — rent reminders and invoices are emailed there.</div>
+
+<h2>2.2 Creating a Tenancy (Rental Contract)</h2>
+<div class="step">
+<b class="n">1</b> Property Management <span class="arrow">&rarr;</span> <b>Tenancy Details</b> <span class="arrow">&rarr;</span> <b>New</b>.<br>
+<b class="n">2</b> <b>Tenant:</b> choose the tenant. <b>Property:</b> choose the exact <b>unit</b>
+(e.g. <i>Kamere Towers — A-203</i>), <u>never the whole building</u>.<br>
+<b class="n">3</b> Enter the <b>Rent</b> amount, choose the rent frequency (Monthly), set
+<b>Start Date</b> and <b>End Date</b> (e.g. one year).<br>
+<b class="n">4</b> Enter the <b>Deposit</b> amount agreed.<br>
+<b class="n">5</b> Attach the signed lease agreement (PDF/photo) in the chatter.<br>
+<b class="n">6</b> Click <b>Create Rent Schedule</b> — the system lists every rent due date for the whole contract.<br>
+<b class="n">7</b> Click <b>Start</b>. The contract is now active and the unit shows as occupied.
+</div>
+<div class="warn">One contract = one unit = one tenant. If a family or company takes two units, make two contracts.</div>
+
+<h2>2.3 Collecting the Deposit</h2>
+<div class="step">
+<b class="n">1</b> When the tenant pays the deposit, open the tenancy and click <b>Deposit Received</b>.<br>
+<b class="n">2</b> The deposit is recorded against the tenant — you can always see it with <b>Open Received</b>.<br>
+<b class="n">3</b> It stays held until move-out (see 2.7).
+</div>
+
+<h2 class="pagebreak">2.4 Monthly Rent: Invoicing &amp; Receiving Payments</h2>
+<h3>Sending the rent invoice</h3>
+<div class="step">
+<b class="n">1</b> Open the tenancy <span class="arrow">&rarr;</span> <b>Rent Schedule</b> tab. Each line is one month.<br>
+<b class="n">2</b> On the due line, click the <b>gear ⚙ (Create Invoice)</b> button. An invoice is created for that month&rsquo;s rent
+(plus any penalty or recurring charges).<br>
+<b class="n">3</b> Click the <b>arrow ➜ (Open Invoice)</b>, check it, then <b>Confirm</b> and <b>Send &amp; Print</b> — the tenant
+gets it by email and sees it on their portal.
+</div>
+<div class="tip">Tenants also get an <b>automatic reminder email</b> when rent is due — no action needed from you.</div>
+<h3>Recording a payment</h3>
+<div class="step">
+<b class="n">1</b> Open the invoice (from the schedule line or Accounting) and click <b>Register Payment</b>.<br>
+<b class="n">2</b> Choose how they paid (bank, cash, M-Pesa via bank), the amount and date <span class="arrow">&rarr;</span> <b>Create Payment</b>.<br>
+<b class="n">3</b> The invoice shows <b>Paid</b> and the schedule line is marked paid. The voucher can be printed for the tenant.
+</div>
+
+<h2>2.5 Late Payments &amp; Penalties</h2>
+<ul>
+<li>If a rent line passes its due date unpaid, the agreed <b>penalty</b> is calculated automatically and added
+when you invoice.</li>
+<li>To see all arrears: <b>Tenancy Details</b> <span class="arrow">&rarr;</span> Rent Schedules, filter <i>Unpaid</i>,
+Group By <i>Tenant</i>.</li>
+<li>The <b>Rent Voucher report</b> prints a statement of paid/unpaid months for one contract — useful for
+conversations with tenants.</li>
+</ul>
+
+<h2>2.6 Handling Maintenance Requests</h2>
+<div class="step">
+<b class="n">1</b> <b>Maintenance</b> app <span class="arrow">&rarr;</span> <b>New</b> (or the tenant reports it and you log it).<br>
+<b class="n">2</b> Choose the <b>Property (unit)</b> — the tenant fills in automatically. Describe the problem,
+pick the team (Plumbing, Electrical…) and a priority.<br>
+<b class="n">3</b> Drag the card across stages as work progresses. The tenant and the property manager get an
+automatic email when work is <b>In Progress</b> and when it is <b>Done</b>.<br>
+<b class="n">4</b> If the tenant must pay for the repair (damage, not wear-and-tear): on the finished request click
+<b>Create Invoice</b> and confirm it like a rent invoice.
+</div>
+
+<h2 class="pagebreak">2.7 When a Tenant Moves Out</h2>
+<div class="step">
+<b class="n">1</b> Make sure all rent invoices are issued and settled (invoice any final amounts, e.g. damages).<br>
+<b class="n">2</b> On the tenancy click <b>Close</b> (or <b>Cancel Tenancy</b> if breaking early).<br>
+<b class="n">3</b> Click <b>Deposit Return</b> to pay back the deposit (after deducting damage invoices if any).<br>
+<b class="n">4</b> The unit automatically shows as <b>Available</b> again, ready for the next tenant.
+</div>
+
+<h2>2.8 Renewing a Contract</h2>
+<div class="step">
+<b class="n">1</b> Open the expiring tenancy and click <b>Renew</b>.<br>
+<b class="n">2</b> Enter the new period (and the new rent if it changed).<br>
+<b class="n">3</b> A fresh rent schedule is generated — continue invoicing as before.
+</div>
+<div class="tip">Run the <b>Contract Expiry report</b> monthly (Reporting menu) so renewals never take you by surprise.</div>
+
+<h2>2.9 Paying the Property Owner (Landlord)</h2>
+<div class="step">
+<b class="n">1</b> <b>Landlord Details</b>: each owner has a landlord contract listing what they are owed
+(their share of collected rent).<br>
+<b class="n">2</b> On the due payout line click <b>Create Landlord Invoice</b> — this makes a bill in the owner&rsquo;s name.<br>
+<b class="n">3</b> Accounting pays the bill like any supplier payment; the owner sees it on their portal.
+</div>
+
+<h2>2.10 Everyday Reports</h2>
+<table>
+<tr><th>You want to know…</th><th>Run this (Reporting menu)</th></tr>
+<tr><td>Which contracts end soon?</td><td><b>Contract Expiry</b></td></tr>
+<tr><td>Has tenant X paid this year?</td><td><b>Rent Voucher</b> / Tenancy by Tenant</td></tr>
+<tr><td>What did building Y earn vs spend?</td><td><b>Income / Expenditure</b></td></tr>
+<tr><td>Which certificates (fire, lift…) expire?</td><td><b>Safety Certificate / Document Expiry</b></td></tr>
+<tr><td>What do we own per town?</td><td><b>Property per Location</b></td></tr>
+<tr><td>Which units are vacant?</td><td>Property Details, filter <i>State = Available</i> (or the building&rsquo;s Sub-Properties tab)</td></tr>
+</table>
+
+<!-- 3 -->
+<div class="pagebreak"></div>
+<h1>3. For Tenants (Portal Guide)</h1>
+<p><i>Share this page with your tenants — it is written for them.</i></p>
+<h3>Your tenant account</h3>
+<div class="step">
+<b class="n">1</b> You will receive an email invitation from your property manager — click the link and set a password.<br>
+<b class="n">2</b> Log in any time at <b>https://odooerp.co.ke</b>.
+</div>
+<h3>What you can do</h3>
+<ul>
+<li><b>See your rental contract</b> — rent amount, start and end dates, your deposit.</li>
+<li><b>See and download your invoices</b> — every month&rsquo;s rent invoice appears under <i>Your Invoices</i>;
+download the PDF for your records.</li>
+<li><b>Check what you owe</b> — unpaid invoices are clearly marked. Pay by your usual method
+(bank transfer / M-Pesa as instructed on the invoice) and your manager will receipt it.</li>
+<li><b>Get reminders</b> — you&rsquo;ll receive an email when rent is due, and a receipt confirmation when payment is recorded.</li>
+<li><b>Report a problem</b> — email or call your property manager to log a maintenance request; you will receive
+an email when the work starts and when it is finished.</li>
+<li><b>Update your details</b> — keep your phone and email up to date from your portal profile (top-right menu
+<span class="arrow">&rarr;</span> My Account).</li>
+</ul>
+<div class="note">If you cannot log in, use <i>&ldquo;Reset Password&rdquo;</i> on the login page, or contact the
+property office.</div>
+
+<!-- 4 -->
+<h1 class="pagebreak">4. For Landlords / Property Owners (Portal Guide)</h1>
+<p><i>Share this page with property owners whose buildings you manage.</i></p>
+<ul>
+<li><b>Log in</b> at <b>https://odooerp.co.ke</b> with the invitation sent by the management company.</li>
+<li><b>Your properties</b> — you see the buildings/units you own: occupancy, current tenants, condition records.</li>
+<li><b>Your payouts</b> — every rent share due to you appears as a bill in your name; you can see what has been
+paid and what is upcoming, with downloadable PDFs.</li>
+<li><b>Statements</b> — request a periodic statement from the management office (income collected, fees,
+maintenance deducted, net paid to you).</li>
+<li><b>Privacy</b> — you only see your own properties and documents; other owners&rsquo; data is never visible to you.</li>
+</ul>
+
+<!-- 5 -->
+<h1>5. Frequently Asked Questions</h1>
+<dl class="faq">
+<dt>The tenant paid two months at once — what do I do?</dt>
+<dd>Create the invoices for both schedule lines, then register one payment across both invoices
+(Register Payment from the first invoice, then allocate the remainder to the second, or register two payments).</dd>
+<dt>I invoiced the wrong amount.</dt>
+<dd>If the invoice is unconfirmed, edit it. If confirmed, use <b>Credit Note</b> on the invoice and re-issue correctly.</dd>
+<dt>A tenant disputes the penalty.</dt>
+<dd>Penalties come from the contract&rsquo;s late-fee terms. A manager can edit the penalty amount on the schedule
+line before invoicing, or credit it afterwards.</dd>
+<dt>Can two people share one unit?</dt>
+<dd>Put the lead tenant on the contract and add the co-occupant&rsquo;s details in the contract notes/chatter.
+(True co-tenant billing is on the enhancement roadmap.)</dd>
+<dt>How do I move a tenant to a different unit?</dt>
+<dd>Close the current tenancy (deposit can be returned or carried), then create a new tenancy on the new unit.</dd>
+<dt>Who can see what?</dt>
+<dd>Staff see everything per their role. Tenants see only their own contract and invoices. Owners see only their
+own properties and payouts. Agents see their deals and commissions.</dd>
+<dt>Something shows an error on screen.</dt>
+<dd>Take a screenshot including the red error text and send it to your administrator
+(peterkamere@gmail.com) with a note of what you clicked.</dd>
+</dl>
+
+<!-- 6 -->
+<h1 class="pagebreak">6. Quick Reference Card</h1>
+<table>
+<tr><th>Task</th><th>Where</th><th>Click</th></tr>
+<tr><td>New tenant</td><td>Tenant Details</td><td>New <span class="arrow">&rarr;</span> fill <span class="arrow">&rarr;</span> Save</td></tr>
+<tr><td>New contract</td><td>Tenancy Details</td><td>New <span class="arrow">&rarr;</span> tenant + unit + rent + dates <span class="arrow">&rarr;</span> Create Rent Schedule <span class="arrow">&rarr;</span> Start</td></tr>
+<tr><td>Take deposit</td><td>The tenancy</td><td>Deposit Received</td></tr>
+<tr><td>Invoice this month&rsquo;s rent</td><td>Tenancy <span class="arrow">&rarr;</span> Rent Schedule</td><td>⚙ on the line <span class="arrow">&rarr;</span> Confirm <span class="arrow">&rarr;</span> Send</td></tr>
+<tr><td>Receipt a payment</td><td>The invoice</td><td>Register Payment</td></tr>
+<tr><td>Log a repair</td><td>Maintenance</td><td>New <span class="arrow">&rarr;</span> pick unit <span class="arrow">&rarr;</span> team</td></tr>
+<tr><td>Bill repair to tenant</td><td>The finished request</td><td>Create Invoice</td></tr>
+<tr><td>Move-out</td><td>The tenancy</td><td>Close <span class="arrow">&rarr;</span> Deposit Return</td></tr>
+<tr><td>Renew</td><td>The tenancy</td><td>Renew</td></tr>
+<tr><td>Pay an owner</td><td>Landlord contract line</td><td>Create Landlord Invoice <span class="arrow">&rarr;</span> pay bill</td></tr>
+<tr><td>Vacant units</td><td>Property Details</td><td>Filter: State = Available</td></tr>
+<tr><td>Expiring contracts</td><td>Reporting</td><td>Contract Expiry</td></tr>
+</table>
+
+<p style="margin-top:40px;color:#888;font-size:9pt;text-align:center;">
+Property Management — End User Guide &middot; Techverse Online Limited &middot; June 2026<br>
+Support: peterkamere@gmail.com</p>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<odoo>
+
+    <!-- Inherited form view of Sale Order-->
+    <record id="sale_order_inherit_property" model="ir.ui.view">
+        <field name="name">sale.order.inherit.property</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="after">
+                <field name="property_id" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
+                <field name="property_id" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Top menu item -->
+    <menuitem id="portal.portal_menu" name="Portal" groups="base.group_portal" sequence="10"/>
+
+</odoo>

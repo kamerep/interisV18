@@ -1,0 +1,79 @@
+<odoo>
+	<!--Template For Tenancy Details By Tenant Report-->
+	<template id="report_tenancy_by_tenant">
+		<t t-call="web.html_container">
+				<!-- <t t-call="property_management_ee.property_external_layout"> -->
+				<t t-call="web.external_layout"><br/><br/>
+					<div class="page">
+						<h2>
+							<span>
+								<center>Tenancy Details By Tenant</center>
+							</span>
+						</h2>
+						<br/><br/>
+						<table width="100%">
+							<tr>
+								<td style="text-align:left">
+									<strong>Tenant name :</strong>
+									<span t-esc="data['tenant_name']"/>
+								</td>
+								<td width="33%" style="text-align:left">&#160;</td>
+								<td width="34%" style="text-align:left">
+									<strong>From:</strong>
+									<span t-esc="date_format(data['start_date'])"/>&#160;&#160;&#160;
+									<strong>To:</strong>
+									<span t-esc="date_format(data['end_date'])"/>
+								</td>
+							</tr>
+						</table>
+						<br/>
+
+						<table style="border:solid 1px #000000" width="100%" class="table table-bordered">
+							<tr style="text-align:left;background-color:#e6e6e6;">
+								<th style="border: 1px solid #000000;">Property</th>
+								<th style="border: 1px solid #000000;">Start date</th>
+								<th style="border: 1px solid #000000;">End date</th>
+								<th style="border: 1px solid #000000;">Rent</th>
+								<th style="border: 1px solid #000000;">Deposit</th>
+								<th style="border: 1px solid #000000;">Rent Type</th>
+								<th style="border: 1px solid #000000;">State</th>
+							</tr>
+
+							<tr t-foreach="get_details" t-as="t">
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('property_id', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('date_start', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('date', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('rent', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('deposit', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('rent_type_id', '')"/>&#160;<span t-esc="t.get('rent_type_month', '')"/>
+								</td>
+								<td class="text-left" style="border: 1px solid #000000;">
+									<span t-esc="t.get('state', '')"/>
+								</td>
+							</tr>
+						</table>
+
+					</div>
+				</t>
+		</t>
+	</template>
+
+	<record id="action_report_tenancy_by_tenant" model="ir.actions.report">
+		<field name="name">Tenancy by Tenant</field>
+		<field name="model">account.asset</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">property_management_ee.report_tenancy_by_tenant</field>
+		<field name="report_file">property_management_ee.report_tenancy_by_tenant</field>
+	</record>
+</odoo>

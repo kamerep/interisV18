@@ -1,0 +1,19 @@
+<odoo>
+    <record id="category_commission_pay" model="ir.module.category">
+        <field name="name">Commission</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="groups_commission_pay_manager" model="res.groups">
+        <field name="name">Commission Manager</field>
+        <field name="category_id" ref="property_commission_ee.category_commission_pay" />
+    </record>
+
+     <record id="property_commission_rule_agent" model="ir.rule">
+        <field name="name">Commission Property of agent</field>
+        <field name="model_id" ref="model_commission_invoice" />
+        <field eval="True" name="global" />
+        <field name="domain_force">[('agent','=',user.partner_id.id)]</field>
+        <field eval="[(4, ref('property_management_ee.group_property_agent'))]" name="groups" />
+    </record>
+</odoo>

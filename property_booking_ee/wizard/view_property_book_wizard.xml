@@ -1,0 +1,115 @@
+<odoo>
+    <!--property Wizzard Filter Form View -->
+    <record id="view_wizz_wizz_wizard" model="ir.ui.view">
+        <field name="name">property.wizard</field>
+        <field name="model">property.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Property Wizzard">
+                <group col="2" colspan="2">
+                    <field name="property_id" invisible="1"/><newline/>
+                </group>
+                <group col="4" colspan="2">
+                    <field name="tower" required="1"/><newline/>
+                    <field name="newtower" invisible="1"/><newline/>
+                    <field name="floor_count" invisible="1"/><newline/>
+                    <field name="floor" required="1"/><newline/>
+                </group>
+                <group col="2" colspan="2">
+                    <field name="property_created_ids" invisible="1">
+                        <list string="Properties">
+                            <field name="floor"/>
+                            <field name="label_id"/>
+                            <field name="state"/>
+                            <field name="furnished"/>
+                        </list>
+                    </field>
+                </group>
+                <footer>
+                    <button name="property_method" type="object" string="Filter" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Property wizard Filter -->
+    <record id="action_property_wizz_wizz" model="ir.actions.act_window">
+        <field name="name">Wizard Wizard</field>
+        <field name="res_model">property.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!--Sub Wizzard Form View -->
+    <record id="sub_wizard_form_view" model="ir.ui.view">
+        <field name="name">sub.wizard.form.view</field>
+        <field name="model">sub.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sub Wizzard">
+                <group col="4" colspan="2">
+                    <field name="name_prop_name" required="1" placeholder="Name Of Property"/><newline/>
+                    <field name="furnish" style="width:40%%;"/><newline/>
+                    <field name="is_other"/>
+                </group>
+                <!-- <group col="2" colspan="2"> -->
+                <separator string="Sub Properties"/>
+                <field name="property_created_merged_ids">
+                    <list string="Properties">
+                        <field name="name"/>
+                        <field name="floor" readonly="1"/>
+                        <field name="property_manager"/>
+                        <field name="label_id" widget="selection"/>
+                        <field name="state"/>
+                        <field name="furnished"/>
+                    </list>
+                </field>
+                <!-- </group> -->
+                <footer>
+                    <button name="sub_method" type="object" string="Update" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for sub wizard -->
+    <record id="action_sub_wizard_filter" model="ir.actions.act_window">
+        <field name="name">Property Filter</field>
+        <field name="res_model">sub.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!--Property parent merge wizard Form View -->
+    <record id="property_parent_merge_wizard_view" model="ir.ui.view">
+        <field name="name">property.parent.merge.wizard.view</field>
+        <field name="model">property.parent.merge.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Property Merge">
+                <group col="2" colspan="2">
+                    <field name="new_prop_id" invisible="1"/>
+                    <field name="main_property_id" required="1" context="{'booking_new_prop_id': new_prop_id}"/>
+                </group>
+                <group col="2" colspan="2">
+                    <separator string="Merge Properties"/><newline/>
+                    <field name="new_property_created_ids" nolabel="1" context="{'booking_new_prop_id': new_prop_id, 'booking_main_property_id': main_property_id}">
+                        <list string="Properties" editable="bottom">
+                            <field name="name"/>
+                            <field name="floor" readonly="1"/>
+                            <field name="property_manager"/>
+                            <field name="label_id" widget="selection"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </group>
+                <footer>
+                    <button name="property_merge_parent" string="Merge" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

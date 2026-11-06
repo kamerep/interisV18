@@ -1,0 +1,11 @@
+<odoo>
+
+    <record id="property_rent_report" model="ir.actions.report">
+		<field name="name">Payment Receipt</field>
+		<field name="model">account.analytic.account</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="binding_model_id" ref="analytic.model_account_analytic_account"/>
+		<field name="report_name">property_rent_report_ee.report_rent_voucher_details</field>
+		<field name="report_file">property_rent_report_ee.report_rent_voucher_details</field>
+	</record>
+</odoo>

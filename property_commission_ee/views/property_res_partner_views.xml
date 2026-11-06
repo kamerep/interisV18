@@ -1,0 +1,39 @@
+<odoo>
+
+    <record id="view_partner_form_agent3" model="ir.ui.view">
+        <field name="name">res.partner.form.agent</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <page name="sales_purchases" position="after">
+                <page invisible="not agent" name="commission_information" string="Commission information">
+                 <separator string="Commission History" />
+                    <field colspan="4" name="commission_line" nolabel="1" readonly="1">
+                            <list string="Commission information">
+                               <field name="property_id" />
+                               <field name="name" />
+                               <field name="date_start" />
+                               <field name="date" />
+                               <field name="commission_type" />
+                               <field name="total_commission" sum="Total Commission" />
+                            </list>
+                            <form string="Commission information">
+                            <group>
+                               <field name="property_id" />
+                               <field name="name" />
+                               <field name="date_start" />
+                               <field name="date" />
+                               <field name="commission_type" />
+                               <field name="total_commission" />
+                            </group>
+                            </form>
+                    </field>
+                </page>
+            </page>
+            <xpath expr="//page[@name='sales_purchases']//field[@name='property_supplier_payment_term_id']" position="after">
+                <field name="agent" string="Agent" />
+            </xpath>
+          </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,32 @@
+<odoo>
+
+    <!-- Commission report wizard Form View -->
+    <record id="commission_owner_invoice_id" model="ir.ui.view">
+        <field name="name">Commission Owner Invoice</field>
+        <field name="model">commission.invoice.owner</field>
+        <field name="arch" type="xml">
+            <form string="Commission Owner Invoice">
+                <separator string="Commission details" colspan="4" />
+                <group colspan="4" col="4">
+                    <field name="start_date" />
+                    <field name="end_date" />
+                </group>
+                <footer>
+                    <button name="print_yes" string="Print" icon="fa-print"
+                        type="object" class="oe_highlight" />
+                    <button special="cancel" string="Cancel" icon="fa-times-circle"
+                        class="oe_highlight oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--Action for Commission Owner Invoice wizard -->
+    <record id="action_commission_owner_invoices" model="ir.actions.act_window">
+        <field name="name">Commission Owner Invoice</field>
+        <field name="res_model">commission.invoice.owner</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

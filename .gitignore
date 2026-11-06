@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.orig
+*.rej
+.claude/
+.vscode/
+.idea/

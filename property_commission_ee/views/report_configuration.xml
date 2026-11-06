@@ -1,0 +1,23 @@
+<odoo>
+
+    <record id="commission_owner_invoice_report" model="ir.actions.report">
+        <field name="name">Commission Invoice Owner</field>
+        <field name="model">commission.invoice.owner</field>
+        <field name="binding_model_id" ref="model_commission_invoice_owner"/>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">property_commission_ee.commission_invoice_owner</field>
+        <field name="report_file">property_commission_ee.commission_invoice_owner</field>
+    </record>
+
+
+    <record id="commission_for_invoice_report" model="ir.actions.report">
+        <field name="name">Commission Report</field>
+        <field name="model">commission.invoice</field>
+        <field name="binding_model_id" ref="model_commission_invoice"/>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">property_commission_ee.commission_report_template2</field>
+        <field name="report_file">property_commission_ee.commission_report_template2</field>
+        <field name="attachment_use">False</field>
+    </record>
+
+</odoo>

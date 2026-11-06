@@ -1,0 +1,39 @@
+<odoo>
+
+	<!--Renew Tenancy Wizard Form View -->
+	<record model="ir.ui.view" id="view_renew_tenancy_wizard">
+		<field name="name">renew.tenancy.view</field>
+		<field name="model">renew.tenancy</field>
+		<field name="arch" type="xml">
+			<form string="Renew Tenancy Wizard">
+				<p colspan="2" class="oe_edit_only oe_grey">
+					Fill up Start date, End date and Periods To Renew Tenancy.
+				</p>
+				<group>
+                    <label for="start_date" string="Dates"/>
+                    <div name="dates" class="o_row">
+                        <field name="start_date" widget="daterange" options='{"related_end_date": "end_date"}'/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow" invisible="not start_date and not end_date"/>
+                        <field name="end_date" widget="daterange" options='{"related_start_date": "start_date"}'/>
+                    </div>
+                    <field name="rent_type_id" widget="selection"/>
+                </group>
+				<footer>
+					<button name="renew_contract" type="object" string="Renew" class="oe_highlight"/>
+					or
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<!-- Action for Renew Tenancy Wizard -->
+	<record model="ir.actions.act_window" id="action_renew_tenancy_wizz_wizz">
+		<field name="name">Renew Tenancy Wizard</field>
+		<field name="res_model">renew.tenancy</field>
+		<field name="view_mode">form</field>
+		<field name="target">new</field>
+	</record>
+
+</odoo>

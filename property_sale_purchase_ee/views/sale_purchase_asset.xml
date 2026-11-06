@@ -1,0 +1,113 @@
+<odoo>
+
+    <record id="property_sale_ext_view" model="ir.ui.view">
+        <field name="name">account.asset.form</field>
+        <field name="model">account.asset</field>
+        <field name="inherit_id" ref="property_management_ee.property_asset_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='nearest_place']" position="before">
+                <page readonly="state in ['sold', 'close']" name="purchase_and_sale_details" string="Purchase And Sale Details">
+                    <separator colspan="4" string="Payment Details" />
+                    <group readonly="state in ['sold', 'close']" col="4" colspan="4">
+                        <field name="sale_date" />
+                        <field name="sale_price" options="{'currency_field': 'currency_id'}" widget="monetary" />
+                        <field name="payment_term" />
+                        <field name="customer_id" />
+                        <field name="partner_id" />
+                    </group>
+                    <newline />
+                    <group col="2" colspan="2">
+                        <button invisible="sale_instl_chck" class="oe_stat_button oe_highlight" colspan="2" name="genrate_payment_enteries" string="Create Entries" type="object" />
+                        <field invisible="1" name="sale_instl_chck" />
+
+<!--                        <label for="___" string="   " />-->
+                        <!-- <button class="oe_stat_button oe_highlight" colspan="2" name="button_sold" states="close" string="  Sale   " type="object" /> -->
+                    </group>
+                    <newline />
+                    <separator colspan="4" string="Sales Cost" />
+                    <field readonly="state in ['sold', 'close']" colspan="4" name="sale_cost_ids" nolabel="1">
+                        <list editable="bottom" string="Sale Cost Details">
+                            <field name="date" />
+                            <field name="amount" />
+                            <field name="payment_details" />
+                            <field name="move_check" />
+                            <field name="remaining_amount" />
+                            <field name="rmn_amnt_per" />
+                            <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name='company_id'  groups="base.group_multi_company" invisible="1"/>
+                            <button invisible="move_check" class="fa fa-gear" name="create_invoice" type="object">
+                            </button>
+                            <button
+                                    invisible="not move_check" class="fa fa-arrow-circle-o-right" name="open_invoice" type="object">
+                            </button>
+                        </list>
+                        <form string="Cost Details">
+                            <group colspan="4">
+                                <field name="date" />
+                                <field name="amount" />
+                                <field name="payment_details" />
+                                <field name="move_check" />
+                                <field name="remaining_amount" />
+                                <field name="rmn_amnt_per" />
+                                <field invisible="1" name="invc_id" />
+                                <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                                <field name='company_id'  groups="base.group_multi_company" invisible="1"/>
+                            </group>
+                        </form>
+                    </field>
+                    <separator colspan="4" string="Purchase Details" />
+                    <group col="4" colspan="4">
+                        <field name="acquisition_date" required="1" />
+                        <field name="end_date" />
+                        <field name="purchase_price" options="{'currency_field': 'currency_id'}" widget="monetary" />
+                        <field name="multiple_owners" />
+                        <field invisible="not multiple_owners" name="total_owners" />
+                        <field name="recurring_rule_type" />
+                        <button invisible="pur_instl_chck" class="oe_highlight oe_stat_button" colspan="2" name="create_purchase_installment" string="Create Installment" type="object" />
+                        <field invisible="1" name="pur_instl_chck" />
+                    </group>
+                    <newline />
+                    <separator colspan="4" string="Purchase Cost" />
+                    <field colspan="4" context="{}" name="purchase_cost_ids" nolabel="1">
+                        <form string="Cost Details">
+                            <group colspan="4">
+                                <field name="name" />
+                                <field name="date" />
+                                <field name="amount" />
+                               <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name='company_id'  groups="base.group_multi_company" invisible="1"/>
+                                <field name="move_id" />
+                                <field name="property_id" invisible="1" />
+                                <field name="payment_details" />
+                                <field name="remaining_amount" />
+                                <field name="rmn_amnt_per" />
+                                <field invisible="1" name="invc_id" />
+                            </group>
+                        </form>
+                        <list editable="bottom" string="Purchase Cost Details">
+                            <field name="date" />
+                            <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                            <field name='company_id'  groups="base.group_multi_company" invisible="1"/>
+                            <field name="amount" sum="Total Cost" />
+                            <field name="payment_details" />
+                            <field name="move_check" />
+                            <field name="remaining_amount" />
+                            <field name="rmn_amnt_per" />
+                            <field name="name" string="Notes" />
+                            <button
+                                    invisible="move_check" class="fa fa-gear" name="create_invoice" type="object">
+                            </button>
+                            <button
+                                    invisible="not move_check"  class="fa fa-arrow-circle-o-right" name="open_invoice" type="object">
+                            </button>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[@name='occupancy']/group[@name='property_performance']/field[@name='operational_costs']" position="before">
+                <field name="return_period" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

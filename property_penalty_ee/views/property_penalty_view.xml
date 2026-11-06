@@ -1,0 +1,37 @@
+<odoo>
+    <!--Inherited account asset asset form view to add label -->
+    <record id="property_tenancy_penalty_view_inherit" model="ir.ui.view">
+        <field name="name">property.tenancy.penalty.view.inherit</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="property_management_ee.property_analytic_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="before">
+                <separator string="Penalty Information" colspan="4"/>
+                <group col="4" colspan="4">
+                    <field name="penalty"/>
+                    <field name="penalty_day"/>
+                </group>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='rent_schedule']/field[@name='rent_schedule_ids']/list/field[@name='amount']" position="after">
+                <field name="penalty_amount" readonly="1"/>
+            </xpath>
+            <xpath expr="//form/sheet/notebook/page[@name='rent_schedule']/field[@name='rent_schedule_ids']/list/button[@name='create_invoice']" position="attributes">
+                <attribute name="context">{'asset':1,'is_tenancy':1,'amount_val': 2, 'recuring': 0, 'comm': 1,'penanlty': 0}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!--Inherited tenancy rent schedular form view  -->
+    <record id="tenancy_rent_schedule_view_inherit" model="ir.ui.view">
+        <field name="name">tenancy.rent.schedule.view.inherit</field>
+        <field name="model">tenancy.rent.schedule</field>
+        <field name="inherit_id" ref="property_management_ee.tenancy_rent_form"/>
+        <field name="arch" type="xml">
+            <field name="amount" position="after">
+                <field name="penalty_amount" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,74 @@
+<odoo>
+	<!--Template For Income Expenditure Report-->
+	<template id="report_income_expenditure">
+		<t t-call="web.html_container">
+				<!-- <t t-call="property_management_ee.property_external_layout"> -->
+				<t t-call="web.external_layout"><br/><br/>
+					<div class="page">
+						<h2>
+							<span>
+								<center>Income Expenditure Report</center>
+							</span>
+						</h2>
+						<br/>
+							<div class="text-center">
+								<strong>From:</strong>
+								<span t-esc="data['start_date']"/>
+								<strong>To:</strong>
+								<span t-esc="data['end_date']"/>
+							</div>
+						<br/>
+						<table class="table table-condensed" width="100%">
+							<tr style="background-color:#f9f9f9;">
+								<td width="33%">
+									<strong>Property</strong>
+								</td>
+								<td width="33%" style="text-align:right;">
+									<strong>Income</strong>
+								</td>
+								<td width="33%" style="text-align:right;">
+									<strong>Expenditure</strong>
+								</td>
+							</tr>
+							<tr t-foreach="get_details" t-as="t">
+								 <t t-set="currency_id" t-value="t.get('currency_id')"/>
+								<td width="33%"><span t-esc="t.get('property', '')"/></td>
+								<td width="33%" style="text-align:right;"><span t-esc="t.get('total_income', '')" t-options="{'widget': 'monetary', 'display_currency': currency_id}"/></td>
+								<td width="33%" style="text-align:right;"><span t-esc="t.get('total_expence', '')" t-options='{"widget": "monetary", "display_currency": currency_id}'/></td>
+							</tr>
+						</table>
+						<table width="100%" class="table table-condensed table-striped">
+							<tr t-foreach='get_details' t-as='ti'>
+								<t t-if="ti.get('total_in', '')">
+									<td width="33%">&#160;</td>
+									<td width="33%" style="text-align:right;">Income : &#160;
+										<span t-esc="ti.get('total_in', '')"/>
+									</td>
+								</t>
+								<t t-if="ti.get('total_ex', '')">
+									<td width="33%" style="text-align:right;">Expenditure : &#160;<span t-esc="ti.get('total_ex', '')"/></td>
+								</t>
+							</tr>
+						</table>
+						<table width="100%" class="table table-condensed table-striped">
+							<tr t-foreach='get_details' t-as='g'>
+								<t t-if="g.get('total_gr')">
+									<td width="33%" style="text-align:right;">Total Income :&#160;
+										<span t-esc="g.get('total_gr')"/>
+									</td>
+								</t>
+							</tr>
+						</table>
+					</div>
+				</t>
+		</t>
+	</template>
+
+	<record id="action_report_income_expenditure" model="ir.actions.report">
+		<field name="name">Income Expenditure</field>
+		<field name="model">account.asset</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">property_management_ee.report_income_expenditure</field>
+		<field name="report_file">property_management_ee.report_income_expenditure</field>
+	</record>
+</odoo>

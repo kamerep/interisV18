@@ -1,0 +1,101 @@
+<odoo>
+
+    <!-- ###################################################################
+                    TENANCY RENT SCHEDULE VIEW
+    ################################################################### -->
+
+    <!--Tenancy Rent Schedule Form view-->
+    <record id="tenancy_rent_form" model="ir.ui.view">
+        <field name="name">tenancy.rent.schedule.form</field>
+        <field name="model">tenancy.rent.schedule</field>
+        <field name="arch" type="xml">
+            <form string="Rent Schedule">
+                <sheet>
+                    <group colspan='4' col='4'>
+                        <field name="cheque_detail"/>
+                        <field name="start_date"/>
+                        <field name="tenancy_id" context="{'form_view_ref': 'property_management_ee.property_analytic_view_form'}"/>
+                        <field name="rel_tenant_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
+                        <field name="amount"/>
+                        <field name="move_check"/>
+                        <field name="is_readonly" invisible="1"/>
+                        <field name="invoice_id" invisible="1"/>
+                        <field name="is_invoiced" invisible="1"/>
+                    </group>
+                    <newline/>
+                    <separator string="Notes" colspan="4"/>
+                    <field name="note" colspan="4" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--Tenancy Rent Schedule Tree view-->
+    <record id="tenancy_rent_tree" model="ir.ui.view">
+        <field name="name">tenancy.rent.schedule.tree</field>
+        <field name="model">tenancy.rent.schedule</field>
+        <field name="arch" type="xml">
+            <list string="Rent Schedule">
+                <field name="start_date"/>
+                <field name="cheque_detail"/>
+                <field name="tenancy_id"/>
+                <field name="rel_tenant_id"/>
+                <field name="amount"/>
+                <field name="move_check"/>
+                <field name="note"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!--Tenancy Rent Schedule Search view-->
+    <record id="tenancy_rent_schedule_search" model="ir.ui.view">
+        <field name="name">tenancy.rent.schedule.search</field>
+        <field name="model">tenancy.rent.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Search Tenant Rent">
+                <filter
+                    name="this_month"
+                    string="This Month"
+                    domain="[('start_date','&lt;=',(datetime.date.today()+relativedelta(day=31)).strftime('%%Y-%%m-%%d')),('start_date','&gt;=',(datetime.date.today()-relativedelta(day=1)).strftime('%%Y-%%m-%%d'))]"
+                    help="Tenant Rent in this month"/>
+                <filter name="paid" string="Paid" domain="[('move_check','=',True)]" help="Paid Tenant Rent"/>
+                <filter name="pending" string="Pending" domain="[('move_check','=',False)]" help="Unpaid Tenant Rent"/>
+                <field name="tenancy_id"/>
+                <field name="cheque_detail"/>
+                <field name="rel_tenant_id"/>
+                <field name="start_date"/>
+                <field name="amount"/>
+                <newline/>
+                <group expand="0" string="Group by..." colspan="4" col="10">
+                    <filter icon="terp-personal" name="tenancy" string="Tenancy" context="{'group_by':'tenancy_id'}"/>
+                    <filter icon="terp-personal" name="tenant" string="Tenant" context="{'group_by':'rel_tenant_id'}"/>
+                    <filter icon="terp-go-today" string="Date" name="date" context="{'group_by':'start_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!--Tenancy Rent Schedule Calendar view-->
+    <record id="tenancy_rent_calendar" model="ir.ui.view">
+        <field name="name">tenancy.rent.schedule.calendar</field>
+        <field name="model">tenancy.rent.schedule</field>
+        <field name="arch" type="xml">
+            <calendar string="Rent" color="tenancy_id" date_start="start_date">
+                <field name="rel_tenant_id"/>
+                <field name="amount"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Action for Tenancy Rent Schedule view-->
+    <record id="action_tenancy_rent" model="ir.actions.act_window">
+        <field name="name">Tenancy Rent Schedule</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tenancy.rent.schedule</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+
+</odoo>

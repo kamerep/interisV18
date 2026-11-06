@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Inherited res partner form view-->
+    <record id="inherited_view_partner_form_tenant_id" model="ir.ui.view">
+        <field name="name">inherited.view.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='website']" position="after">
+                <field name="occupation" />
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']/group/group[@name='sale']/field[@name='user_id']" position="before">
+                <field name="tenant" string='Is a Tenant' />
+            </xpath>
+        </field>
+    </record>
+
+    <!--Inherited res user form view to add tenant id-->
+    <record id="inherited_view_user_form_id" model="ir.ui.view">
+        <field name="name">property.inherited.view.user.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div[hasclass('oe_title')]/group" position='inside'>
+                    <field name="tenant_id" />
+                    <field name="tenant_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

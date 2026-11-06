@@ -1,0 +1,84 @@
+<odoo>
+
+    <!-- Inherited form view of crm lead -->
+    <record id="crm_lead_form_inherit_property" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.property</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//group[1]" position="inside">
+            <group col="4" colspan="4">
+                <field name="property_id" domain="[('state','=','draft')]"/>
+                <field name="demand"/>
+                <field name="is_rent"/>
+                <field name="is_buy"/>
+                <field name="email_send" invisible="1"/>
+            </group>
+          </xpath>
+            <xpath expr="//page[@name='lead']" position="after">
+                <page string="Demand Info" invisible="not demand">
+                    <group>
+                        <group>
+                            <field name="min_bedroom"/>
+                            <field name="min_bathroom"/>
+                            <field name="min_price"/>
+                            <field name="facing"/>
+                            <field name="type_id"/>
+                        </group>
+                        <group>
+                            <field name="max_bedroom"/>
+                            <field name="max_bathroom"/>
+                            <field name="max_price"/>
+                            <field name="furnished"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- crm make contract form view -->
+    <record id="view_crm_make_contract" model="ir.ui.view">
+        <field name="name">crm.make.contract.form</field>
+        <field name="model">crm.make.contract</field>
+        <field name="arch" type="xml">
+            <form string="Convert to Quotation">
+                <group col="4">
+                    <field name="date_start"/>
+                    <field name="date"/>
+                    <field name="close"/>
+                </group>
+                <footer>
+                    <button name="makecontract" string="_Create" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- action for crm make contract -->
+    <record id="action_crm_make_contract" model="ir.actions.act_window">
+        <field name="name">Create Contract</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">crm.make.contract</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Inherited form view of opportunity -->
+    <record id="crm_lead_form_opportunity_inherit_button" model="ir.ui.view">
+        <field name="name">crm.lead.form.opportunity.inherit.button</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_sale_quotations_new']" position="replace">
+                <button invisible="is_rent or probability == 0" string="Create Quotation" name="%(action_crm_make_sale)d" type="action" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//field[@name='stage_id']" position="before">
+                <button invisible="is_buy" string="Create Contract" name="%(action_crm_make_contract)d" type="action" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

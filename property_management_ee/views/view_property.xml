@@ -1,0 +1,371 @@
+<odoo>
+	<!--PROPERTY TYPE VIEW-->
+	<!--Property Type Form View-->
+	<record id="property_type_form" model="ir.ui.view">
+		<field name="name">property.type.form</field>
+		<field name="model">property.type</field>
+		<field name="arch" type="xml">
+			<form string="Property Type">
+				<sheet>
+					<group>
+						<field name="name"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!--Property Type Tree View-->
+	<record id="property_type_tree" model="ir.ui.view">
+		<field name="name">property.type.tree</field>
+		<field name="model">property.type</field>
+		<field name="arch" type="xml">
+			<list string="Property Type">
+				<field name="name"/>
+			</list>
+		</field>
+	</record>
+
+	<!--Property Type Search View-->
+	<record id="property_type_view_search" model="ir.ui.view">
+		<field name="name">property.type.search</field>
+		<field name="model">property.type</field>
+		<field name="arch" type="xml">
+			<search string="Search Property">
+				<field name="name"/>
+			</search>
+		</field>
+	</record>
+
+	<!-- Action for Property Tenancy Views -->
+	<record id="action_property_type_view" model="ir.actions.act_window">
+		<field name="name">Property Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">property.type</field>
+		<field name="view_mode">list,form</field>
+	</record>
+
+	<!-- ################################################################### RENT TYPE VIEW ################################################################### -->
+
+	<!--Rent Type Form View-->
+	<record id="rent_type_form" model="ir.ui.view">
+		<field name="name">rent.type.form</field>
+		<field name="model">rent.type</field>
+		<field name="arch" type="xml">
+			<form string="Rent Type">
+				<sheet>
+					<group>
+						<field name="name"/>
+						<field name="renttype"/>
+						<field name="sequence_in_view"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Rent Type Tree View-->
+	<record id="rent_type_tree" model="ir.ui.view">
+		<field name="name">rent.type.tree</field>
+		<field name="model">rent.type</field>
+		<field name="arch" type="xml">
+			<list string="Rent Type">
+				<field name="name"/>
+				<field name="renttype"/>
+				<field name="sequence_in_view"/>
+			</list>
+		</field>
+	</record>
+
+	<!--Rent Type Search View-->
+	<record model="ir.ui.view" id="rent_type_view_search">
+		<field name="name">rent.type.search</field>
+		<field name="model">rent.type</field>
+		<field name="arch" type="xml">
+			<search string="Search Property">
+				<field name="name"/>
+				<field name="renttype"/>
+			</search>
+		</field>
+	</record>
+
+	<!--Action for Rent Type Views -->
+	<record id="action_rent_type_view" model="ir.actions.act_window">
+		<field name="name">Rent Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">rent.type</field>
+		<field name="view_mode">list,form</field>
+	</record>
+
+	<!-- ################################################################### ROOM TYPE VIEW ################################################################### -->
+
+	<!-- Room Type Form View -->
+	<record id="room_type_form" model="ir.ui.view">
+		<field name="name">room.type.form</field>
+		<field name="model">room.type</field>
+		<field name="arch" type="xml">
+			<form string="Room Type">
+				<sheet>
+					<group>
+						<field name="name"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Room Type Tree View -->
+	<record id="room_type_tree" model="ir.ui.view">
+		<field name="name">room.type.tree</field>
+		<field name="model">room.type</field>
+		<field name="arch" type="xml">
+			<list string="Room Type">
+				<field name="name"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- Room Type Search View -->
+	<record model="ir.ui.view" id="room_type_view_search">
+		<field name="name">room.type.search</field>
+		<field name="model">room.type</field>
+		<field name="arch" type="xml">
+			<search string="Search Property">
+				<field name="name"/>
+			</search>
+		</field>
+	</record>
+
+	<!-- Action for Room Type Views -->
+	<record id="action_room_type_view" model="ir.actions.act_window">
+		<field name="name">Room Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">room.type</field>
+		<field name="view_mode">list,form</field>
+	</record>
+
+	<!-- ################################################################### UTILITY VIEW ################################################################### -->
+
+	<!-- Utility Type Form View -->
+	<record id="utility_form" model="ir.ui.view">
+		<field name="name">utility.form</field>
+		<field name="model">utility</field>
+		<field name="arch" type="xml">
+			<form string="Room Type">
+				<sheet>
+					<group>
+						<field name="name"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Utility Type Tree View -->
+	<record id="utility_tree" model="ir.ui.view">
+		<field name="name">utility.tree</field>
+		<field name="model">utility</field>
+		<field name="arch" type="xml">
+			<list string="Room Type">
+				<field name="name"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- Utility Type Search View -->
+	<record model="ir.ui.view" id="utility_type_view_search">
+		<field name="name">utility.type.search</field>
+		<field name="model">utility</field>
+		<field name="arch" type="xml">
+			<search string="Search Property">
+				<field name="name"/>
+			</search>
+		</field>
+	</record>
+
+	<!-- Action for Utility Type Views -->
+	<record id="action_utility_view" model="ir.actions.act_window">
+		<field name="name">Utility Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">utility</field>
+		<field name="view_mode">list,form</field>
+	</record>
+
+	<!-- ################################################################### PLACE TYPE VIEW ################################################################### -->
+
+	<!-- Place Type Search View -->
+	<record model="ir.ui.view" id="utility_type_view_search">
+		<field name="name">place.type.search</field>
+		<field name="model">place.type</field>
+		<field name="arch" type="xml">
+			<search string="Search Place Type">
+				<field name="name"/>
+			</search>
+		</field>
+	</record>
+
+	<!-- Place Type Form View -->
+	<record id="place_type_form" model="ir.ui.view">
+		<field name="name">place.type.form</field>
+		<field name="model">place.type</field>
+		<field name="arch" type="xml">
+			<form string="Place Type">
+				<sheet>
+					<group>
+						<field name="name"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Place Type Tree View -->
+	<record id="place_type_tree" model="ir.ui.view">
+		<field name="name">place.type.tree</field>
+		<field name="model">place.type</field>
+		<field name="arch" type="xml">
+			<list string="Place Type">
+				<field name="name"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- Action for Place Type Views -->
+	<record id="action_place_type_view" model="ir.actions.act_window">
+		<field name="name">Place Type</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">place.type</field>
+		<field name="view_mode">list,form</field>
+	</record>
+
+	<!-- ################################################################### PROPERTY ROOM VIEW ################################################################### -->
+
+	<!-- Rooms Form View -->
+	<record id="property_room_view_form" model="ir.ui.view">
+		<field name="name">property.room.form</field>
+		<field name="model">property.room</field>
+		<field name="arch" type="xml">
+			<form string="Rooms">
+				<sheet>
+
+					<field name="image" widget="image" class="oe_left oe_avatar" />
+					<div class="oe_title oe_left" style="padding-left:15px">
+						<div class="oe_edit_only">
+							<label for="name"/>
+						</div>
+						<h1>
+							<field name="name" default_focus="1" placeholder="Name" required='1'/>
+						</h1>
+					</div>
+					<group colspan="4" col='4'>
+						<field name="length"/>
+						<field name="type_id" widget="selection"/>
+						<field name="width"/>
+						<field name="attach"/>
+						<field name="height"/>
+					</group>
+					<notebook colspan="4">
+						<page string="Room Details">
+							<field name="assets_ids" colspan="4" nolabel="1"/>
+							<newline/>
+							<separator string="Notes" colspan="4"/>
+							<field name="note" colspan="4" nolabel="1"/>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- Property Rooms Tree View-->
+	<record id="property_room_view_tree" model="ir.ui.view">
+		<field name="name">property.room.tree</field>
+		<field name="model">property.room</field>
+		<field name="arch" type="xml">
+			<list string="Rooms">
+				<field name="name"/>
+				<field name="type_id"/>
+				<field name="length" string="Length (m)"/>
+				<field name="width" string="Width (m)"/>
+				<field name="height" string="Height (m)"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- ################################################################### ROOM ASSET VIEW ################################################################### -->
+
+	<!--Room Assets Form View-->
+	<record id="room_assets_view_form" model="ir.ui.view">
+		<field name="name">room.assets.form</field>
+		<field name="model">room.assets</field>
+		<field name="arch" type="xml">
+			<form string="Room Assets">
+				<sheet>
+					<group colspan="4" col='4'>
+						<field name="type"/>
+						<field name="qty"/>
+						<field name="name"/>
+						<field name="date"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!--Room Assets Tree View-->
+	<record id="room_assets_view_tree" model="ir.ui.view">
+		<field name="name">room.assets.tree</field>
+		<field name="model">room.assets</field>
+		<field name="arch" type="xml">
+			<list string="Room Assets" editable="bottom">
+				<field name="type"/>
+				<field name="name"/>
+				<field name="qty"/>
+				<field name="date"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- ################################################################### PROPERTY CERTIFICATE VIEW ################################################################### -->
+
+	<!--Property Safety Certificate Tree view-->
+	<record id="property_certificate_view_tree" model="ir.ui.view">
+		<field name="name">property.certificate.tree</field>
+		<field name="model">property.safety.certificate</field>
+		<field name="arch" type="xml">
+			<list string="Property Certificate Details" editable="bottom">
+				<field name="name"/>
+				<field name="expiry_date"/>
+				<field name="property_id"/>
+				<field name="contact_id"/>
+			</list>
+		</field>
+	</record>
+
+	<!-- ################################################################### PROPERTY ATTACHMENT VIEW ################################################################### -->
+
+	<!--Property Attachment Tree view-->
+	<record id="property_attachment_view_tree" model="ir.ui.view">
+		<field name="name">property.attachment.tree</field>
+		<field name="model">property.attachment</field>
+		<field name="arch" type="xml">
+			<list string="Property Attachment Details" create="false">
+				<field name="name"/>
+				<field name="expiry_date"/>
+				<field name="property_id"/>
+			</list>
+		</field>
+	</record>
+
+	<!--Inherit account invoice line -->
+	<!-- <record id="property_tenancy_acc_invo_view_inherit" model="ir.ui.view">
+		<field name="name">account.invoice.form</field>
+		<field name="model">account.invoice</field>
+		<field name="inherit_id" ref="account.invoice_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="attributes">
+				<attribute name="required">False</attribute>
+			</xpath>
+		</field>
+	</record> -->
+</odoo>

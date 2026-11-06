@@ -1,0 +1,16 @@
+<odoo>
+	<!-- Tenant Wizard Mail Form View -->
+	<record id="view_partner_mass_mail" model="ir.ui.view">
+		<field name="name">Mass Mailing</field>
+		<field name="model">tenant.wizard.mail</field>
+		<field name="arch" type="xml">
+			<form string="Mass Mailing">
+				<button special="cancel" string="Cancel" icon="fa-times" class="oe_highlight"/>
+				<button name="mass_mail_send" string="Send Email" type="object" icon="fa-envelope" class="oe_highlight"/>
+			</form>
+		</field>
+	</record>
+
+	<act_window name="Mailing" res_model="tenant.wizard.mail" binding_model="tenancy.rent.schedule" view_mode="form" target="new" id="action_tenant_mass_mail"/>
+
+</odoo>

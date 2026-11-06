@@ -1,0 +1,30 @@
+<odoo>
+    <record id="group_hide_menus" model="res.groups">
+        <field name="name">Restricted Menus Group</field>
+        <field name="comment">Restricted Menus Group</field>
+    </record>
+
+    <record model="ir.ui.menu" id="maintenance.menu_equipment_form">
+        <field name="groups_id" eval="[(6, 0, [ref('group_hide_menus')])]"/>
+    </record>
+
+    <record model="ir.ui.menu" id="maintenance.menu_maintenance_cat">
+        <field name="groups_id" eval="[(6, 0, [ref('group_hide_menus')])]"/>
+    </record>
+
+    <record id="groups_property_maintenance" model="ir.module.category">
+        <field name="name">Maintenance</field>
+        <field name="sequence">15</field>
+    </record>
+
+    <record id="groups_property_maintenance_manager" model="res.groups">
+        <field name="name">Maintenance Manager</field>
+        <field name="category_id" ref="property_maintenance_ee.groups_property_maintenance"/>
+    </record>
+
+    <record id="groups_property_maintenance_worker" model="res.groups">
+        <field name="name">Maintenance Technician/Worker</field>
+        <field name="category_id" ref="property_maintenance_ee.groups_property_maintenance"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,8 @@
+<odoo>
+    <record id="maintenance.stage_1" model="maintenance.stage">
+        <field name="name">In Progress</field>
+        <field name="sequence" eval="2" />
+        <field name="fold" eval="False" />
+        <field name="is_in_progress" eval="True" />
+    </record>
+</odoo>

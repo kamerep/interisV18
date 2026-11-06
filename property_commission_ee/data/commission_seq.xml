@@ -1,0 +1,10 @@
+<odoo>
+
+    <record id="seq_commition" model="ir.sequence">
+        <field name="name">commission.invoice</field>
+        <field name="code">commission.invoice</field>
+        <field name="prefix">COM/</field>
+        <field name="padding">5</field>
+    </record>
+    
+</odoo>

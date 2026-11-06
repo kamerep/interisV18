@@ -1,0 +1,121 @@
+<odoo>
+    <!--Property Main Menu -->
+    <menuitem
+        id="menu_property_main"
+        name="Property Management"
+        web_icon="property_management_ee,static/description/icon1.png"
+        groups="property_management_ee.group_property_user,property_management_ee.group_property_manager,property_management_ee.group_property_owner,property_management_ee.group_property_agent"/>
+
+        <!--Property Menu -->
+    <menuitem
+        id="menu_property_sub"
+        name="Property Details"
+        parent="menu_property_main"
+        sequence="1"/>
+
+    <!--Properties -->
+    <menuitem
+        id="menu_property_assets"
+        name="Properties"
+        parent="menu_property_sub"
+        action="action_property_assets_view"
+        sequence="1"/>
+
+    <!-- <menuitem
+        id="menu_create_h_property2"
+        name="Property Hierarchy"
+        action="action_create_hierarchy_property_id"
+        parent="menu_property_sub"
+        sequence="2"/> -->
+
+
+    <!--Tenant Details -->
+    <menuitem
+        id="menu_tenant_details_sub"
+        name="Tenant Details"
+        parent="menu_property_main"
+        sequence="2"/>
+
+    <!--  Tenants-->
+    <menuitem
+        id="menu_tenant_detail"
+        name="Tenants"
+        parent="menu_tenant_details_sub"
+        action="action_tenant_detail_view"
+        sequence="1"/>
+
+    <!--Tenancy -->
+    <menuitem
+        id="menu_tenancy"
+        name="Tenant Tenancy"
+        parent="menu_tenant_details_sub"
+        action="action_property_analytic_view"
+        sequence="2"/>
+
+            <!--Hierarchy -->
+            <!-- <menuitem id="menu_account_asset_asset_hierarch_action" parent="menu_property_sub" action="action_account_asset_asset_hierarch" groups='base.group_erp_manager,property_management.group_property_manager'/> -->
+
+    <!--Rent Schedule menu-->
+    <menuitem
+        id="menu_tenancy_rent"
+        name="Tenancy Rent Schedule"
+        parent="menu_tenant_details_sub"
+        action="action_tenancy_rent"
+        sequence="3"/>
+
+    <menuitem
+        id="menu_report_sub"
+        name="Reporting"
+        parent="menu_property_main"
+        sequence="6"/>
+
+
+
+    <menuitem
+        id="menu_configuration_main"
+        name="Configuration"
+        parent="menu_property_main"
+        sequence="7"/>
+
+        <!--Types-->
+    <menuitem
+        id="menu_types_main"
+        name="Types"
+        parent="menu_configuration_main"/>
+
+        <!--Property Types-->
+    <menuitem
+        id="menu_property_type"
+        name="Property Type"
+        parent="menu_types_main"
+        action="action_property_type_view"/>
+
+        <!--Rent Types-->
+    <menuitem
+        id="menu_rent_type"
+        name="Rent Type"
+        parent="menu_types_main"
+        action="action_rent_type_view"/>
+
+        <!--Room Types-->
+        <menuitem
+            id="menu_room_type"
+            name="Room Type"
+            parent="menu_types_main"
+            action="action_room_type_view"/>
+
+        <!--Utility Types-->
+        <menuitem
+            id="menu_utility"
+            name="Utility Type"
+            parent="menu_types_main"
+            action="action_utility_view"/>
+
+        <!--Place Types-->
+        <menuitem
+            id="menu_place_type"
+            name="Place Type"
+            parent="menu_types_main"
+            action="action_place_type_view"/>
+
+</odoo>

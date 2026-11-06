@@ -1,0 +1,301 @@
+<odoo>
+
+    <record id="property_analytic_view_tree_landlord" model="ir.ui.view">
+        <field name="name">property.analytic.view.tree</field>
+        <field name="model">account.analytic.account</field>
+        <field name="arch" type="xml">
+            <list string="Tenancy Details">
+                <field name="ten_date"/>
+                <field name="name" string="Tenancy Name "/>
+                <field name="code" string="Code"/>
+                <field name="property_id"/>
+                <field name="property_owner_id"/>
+                <field name="date_start"/>
+                <field name="date"/>
+                <field name="rent_type_id"/>
+                <field name="landlord_rent"/>
+                <field name="total_rent" sum="Total Rent"/>
+                <field name="state"/>
+                <field invisible="1" name="currency_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="landlord_analytic_view_form_id" model="ir.ui.view">
+        <field name="name">landlord.property.analytic.view.form</field>
+        <field name="model">account.analytic.account</field>
+        <field name="arch" type="xml">
+            <form string="Tenancy Details">
+                <header>
+                    <button colspan="2" class="oe_highlight" icon="fa-play" name="landlord_button_start" invisible="state != 'draft'" string="Start" type="object"/>
+                    <button invisible="state != 'open' or rent_entry_chck" colspan="2" class="oe_highlight" icon="fa-plus" name="create_rent_schedule_landlord" string=" Schedule Rent" type="object"/>
+                    <button
+                        invisible="deposit_received"
+                        icon="fa-money"
+                        name="landlord_button_deposite_pay"
+                        string="Pay Deposit"
+                        context="{'deposite_pay':True}"
+                        class="oe_highlight"
+                        type="object"/>
+
+                    <button
+                        invisible="deposit_return or not deposit_received"
+                        context="{'deposite_received':1}"
+                        icon="fa-undo"
+                        name="landlord_button_deposite_received"
+                        string="Received Deposit"
+                        class="oe_highlight"
+                        type="object"/>
+                    <button colspan="2" class="oe_highlight" icon="fa-undo" name="button_set_to_renew" invisible="state != 'close'" string="Renew" type="object"/>
+
+                    <button
+                        invisible="tenancy_cancelled or state != 'open'"
+                        colspan="2"
+                        confirm="Are you sure you want to Cancel?"
+                        icon="fa-times"
+                        name="landlord_button_cancel_tenancy"
+                        string="Cancel Tenancy"
+                        class="oe_highlight"
+                        type="object"/>
+                    <button colspan="2" icon="fa-times" class="oe_highlight" name="landlord_button_close" invisible="state != 'open'" string="Close" type="object"/>
+                    <field name="state" statusbar_visible="draft,open,close" widget="statusbar"/>
+                </header>
+                <sheet>
+                    
+                    <div class="oe_button_box" name="button_box">
+                        <!-- <button class="oe_stat_button" colspan="2" icon="fa-play" name="landlord_button_start" states="draft" string="Start" type="object"/>
+                        <button attrs="{'invisible': ['|', ('state','!=','open'),('rent_entry_chck','!=',False)]}" class="oe_stat_button" colspan="2" icon="fa-plus" name="create_rent_schedule_landlord" string=" Schedule Rent" type="object"/>
+                        <button
+                            attrs="{'invisible':[('deposit_received','=',True)]}"
+                            class="oe_inline oe_stat_button"
+                            icon="fa-money"
+                            name="landlord_button_deposite_pay"
+                            string="Pay Deposit"
+                            context="{'deposite_pay':True}"
+                            type="object"/>
+                        <button
+                            attrs="{'invisible':['|',('deposit_return','=',True),('deposit_received','=',False)]}"
+                            class="oe_inline oe_stat_button"
+                            context="{'deposite_received':1}"
+                            icon="fa-undo"
+                            name="landlord_button_deposite_received"
+                            string="Received Deposit"
+                            type="object"/>
+                        <button class="oe_stat_button" colspan="2" icon="fa-undo" name="button_set_to_renew" states="close" string="Renew" type="object"/>
+
+                        <button
+                            attrs="{'invisible':['|',('tenancy_cancelled','!=',False),('state','!=','open')]}"
+                            class="oe_inline oe_stat_button"
+                            colspan="2"
+                            confirm="Are you sure you want to Cancel?"
+                            icon="fa-times"
+                            name="landlord_button_cancel_tenancy"
+                            string="Cancel Tenancy"
+                            type="object"/>
+                        <button class="oe_stat_button" colspan="2" icon="fa-times" name="landlord_button_close" states="open" string="Close" type="object"/> -->
+                        <field invisible="1" name="rent_entry_chck"/>
+                    </div>
+                    <div class="oe_title oe_left">
+                        <label class="oe_edit_only" for="name" string='Landlord'/>
+                        <h1>
+                            <field class="oe_inline" default_focus="1" name="name" placeholder="Tenancy Name"/>
+                        </h1>
+                        <label class="oe_edit_only" for="code"
+                               string="Tenancy #"/>
+                        <h4>
+                            <field name="code" readonly="1"/>
+                        </h4>
+                    </div>
+                    <group readonly="state == 'close'" colspan="2">
+                        <group col="4" colspan="4">
+                            <separator colspan="4" string="Asset Information"/>
+                            <field readonly="state != 'draft'" name="property_id" placeholder="Property Name" required="1" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+                            <field readonly="state != 'draft'" context="{'default_is_owner':True,}" domain="[('is_owner','=',True)]" name="property_owner_id" placeholder="Owner Name" required="1"/>
+                            <field name="manager_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field invisible="1" name="tenancy_cancelled"/>
+                            <field name="resident_type" invisible="1"/>
+                            <field invisible="1" name="multi_prop"/>
+                            <field invisible="1" name="invoice_id"/>
+                        </group>
+                        <group readonly="state == 'close'" col="4" colspan="4">
+                            <separator colspan="4" string="Tenancy Information"/>
+                            <field readonly="state != 'draft'" name="landlord_rent"/>
+                            <field name="ten_date" required="1"/>
+                            <field readonly="deposit_received" name="deposit" string="Amount Deposit"/>
+                            <field name="amount_return" readonly="1"/>
+                            <field name="deposit_received" string="Deposit Paid ?"/>
+                            <field name="deposit_return"  string="Deposit Received ?"/>
+                            <field colspan="2" name="deposit_scheme_type"/>
+                            <field colspan="2" name="contact_id"/>
+                            <field invisible="1" name="main_cost"/>
+                            <field invisible="1" name="acc_pay_dep_rec_id"/>
+                            <field invisible="1" name="acc_pay_dep_ret_id"/>
+                        </group>
+                        <group col="4" colspan="4">
+                            <separator colspan="4" string="Contract Information"/>
+                            <field readonly="state != 'draft'" colspan="2" name="date_start" required="True"/>
+                            <field readonly="state != 'draft'" colspan="2" name="date" placeholder="End Date" required="True"/>
+                            <field name="rent_type_id" required="True" widget="selection"/>
+                            <field name="total_rent"/>
+                            <field name="contract_attachment"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="rent_schedule" string="Rent Schedule">
+                            <separator colspan="4" string="Rent Schedule Details"/>
+                            <field readonly="state in ['close', 'cancelled']" name="rent_schedule_ids" nolabel="1">
+                                <list decoration-danger="is_invoiced == True" decoration-info="paid == True" editable="bottom" limit="12" string="Rent Schedule">
+                                    <field name="start_date"/>
+                                    <field name="amount" sum="Total Amount"/>
+                                    <field name="rent_residual"/>
+                                    <field name="paid"/>
+                                    <field name="move_check"/>
+                                    <field name="note"/>
+                                    <field name="invoice_id"/>
+                                    <field invisible="1" name="is_invoiced"/>
+                                    <field invisible="1" name="tenancy_id"/>
+                                    <field invisible="1" name="currency_id"/>
+                                    <field invisible="1" name="is_readonly"/>
+                                    <button
+                                            invisible="is_invoiced or is_readonly" name="create_landlord_invoice" class="fa fa-gear" type="object">
+                                    </button>
+                                    <button
+                                            invisible="not is_invoiced" class="fa fa-arrow-circle-o-right" name="open_landlord_invoice" type="object">
+                                    </button>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="history" string="History">
+                            <separator colspan="4" string="Account History"/>
+                            <field name="line_ids" readonly="1">
+                                <list create="false" string="Analytic Items">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="ref" string="Reference"/>
+                                    <field name="move_line_id"/>
+                                    <field name="general_account_id" options="{&quot;no_open&quot;:True}"/>
+                                    <field name="amount" sum="Total" widget="monetary"/>
+                                    <field name="currency_id" options="{'no_create': True}" invisible="1"/>
+                                </list>
+                            </field>
+                            <group/>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="total_credit_amt"/>
+                                <field name="total_debit_amt"/>
+                                <field class="oe_subtotal_footer_separator" name="total_deb_cre_amt"/>
+                            </group>
+                        </page>
+
+                        <page name="contract_page" string="Terms &amp; Conditions">
+                            <separator name="description" string="Terms and Conditions"/>
+                            <field name="description" placeholder="Enter Terms and Conditions..."/>
+                        </page>
+                    </notebook>
+                    <separator colspan="4" string="Notes"/>
+                    <field colspan="4" name="duration_cover" nolabel="1" placeholder="Additional notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="analytic_kanban_view_landlord" model="ir.ui.view">
+        <field name="name">Account Analytic Account Kanban</field>
+        <field name="model">account.analytic.account</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name" string="Tenancy Name"/>
+                <field name="code" string="Code"/>
+                <field name="property_id"/>
+                <field name="tenant_id"/>
+                <field name="date_start"/>
+                <field name="date"/>
+                <field name="rent_type_id"/>
+                <field name="landlord_rent"/>
+                <field name="total_rent" sum="Total Rent"/>
+                <field name="state"/>
+                <field invisible="1" name="currency_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb16">
+                                <div class="o_kanban_record_headings mt4">
+                                    <strong class="o_kanban_record_title">
+                                        <span>
+                                            <strong>
+                                                [<field name="code"/>]
+                                                <t t-esc="record.name.value"/>
+                                            </strong>
+                                        </span>
+                                    </strong>
+                                </div>
+                                <strong>
+                                    <field name="total_rent" widget="monetary"/>
+                                </strong>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left text-muted">
+                                    <span>
+                                        <t t-esc="record.tenant_id.value"/>
+                                        <br/>
+                                        <t t-esc="record.date_start.value and record.date_start.value.split(' ')[0] or False"/>
+                                        -
+                                        <t t-esc="record.date.value and record.date.value.split(' ')[0] or False"/>
+                                    </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="state" options="{'classes': {'draft': 'success', 'close': 'default', 'cancelled': 'danger', 'pending': 'warning'}}" widget="label_selection"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_analytic_rent_action" model="ir.actions.act_window">
+        <field name="name">Landlord Tenancy</field>
+        <field name="res_model">account.analytic.account</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('resident_type','=','landlord_partner')]</field>
+        <field name="context">{'is_landlord_rent':True,'default_resident_type': 'landlord_partner' }</field>
+    </record>
+
+    <record id="action_analytic_rent_form_view" model="ir.actions.act_window.view">
+        <field eval="3" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="property_landlord_management_ee.landlord_analytic_view_form_id"/>
+        <field name="act_window_id" ref="property_landlord_management_ee.action_analytic_rent_action"/>
+    </record>
+
+    <record id="action_analytic_rent_tree_view" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="property_landlord_management_ee.property_analytic_view_tree_landlord"/>
+        <field name="act_window_id" ref="property_landlord_management_ee.action_analytic_rent_action"/>
+    </record>
+
+    <record id="action_analytic_kanaban_owner_action" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="property_landlord_management_ee.analytic_kanban_view_landlord"/>
+        <field name="act_window_id" ref="property_landlord_management_ee.action_analytic_rent_action"/>
+    </record>
+
+    <menuitem
+        id="menu_landlord_details_sub"
+        name="Landlord Details"
+        parent="property_management_ee.menu_property_main"
+        sequence="2"
+        groups="property_management_ee.group_property_manager,property_management_ee.group_property_owner"/>
+
+    <menuitem
+        id="menu_tenancy_rents"
+        action="action_analytic_rent_action"
+        name="Landlord Tenancy"
+        parent="menu_landlord_details_sub"
+        sequence="4"/>
+</odoo>

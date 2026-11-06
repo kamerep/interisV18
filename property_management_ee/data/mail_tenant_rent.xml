@@ -1,0 +1,22 @@
+<odoo>
+
+    <record id="mail_tenant_rent" model="mail.template">
+        <field name="name">Tenancy: Mail to Tenant</field>
+        <field name="model_id" ref="property_management_ee.model_tenancy_rent_schedule"/>
+        <field name="subject">Rent Schedule on {{ object.start_date }}</field>
+        <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
+        <!-- <field name="email_to">{{ object.email_formatted }}</field> -->
+        <field name="body_html" type="html">
+            <div>
+                Dear <t t-out="object.tenancy_id.tenant_id.name or ''">Marc Demo</t>,<br /><br />
+                
+                Your rent is scheduled on <t t-out="object.start_date"></t>. So please pay before the due date.<br/><br/>
+
+                Property Manager-
+                <t t-out="object.tenancy_id.property_id.property_manager.name"></t>
+
+            </div>
+        </field>
+    </record>
+
+</odoo>

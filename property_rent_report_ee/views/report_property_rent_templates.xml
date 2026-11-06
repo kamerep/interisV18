@@ -1,0 +1,301 @@
+<odoo>
+    <template id="report_rent_voucher_details">
+        <t t-call="web.html_container">
+            <t t-value="-1" t-set="count"/>
+            <t t-foreach="docs" t-as="o">
+                <t t-foreach="o.rent_schedule_ids" t-as="rent_line_count">
+                    <t t-if="rent_line_count.paid == True">
+                        <t t-value="count+1" t-set="count"/>
+                    </t>
+                </t>
+                <t t-if="o.rent_schedule_ids">
+                <t t-foreach="o.rent_schedule_ids[count]" t-as="rent_line">
+                    <t t-if="rent_line.paid == True">
+                        <t t-call="web.external_layout">
+                            <div class="page">
+                                <br/>
+                                <br/>
+                                <div class="container" style="border:1px solid #000000;width:100%;">
+                                    <table style="width:100%;font-size: 14px;">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="6" align="center">
+                                                    <h5>
+                                                        <b>Rent Receipt</b>
+                                                    </h5>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="5%" align="left">
+                                                    <b>Date:</b>
+                                                </td>
+                                                <td width="20%" style="border-bottom: 1px solid #000000;" align="center">
+                                                    <span t-field="rent_line.start_date"/>
+                                                </td>
+                                                <td widht="15%">&amp;nbsp;</td>
+                                                <td widht="30%">&amp;nbsp;</td>
+                                                <td width="10%">
+                                                    <b>Receipt#:</b>
+                                                </td>
+                                                <td width="20%" style="border-bottom: 1px solid #000000;" align="center">
+                                                    <span t-esc="o.name"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="6">&amp;nbsp;</td>
+                                            </tr>
+
+                                            <tr>
+                                                <th style="border-right:1px dashed;border-bottom:1px dashed;font-size: 16px;" colspan="3" class="text-center">Landlord</th>
+                                                <th style="border-bottom:1px dashed;font-size: 16px;" colspan="3" class="text-center">Tenant</th>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" style="border-top: 0px white; padding:5px;">
+                                                    <b>Address:</b><br/>
+                                                    <div style="padding-left: 52px;">
+                                                        <span t-field="o.property_id.property_manager.street"/><br/>
+                                                        <span t-field="o.property_id.property_manager.street2"/>,<span t-field="o.property_id.property_manager.city"/>,<br/>
+                                                        <span t-field="o.property_id.property_manager.state_id.name"/>-<span t-field="o.property_id.property_manager.zip"/><br/>
+                                                    </div>
+                                                    <b>Name:</b>
+                                                    <span t-field="o.property_id.property_manager.name"/><br/>
+                                                    <b>Phone:</b>
+                                                    <span t-field="o.property_id.property_manager.phone"/>
+                                                </td>
+                                                <td colspan="3" style="border-left: 1px dashed; border-top: 0px white; padding:10px;">
+                                                    <b>Address:</b><br/>
+                                                    <div style="padding-left: 52px;">
+                                                        <span t-field="o.tenant_id.street"/><br/>
+                                                        <span t-field="o.tenant_id.street2"/>,<span t-field="o.tenant_id.city"/><br/>
+                                                        <span t-field="o.tenant_id.state_id.name"/>-<span t-field="o.tenant_id.zip"/><br/>
+                                                    </div>
+                                                    <b>Name:
+                                                    </b><span t-field="o.tenant_id.name"/>
+                                                    <br/>
+                                                    <b>Phone:</b>
+                                                    <span t-field="o.tenant_id.phone"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr style="border-top: 1px dashed #000; padding:5px 0px;">
+                                                <td colspan="6">&amp;nbsp;</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b>Received From:</b>
+                                                </td>
+                                                <td colspan="4" style="border-bottom: 1px solid #000000;">
+                                                    <span t-field="o.tenant_id.name"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b>The Amount of:</b>
+                                                </td>
+                                                <td colspan="4" style="border-bottom: 1px solid #000000;">
+                                                    <span t-field="rent_line.amount"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b>For Payment of:</b>
+                                                </td>
+                                                <td colspan="4" style="border-bottom: 1px solid #000000;">
+                                                    <span t-field="o.rent"/>
+                                                </td>
+                                            </tr>
+                                            
+
+                                            <tr>
+                                                <td colspan="6">&amp;nbsp;</td>
+                                            </tr>
+
+                                            <tr style="border-top: 1px dashed #000;">
+                                                <td colspan="6">&amp;nbsp;</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="6" align="center">
+                                                    <table width="60%">
+                                                        <tr>
+                                                            <td width="70%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <b>
+                                                                    Total Amount To be Recevied
+                                                                </b>
+                                                            </td>
+                                                            <td width="50%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <span t-field="o.total_rent"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <b>
+                                                                    Amount Recevied
+                                                                </b>
+                                                            </td>
+                                                            <td width="50%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <span t-esc="get_amount(o)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="50%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <b>
+                                                                    Balance Due
+                                                                </b>
+                                                            </td>
+                                                            <td width="50%" style="border: 1px solid #000000; padding: 5px;">
+                                                                <span t-esc="get_amount_due(o)" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+
+                                            <tr style="border-bottom: 1px dashed #000;">
+                                                <td colspan="4" style="padding:5px;">
+                                                    <table width='100%'>
+                                                        <tr width='20%'>
+                                                            <td style="text-align:left;" width="25%">
+                                                                <b>
+                                                                    Received By:
+                                                                </b>
+                                                            </td>
+                                                            <td width="80%" style="border-bottom: 1px solid #000000;">
+                                                                <span t-field="o.contact_id.name"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr width='20%'>
+                                                            <td align="left" width="20%">
+                                                                <b>
+                                                                    Address :
+                                                                </b>
+                                                            </td>
+                                                            <td width="80%" style="border-bottom: 1px solid #000000;">
+                                                                <span t-field="o.contact_id.street"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr width='20%'>
+                                                            <td align="left" width="20%">
+                                                                <b>
+                                                                    Phone:
+                                                                </b>
+                                                            </td>
+                                                            <td width="80%" style="border-bottom: 1px solid #000000;">
+                                                                <span t-field="o.contact_id.phone"/>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+
+                                                <td colspan="2" style="padding:5px;">
+                                                    <table width='100%'>
+                                                        <tr>
+                                                            <td width="10%">
+                                                                <input type="checkbox"/>
+                                                            </td>
+                                                            <td width="15%">
+                                                                Cash
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="10%">
+                                                                <input type="checkbox"/>
+                                                            </td>
+                                                            <td width="20%">
+                                                                Cheque No:
+                                                            </td>
+                                                            <td width="20%" style="border-bottom: 1px solid #000000;"><span t-field="rent_line.cheque_detail"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="10%">
+                                                                <input type="checkbox"/>
+                                                            </td>
+                                                            <td width="25%">
+                                                                Money Order
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="6" align="center">
+                                                     <h5 style="font-size:14px;">
+                                                        <b>Description Of Property</b>
+                                                    </h5>
+                                                </td>
+                                            </tr>
+
+                                            <tr style="border-bottom: 1px solid #000000;">
+                                                <td width="25%">
+                                                    <b>Name Of Property:</b>
+                                                </td>
+                                                <td align="center" width="25%">
+                                                    <span t-field="o.property_id.name"/>
+                                                </td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td width="25%">
+                                                    <b>Address:</b>
+                                                </td>
+                                                <td align="center" width="25%">
+                                                    <span t-field="o.property_id.street"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr style="border-bottom: 1px solid #000000;">
+                                                <td>
+                                                    <b>No Floor:</b>
+                                                </td>
+                                                <td align="center">
+                                                    <span t-field="o.property_id.floor"/>
+                                                </td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>
+                                                    <b>Furnished Status:</b>
+                                                </td>
+                                                <td align="center">
+                                                    <span t-field="o.property_id.furnished"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr style="border-bottom: 1px solid #000000;">
+                                                <td>
+                                                    <b>Property Type:</b>
+                                                </td>
+                                                <td align="center">
+                                                    <span t-field="o.property_id.type_id.name"/>
+                                                </td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>
+                                                    <b>Age Of Property:</b>
+                                                </td>
+                                                <td align="center">
+                                                    <span t-field="o.property_id.acquisition_date"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="6">&amp;nbsp;</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </t>
+            </t>
+            </t>
+        </t>
+    </template>
+</odoo>

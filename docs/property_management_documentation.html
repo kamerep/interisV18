@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Property Management Suite — Odoo 18 Documentation</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; font-size: 10.5pt; color: #222; line-height: 1.45; }
+  h1 { color: #714B67; font-size: 21pt; border-bottom: 3px solid #714B67; padding-bottom: 6px; margin-top: 0; }
+  h2 { color: #714B67; font-size: 15pt; border-bottom: 1px solid #c9b3c4; padding-bottom: 3px; margin-top: 26px; }
+  h3 { color: #017E84; font-size: 12pt; margin-top: 18px; }
+  h4 { color: #444; font-size: 10.5pt; margin-bottom: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 9.5pt; }
+  th { background: #714B67; color: #fff; text-align: left; padding: 5px 8px; }
+  td { border: 1px solid #ccc; padding: 4px 8px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f3f6; }
+  code, .path { font-family: "DejaVu Sans Mono", Consolas, monospace; font-size: 9pt; background: #f2f2f2; padding: 1px 4px; border-radius: 3px; }
+  .step { background: #f0f7f7; border-left: 4px solid #017E84; padding: 8px 12px; margin: 8px 0; }
+  .note { background: #fff8e6; border-left: 4px solid #e0a800; padding: 8px 12px; margin: 8px 0; }
+  .warn { background: #fdeeee; border-left: 4px solid #c0392b; padding: 8px 12px; margin: 8px 0; }
+  .pagebreak { page-break-before: always; }
+  .cover { text-align: center; margin-top: 200px; }
+  .cover h1 { border: none; font-size: 30pt; }
+  .cover p { font-size: 13pt; color: #555; }
+  ul { margin: 6px 0 6px 18px; padding-left: 12px; }
+  li { margin-bottom: 3px; }
+  .toc li { margin-bottom: 5px; }
+  .kbd { background:#eee; border:1px solid #bbb; border-radius:3px; padding:0 4px; font-size: 9pt;}
+  .arrow { color:#017E84; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <h1>Property Management Suite</h1>
+  <p style="font-size:16pt;">Configuration &amp; End-to-End User Guide</p>
+  <p>Odoo 18 Enterprise &mdash; 10-Module Suite</p>
+  <p>Single Property / Multi-Tenant Operations Edition</p>
+  <br><br>
+  <p>Prepared for: <b>Techverse Online Limited</b> (odooerp.co.ke)<br>
+  Author: Geronimo &middot; peterkamere@gmail.com<br>
+  June 2026 &middot; Version 18.0.1.0.0</p>
+</div>
+
+<!-- ============================ TOC ============================ -->
+<div class="pagebreak"></div>
+<h1>Contents</h1>
+<ol class="toc">
+  <li>Suite Overview &amp; Architecture</li>
+  <li>Prerequisites &amp; Installation Order</li>
+  <li>Security Groups &amp; Access Rights</li>
+  <li>Initial Configuration (Step by Step)</li>
+  <li>Core Concepts &amp; Data Model</li>
+  <li>End-to-End Walkthrough: One Property, Several Tenants</li>
+  <li>Rent Billing Cycle: Schedules, Invoices, Payments, Penalties</li>
+  <li>Maintenance Operations</li>
+  <li>Landlord Settlement &amp; Owner Payouts</li>
+  <li>Agent Commissions</li>
+  <li>CRM: From Lead to Signed Tenancy</li>
+  <li>Property Sale &amp; Purchase with Installments</li>
+  <li>Reporting Catalogue</li>
+  <li>Module-by-Module Reference</li>
+  <li>Integration with Other Odoo Modules</li>
+  <li>Scheduled Jobs &amp; Automatic Emails</li>
+  <li>Suggested Enhancements (Roadmap)</li>
+  <li>Appendix A — Odoo 18 Migration Notes</li>
+  <li>Appendix B — Maintenance &amp; Upgrade Procedure</li>
+</ol>
+
+<!-- ============================ 1 ============================ -->
+<div class="pagebreak"></div>
+<h1>1. Suite Overview &amp; Architecture</h1>
+<p>The suite manages the full lifecycle of rental real estate: registering properties and units,
+onboarding tenants and landlords, signing tenancy contracts, scheduling and invoicing rent,
+charging late-payment penalties, running maintenance, paying property owners, rewarding agents,
+and selling/purchasing properties on installment plans &mdash; all on standard Odoo accounting.</p>
+
+<h3>Module map</h3>
+<table>
+<tr><th>Module</th><th>Purpose</th><th>Depends on</th></tr>
+<tr><td><code>property_management_ee</code></td><td><b>Core.</b> Properties, tenants, tenancy contracts, rent schedules, invoicing, CRM bridge, reports, security</td><td>account, account_asset (Enterprise), analytic, sale_crm</td></tr>
+<tr><td><code>property_landlord_management_ee</code></td><td>Landlords (owners), landlord tenancies, owner rent payout invoices</td><td>core</td></tr>
+<tr><td><code>property_maintenance_ee</code></td><td>Property maintenance requests, stage emails, re-invoicing to tenant</td><td>core + maintenance</td></tr>
+<tr><td><code>property_recurring_maintenance_ee</code></td><td>Recurring maintenance charges attached to a tenancy</td><td>property_maintenance_ee</td></tr>
+<tr><td><code>property_penalty_ee</code></td><td>Late-payment penalties on rent schedules</td><td>core</td></tr>
+<tr><td><code>property_booking_ee</code></td><td>Bulk unit generation (towers/floors/units), booking &amp; availability, split/merge</td><td>core</td></tr>
+<tr><td><code>property_commission_ee</code></td><td>Agent commissions on rent / buy / sell, commission invoicing &amp; reports</td><td>core</td></tr>
+<tr><td><code>property_rent_report_ee</code></td><td>Rent voucher / payment-status report</td><td>core</td></tr>
+<tr><td><code>property_sale_purchase_ee</code></td><td>Property sale &amp; purchase with installment plans from payment terms</td><td>core</td></tr>
+<tr><td><code>property_ee</code></td><td>Umbrella bundle &mdash; installs the nine modules above in one click</td><td>all of the above</td></tr>
+</table>
+
+<div class="note"><b>Design key:</b> a <b>Property is an Account Asset</b> (<code>account.asset</code>, flag
+<code>is_property</code>) so every property is simultaneously a depreciable fixed asset in Accounting.
+A <b>Tenancy contract is an Analytic Account</b> (<code>account.analytic.account</code>) so every rupee/shilling of
+rent, penalty, maintenance and owner payout is traceable per contract through analytic accounting.</div>
+
+<!-- ============================ 2 ============================ -->
+<h1 class="pagebreak">2. Prerequisites &amp; Installation Order</h1>
+<h3>Prerequisites</h3>
+<ul>
+  <li>Odoo <b>18 Enterprise</b> (the suite extends the Enterprise <code>account_asset</code> module).</li>
+  <li>Apps already installed: <b>Accounting</b>, <b>Assets</b> (account_asset), <b>CRM</b>, <b>Sales</b>, <b>Maintenance</b>.</li>
+  <li>A configured <b>Chart of Accounts</b> and at least one company with currency set (e.g. KES).</li>
+  <li>Outgoing mail server configured (Settings <span class="arrow">&rarr;</span> Technical <span class="arrow">&rarr;</span> Email) &mdash; the suite sends rent reminders and maintenance notifications.</li>
+</ul>
+<h3>Installation order</h3>
+<div class="step">
+<b>1.</b> <code>property_management_ee</code> (core &mdash; everything depends on it)<br>
+<b>2.</b> <code>property_maintenance_ee</code> (needed before recurring maintenance)<br>
+<b>3.</b> <code>property_landlord_management_ee</code>, <code>property_penalty_ee</code>, <code>property_booking_ee</code>,
+<code>property_commission_ee</code>, <code>property_rent_report_ee</code>, <code>property_sale_purchase_ee</code> &mdash; any order<br>
+<b>4.</b> <code>property_recurring_maintenance_ee</code> (after maintenance)<br>
+<b>5.</b> <i>Optional:</i> <code>property_ee</code> if you prefer one-click installation of the whole suite.
+</div>
+<div class="note">After installing or updating module files on the server always: upload to
+<code>/opt/odoo18/custom_addons/</code> <span class="arrow">&rarr;</span> restart the Odoo service <span class="arrow">&rarr;</span>
+Apps <span class="arrow">&rarr;</span> module <span class="arrow">&rarr;</span> <b>Upgrade</b> (views and data live in the database).</div>
+
+<!-- ============================ 3 ============================ -->
+<h1 class="pagebreak">3. Security Groups &amp; Access Rights</h1>
+<p>The core module creates a dedicated application category with four user roles. Assign them in
+Settings <span class="arrow">&rarr;</span> Users &amp; Companies <span class="arrow">&rarr;</span> Users.</p>
+<table>
+<tr><th>Group</th><th>Who</th><th>Capabilities</th></tr>
+<tr><td><b>Property Manager</b> (<code>group_property_manager</code>)</td><td>Your staff</td><td>Full create/read/write on properties, tenancies, rent schedules, configuration menus, reports</td></tr>
+<tr><td><b>Property User / Tenant</b> (<code>group_property_user</code>)</td><td>Tenants</td><td>Sees only properties they currently occupy and their own tenancy/maintenance records (record rule on <code>current_tenant_id</code>)</td></tr>
+<tr><td><b>Property Owner</b> (<code>group_property_owner</code>)</td><td>Landlords</td><td>Sees only properties they manage/own (record rule on <code>property_manager</code>)</td></tr>
+<tr><td><b>Property Agent</b> (<code>group_property_agent</code>)</td><td>Brokers</td><td>Sees properties they handle; access to commission records</td></tr>
+</table>
+<div class="note"><b>Automatic user provisioning:</b> creating a <b>Tenant</b> or <b>Landlord</b> record
+automatically creates the linked <code>res.partner</code> and can provision a portal/internal user with the right
+group, so tenants can log in and see their contract. Deleting a tenant with active tenancies is blocked.</div>
+<div class="warn">Give accounting staff the normal <b>Accounting / Billing</b> rights as well &mdash; rent invoices,
+payments and asset depreciation post into standard journals.</div>
+
+<!-- ============================ 4 ============================ -->
+<h1 class="pagebreak">4. Initial Configuration (Step by Step)</h1>
+
+<h3>4.1 Accounting prerequisites</h3>
+<div class="step">
+<b>Step 1 — Income account for rent.</b> Accounting <span class="arrow">&rarr;</span> Configuration <span class="arrow">&rarr;</span> Chart of Accounts:
+create/identify an <b>Income</b> account, e.g. <i>700100 Rental Income</i>.<br>
+<b>Step 2 — Maintenance income/expense account</b>, e.g. <i>700200 Maintenance Recharges</i>.<br>
+<b>Step 3 — Asset accounts</b> for depreciation: <i>Fixed Asset (Buildings)</i>, <i>Accumulated Depreciation</i>,
+<i>Depreciation Expense</i>, and a <b>Miscellaneous/Assets journal</b>.<br>
+<b>Step 4 — Payment terms</b> used for property sale installments (e.g. <i>12 monthly installments</i>):
+Accounting <span class="arrow">&rarr;</span> Configuration <span class="arrow">&rarr;</span> Payment Terms.
+</div>
+
+<h3>4.2 Analytic plan</h3>
+<p>The suite auto-creates an analytic plan named <b>&ldquo;Property Management&rdquo;</b> the first time a tenancy is
+created; every tenancy contract is an analytic account on this plan. Nothing to do manually &mdash; just be aware
+it appears under Accounting <span class="arrow">&rarr;</span> Configuration <span class="arrow">&rarr;</span> Analytic Plans.</p>
+
+<h3>4.3 Property configuration menus</h3>
+<div class="step">
+<b>Property Management <span class="arrow">&rarr;</span> Configuration:</b><br>
+&bull; <b>Property Types</b> &mdash; e.g. Apartment, Office, Shop, Godown, Stand-alone House.<br>
+&bull; <b>Rent Types</b> &mdash; billing frequency presets (Monthly, Quarterly, Yearly&hellip;).<br>
+&bull; <b>Property Labels</b> (booking module) &mdash; unit numbering schemes (ABCD / 101 / 1001 / 10001 prefixes).<br>
+&bull; <b>Maintenance Teams</b> (Maintenance app) &mdash; e.g. Plumbing, Electrical, General; add team members.
+</div>
+
+<h3>4.4 Email &amp; scheduled actions</h3>
+<div class="step">
+&bull; Verify outgoing mail server works (send a test email).<br>
+&bull; Settings <span class="arrow">&rarr;</span> Technical <span class="arrow">&rarr;</span> Scheduled Actions: confirm
+<b>&ldquo;Scheduled Rent&rdquo;</b> (daily) and <b>&ldquo;Property States Changed&rdquo;</b> (every 10 minutes) are active.<br>
+&bull; Settings <span class="arrow">&rarr;</span> Technical <span class="arrow">&rarr;</span> Email Templates: review
+<i>Tenancy: Mail to Tenant</i> (rent reminder) and the four <i>Maintenance In&nbsp;Progress/Done</i> templates; adjust wording/branding.
+</div>
+
+<h3>4.5 Penalty policy (property_penalty_ee)</h3>
+<div class="step">On each tenancy contract you can set the penalty parameters (percentage/amount per
+overdue period). Agree the house policy first &mdash; e.g. <i>5% of rent after the 5th of the month</i> &mdash; and apply it
+consistently when creating tenancies.</div>
+
+<h3>4.6 Commission policy (property_commission_ee)</h3>
+<div class="step">On the <b>Agent</b> partner record set the commission percentages for <i>rent</i>, <i>buy</i>,
+and <i>sell</i> transactions. Commissions are then computed per tenancy/deal and invoiced from the commission screen.</div>
+
+<!-- ============================ 5 ============================ -->
+<h1 class="pagebreak">5. Core Concepts &amp; Data Model</h1>
+<table>
+<tr><th>Business object</th><th>Technical model</th><th>What it holds</th></tr>
+<tr><td><b>Property / Unit</b></td><td><code>account.asset</code> (<code>is_property</code>)</td><td>Address &amp; geo-location, type, furnishing, bedrooms/bathrooms/parking, GFA (ft&sup2;/m&sup2;), unit price, ground rent, photos, floor plans, rooms, utilities, nearby places, safety certificates, insurance, attachments, <b>parent/child hierarchy</b> for buildings&rarr;units, depreciation board, manager, current tenant, ROI &amp; occupancy KPIs</td></tr>
+<tr><td><b>Tenancy contract</b></td><td><code>account.analytic.account</code></td><td>Tenant, property, rent amount &amp; frequency, deposit (received/returned), start/end dates, rent schedule lines, penalty settings, contract document, state (Draft <span class="arrow">&rarr;</span> Open <span class="arrow">&rarr;</span> Close/Renew/Cancel)</td></tr>
+<tr><td><b>Rent schedule line</b></td><td><code>tenancy.rent.schedule</code></td><td>One expected rent payment: due date, amount, penalty amount, invoice link, paid flag; buttons to invoice &amp; open the invoice</td></tr>
+<tr><td><b>Tenant</b></td><td><code>tenant.partner</code> (delegates to <code>res.partner</code>)</td><td>Contact data + occupation, documents, tenancies; auto user provisioning</td></tr>
+<tr><td><b>Landlord / Owner</b></td><td><code>landlord.partner</code> (delegates to <code>res.partner</code>)</td><td>Owner data, owned properties, landlord tenancies (payout contracts)</td></tr>
+<tr><td><b>Maintenance request</b></td><td><code>maintenance.request</code> (extended)</td><td>Property, tenant, team, stage, invoice for re-charged works</td></tr>
+<tr><td><b>Unit factory</b></td><td><code>property.created</code> (delegates to asset)</td><td>Tower/floor/unit batch generation with label prefixes; booking status</td></tr>
+<tr><td><b>Sale/Purchase installments</b></td><td>fields + <code>sale.cost</code>/<code>purchase.cost</code> lines on the asset</td><td>Sale price, customer, payment term &rarr; generated installment lines</td></tr>
+</table>
+
+<h3>Property states</h3>
+<p><b>Draft</b> (being prepared) <span class="arrow">&rarr;</span> <b>Open/Normal</b> (available &amp; operating) <span class="arrow">&rarr;</span>
+<b>Book</b> (reserved, booking module) <span class="arrow">&rarr;</span> <b>Close / Sold / Cancel</b> (end of cycle). The 10-minute cron
+keeps states consistent with bookings and tenancy changes.</p>
+
+<!-- ============================ 6 ============================ -->
+<h1 class="pagebreak">6. End-to-End Walkthrough: One Property, Several Tenants</h1>
+<p>This is your exact scenario: <b>one building with several rentable units, each unit occupied by its own
+tenant</b>. The suite models this with the property <b>parent/child hierarchy</b>: the building is the parent
+property; each unit (flat, office, shop, room) is a <b>child property</b>; each child has its own tenancy contract.</p>
+
+<div class="warn"><b>Rule of thumb:</b> one tenancy contract = one rentable unit = one tenant at a time.
+Never attach several simultaneous tenants to a single property record &mdash; instead create one child unit per tenant.
+The History/Sub-Properties tab on the building gives the consolidated view.</div>
+
+<h3>6.1 Register the building (parent property)</h3>
+<div class="step">
+Property Management <span class="arrow">&rarr;</span> Property Details <span class="arrow">&rarr;</span> <b>New</b>.<br>
+1. <b>Property Name:</b> e.g. <i>Kamere Towers</i>. Fill <b>Address</b>, City, Country; click <b>Get Location</b> to verify the map URL (latitude/longitude).<br>
+2. Set <b>Property Type</b> (e.g. Apartment Block), <b>Property Manager</b> (your staff user), No. of Towers/Floors, GFA.<br>
+3. Accounting tab: set <b>Income Account</b> (Rental Income), <b>Maintenance Account</b>, <b>Depreciation</b> &amp; <b>Expense</b> accounts and <b>Journal</b>; set <b>Original Value</b> (building cost) and depreciation method/duration if you depreciate it.<br>
+4. Add <b>photos, floor plans, safety certificates</b> (with expiry dates &mdash; they feed the expiry report), and <b>insurance</b> records.<br>
+5. Click <b>Open</b> to move it from Draft to operating state. Save.
+</div>
+
+<h3>6.2 Create the units (child properties)</h3>
+<p><b>Option A — manual (a few units):</b> on the building form, tab <b>Sub Properties</b>, add lines; or create new
+properties and set their <b>Parent Property</b> to the building. Set per-unit type (1-bed, 2-bed&hellip;), furnishing,
+unit price (monthly rent guide), floor.</p>
+<p><b>Option B — bulk (many units), booking module:</b> Property Management <span class="arrow">&rarr;</span>
+Property Booking <span class="arrow">&rarr;</span> <b>Create Property</b>: choose the parent/tower, the floor count,
+units per floor and a <b>label prefix</b> (101-style, 1001-style or lettered). The wizard generates all child unit
+records in one pass. Units can later be <b>split</b> or <b>merged</b> with the dedicated wizards.</p>
+<div class="note">Each unit inherits the accounting configuration pattern of the parent &mdash; still verify the income
+account on a sample unit. The building&rsquo;s <b>Sub Properties</b> tab shows per-unit state (Available / Booked / Occupied)
+and the <b>Available</b> counter.</div>
+
+<h3>6.3 Onboard tenants</h3>
+<div class="step">
+Property Management <span class="arrow">&rarr;</span> Tenant Details <span class="arrow">&rarr;</span> <b>New</b>.<br>
+1. Name, phone, email, ID/passport scan as attachment, occupation, emergency contact.<br>
+2. Saving creates the linked contact and (if enabled) a <b>portal user</b> in the <i>Property User</i> group so the
+tenant can log in and see their tenancy &amp; invoices.<br>
+3. Repeat per tenant &mdash; e.g. 8 tenants for 8 occupied units of Kamere Towers.
+</div>
+
+<h3>6.4 Sign a tenancy contract per unit</h3>
+<div class="step">
+Property Management <span class="arrow">&rarr;</span> Tenancy Details <span class="arrow">&rarr;</span> <b>New</b> (one per unit+tenant):<br>
+1. <b>Tenant:</b> pick the tenant. <b>Property:</b> pick the <i>unit</i> (not the building!).<br>
+2. <b>Rent</b> amount and <b>Rent Type</b> (Monthly), <b>Start Date</b> / <b>Expiration Date</b> (e.g. 12 months).<br>
+3. <b>Deposit:</b> enter amount; after collecting it press <b>Deposit Received</b> (creates the payment entry). On exit,
+<b>Deposit Return</b> reverses it.<br>
+4. Penalty tab (if installed): set the late-fee policy for this contract.<br>
+5. Attach the signed lease PDF on the contract document field / chatter.<br>
+6. Press <b>Create Rent Schedule</b> &mdash; the system generates one <code>tenancy.rent.schedule</code> line per period for
+the whole duration. Press <b>Start</b> to open the contract. The unit&rsquo;s state flips to occupied and
+<b>Current Tenant</b> is set on the unit.
+</div>
+<div class="note">The contract is an analytic account: every invoice line it generates carries its
+<b>analytic distribution</b>, so P&amp;L per unit and per building rolls up automatically in Accounting analytics.</div>
+
+<h3>6.5 Month after month</h3>
+<p>See Section 7 for the billing cycle. In daily use the building manager lives in three screens:
+<b>Tenancy Details</b> (contracts &amp; schedules), <b>Maintenance</b> (requests per unit), and the
+<b>Property form&rsquo;s stat buttons</b> (Tenancy count, journal Entries).</p>
+
+<h3>6.6 Tenant turnover</h3>
+<div class="step">
+1. Tenancy <span class="arrow">&rarr;</span> <b>Close</b> (or <b>Cancel Tenancy</b> for early break). Outstanding schedules can
+be invoiced or dropped; <b>Deposit Return</b> settles the deposit (net of damages &mdash; post a separate invoice for damages first).<br>
+2. The unit returns to <b>Available</b>; it appears again in booking availability.<br>
+3. New tenant <span class="arrow">&rarr;</span> new tenancy on the same unit (history of all previous tenancies stays on the unit).<br>
+4. For a renewal of the same tenant use <b>Renew</b> (renew wizard) &mdash; it extends/regenerates schedules without re-creating the contract.
+</div>
+
+<!-- ============================ 7 ============================ -->
+<h1 class="pagebreak">7. Rent Billing Cycle</h1>
+<h3>7.1 The schedule</h3>
+<p>Each tenancy holds its <b>Rent Schedule</b> lines: due date, amount, penalty, invoice status. The daily cron
+<b>Scheduled Rent</b> emails tenants whose rent is due (template <i>Tenancy: Mail to Tenant</i>).</p>
+<h3>7.2 Invoicing</h3>
+<div class="step">
+On each schedule line press the <b>gear (Create Invoice)</b> button &mdash; it creates a customer invoice on the tenant
+with the contract&rsquo;s income account and the tenancy&rsquo;s analytic distribution; the line then shows the
+<b>arrow (Open Invoice)</b> button. Validate &amp; send the invoice from Accounting as usual. Bulk emailing is available
+via the <b>Mailing</b> action on selected schedule lines.
+</div>
+<h3>7.3 Payments &amp; reconciliation</h3>
+<p>Register payments on the invoice (Accounting). The payment form carries <b>Tenancy</b> and <b>Property</b> context
+fields and shows the <b>Amount Due</b>. Once paid, the schedule line is flagged paid; the rent voucher report
+(<code>property_rent_report_ee</code>) prints the payment status per contract.</p>
+<h3>7.4 Penalties (property_penalty_ee)</h3>
+<p>Overdue schedule lines accrue a <b>penalty amount</b> per the contract policy; the penalty is added on top of the
+rent when the line is invoiced (or invoiced separately), and totals appear on the tenancy.</p>
+<h3>7.5 Deposits</h3>
+<p>Deposit lifecycle is tracked on the contract: <b>Receive</b> posts the deposit in, <b>Open Received</b> shows the
+entry, <b>Return</b> pays it back on contract end. Deposits are payments, not income &mdash; they sit on the partner
+balance until returned or offset.</p>
+
+<!-- ============================ 8 ============================ -->
+<h1>8. Maintenance Operations</h1>
+<div class="step">
+1. Tenant (portal or phone) or manager raises a request: Maintenance <span class="arrow">&rarr;</span> <b>New</b>:
+pick the <b>Property (unit)</b> &mdash; the tenant is filled from the unit&rsquo;s current tenant; pick the
+<b>Maintenance Team</b> and priority; describe the issue; <b>Open Google Map</b> jumps to the unit location.<br>
+2. Move the request through stages (kanban). On <b>In&nbsp;Progress</b> and <b>Done</b>, automatic emails go to the
+tenant and the property manager (4 templates).<br>
+3. If works are re-charged to the tenant, press <b>Create Invoice</b> on the done request &mdash; it bills the tenant
+using the property&rsquo;s <b>Maintenance Account</b> with the tenancy analytics.<br>
+4. <b>Recurring maintenance</b> (e.g. monthly service charge, garbage, security): on the tenancy, add recurring
+maintenance lines &mdash; they are added into the rent schedule/invoicing cycle automatically.
+</div>
+<div class="note">Use separate teams per trade and the standard Maintenance kanban/calendar for planning;
+everything stays per-unit traceable through the property link.</div>
+
+<!-- ============================ 9 ============================ -->
+<h1 class="pagebreak">9. Landlord Settlement &amp; Owner Payouts</h1>
+<p>When you manage buildings on behalf of owners, install <code>property_landlord_management_ee</code>:</p>
+<div class="step">
+1. <b>Landlord Details</b> <span class="arrow">&rarr;</span> New: owner contact; link the properties they own
+(<i>Property Owner</i> on the property).<br>
+2. Create a <b>landlord tenancy</b> (resident type <i>Landlord Partner</i>): the <b>Landlord Rent</b> is the payout
+(e.g. collected rent minus your management fee), with its own schedule.<br>
+3. Each due line: <b>Create Landlord Invoice</b> generates a <b>vendor bill</b> to the owner (purchase journal);
+pay it like any supplier bill. <b>Deposit Pay / Deposit Received</b> handle owner-side deposits.<br>
+4. The owner (Property Owner group) can log in and see only their properties and payout history.
+</div>
+<div class="note">Per-building profitability = rent income (tenant tenancies) &minus; owner payouts (landlord
+tenancies) &minus; maintenance, all on the same analytic plan &mdash; read it in Accounting <span class="arrow">&rarr;</span>
+Reporting <span class="arrow">&rarr;</span> Analytic Items grouped by plan/account.</div>
+
+<!-- ============================ 10 ============================ -->
+<h1>10. Agent Commissions</h1>
+<div class="step">
+1. Mark the broker&rsquo;s contact as an <b>Agent</b> and set commission % for rent / buy / sell.<br>
+2. On a tenancy closed by an agent press <b>Create Commission</b> &mdash; a commission record computes the amount from
+the rent and the agent&rsquo;s rate.<br>
+3. From the commission record, <b>Create Invoice</b> raises the vendor bill to the agent; <b>Open Invoice</b> tracks it.
+Commission analysis prints from the commission report menu.
+</div>
+
+<!-- ============================ 11 ============================ -->
+<h1>11. CRM: From Lead to Signed Tenancy</h1>
+<div class="step">
+1. Leads captured in CRM get a property section: <b>Is Rent / Is Buy / Is Demand</b>, desired <b>Property</b>, and a
+<b>Demand Info</b> tab (min/max bedrooms, bathrooms, price range, furnishing, facing, type) for requirement matching.<br>
+2. Qualify the lead in the pipeline as usual.<br>
+3. On the opportunity: <b>Create Quotation</b> (sale order for buy deals) or <b>Create Contract</b> &mdash; the wizard
+asks for start/end dates and converts the lead into a <b>tenant + tenancy contract</b> automatically.<br>
+4. Continue from Section 6.4 (schedule, start, invoice).
+</div>
+
+<!-- ============================ 12 ============================ -->
+<h1>12. Property Sale &amp; Purchase with Installments</h1>
+<div class="step">
+<b>Selling a property:</b> on the property form (sale tab): set <b>Customer</b>, <b>Sale Date</b>, <b>Sale Price</b>
+and a <b>Payment Term</b>; press <b>Generate Payment Entries</b> &mdash; the installment plan (dates, amount, remaining,
+%) is computed from the payment term. <b>Create Invoice</b> bills each installment; the property moves to <b>Sold</b>
+at the end of cycle.<br>
+<b>Purchasing:</b> symmetric fields (purchase price, recurring rule, return period) generate the
+purchase installment lines for properties you acquire.
+</div>
+<div class="warn">Use realistic payment terms (e.g. &ldquo;30% advance, balance over 12 months&rdquo;) &mdash; the plan
+derives 1:1 from the term lines.</div>
+
+<!-- ============================ 13 ============================ -->
+<h1 class="pagebreak">13. Reporting Catalogue</h1>
+<table>
+<tr><th>Report (menu: Reporting)</th><th>Tells you</th></tr>
+<tr><td>Tenancy Detail / Tenancy by Tenant</td><td>All contracts with rent &amp; deposit, filtered by property or tenant, date-ranged</td></tr>
+<tr><td>Contract Expiry</td><td>Tenancies expiring in a window &mdash; renewals pipeline</td></tr>
+<tr><td>Safety Certificate Expiry / Document Expiry</td><td>Compliance documents about to lapse per property</td></tr>
+<tr><td>Income / Expenditure</td><td>Per-property income vs expense totals with currency formatting</td></tr>
+<tr><td>Property per Location</td><td>Portfolio split by city/region</td></tr>
+<tr><td>Rent Voucher (rent report module)</td><td>Per-contract payment status voucher</td></tr>
+<tr><td>Commission Report</td><td>Agent commission statements</td></tr>
+<tr><td>Property Hierarchy</td><td>Building <span class="arrow">&rarr;</span> units listing with states</td></tr>
+</table>
+<p>Plus everything native: Accounting analytic reports per tenancy/building, Maintenance KPIs, CRM pipeline analysis.</p>
+
+<!-- ============================ 14 ============================ -->
+<h1 class="pagebreak">14. Module-by-Module Reference</h1>
+
+<h3>property_management_ee (core)</h3>
+<ul>
+<li><b>Menus:</b> Property Details, Tenancy Details, Tenant Details, Rent Schedules, Reporting, Configuration.</li>
+<li><b>Models added/extended:</b> <code>account.asset</code> (+60 property fields, hierarchy, state machine),
+<code>account.analytic.account</code> (tenancy), <code>tenancy.rent.schedule</code>, <code>tenant.partner</code>,
+<code>property.type</code>, <code>property.rent.type</code>, rooms/phases/photos/floorplans/utilities/nearby/
+certificates/insurance/attachments, <code>account.move(.line)</code> + <code>account.payment(.register)</code>
+(property &amp; tenancy context), <code>crm.lead</code> (demand), <code>sale.order(.line)</code> (property on lines),
+<code>res.partner/res.users/res.company</code> (roles &amp; defaults).</li>
+<li><b>Wizards:</b> renew tenancy, CRM make sale/contract, mass mail to tenants, 7 report wizards.</li>
+<li><b>Crons:</b> Scheduled Rent (daily), Property States Changed (10 min). <b>Mail template:</b> rent reminder.</li>
+</ul>
+
+<h3>property_landlord_management_ee</h3>
+<ul><li><code>landlord.partner</code>, landlord tenancies on the analytic model (<code>resident_type =
+landlord_partner</code>), landlord rent &amp; vendor-bill generation, owner views/menus, owner record rules.</li></ul>
+
+<h3>property_maintenance_ee</h3>
+<ul><li>Extends <code>maintenance.request</code>/<code>maintenance.stage</code>: property &amp; tenant link, stage-routed
+emails (tenant + manager &times; in-progress + done), tenant re-invoicing via the property&rsquo;s maintenance account,
+Google-Maps shortcut, property stat button for maintenance count.</li></ul>
+
+<h3>property_recurring_maintenance_ee</h3>
+<ul><li>Recurring maintenance lines on the tenancy; charges merge into the rent schedule cycle.</li></ul>
+
+<h3>property_penalty_ee</h3>
+<ul><li>Penalty configuration on the tenancy; <code>penalty_amount</code> accrual on overdue
+<code>tenancy.rent.schedule</code> lines; penalty shown and invoiced with rent.</li></ul>
+
+<h3>property_booking_ee</h3>
+<ul><li><code>property.created</code> (delegated asset) unit factory: towers/floors/units with label prefixes;
+book/available states with kanban; split &amp; merge wizards; <code>property.label</code> numbering config.</li></ul>
+
+<h3>property_commission_ee</h3>
+<ul><li>Agent flags &amp; rates on partner; <code>commission.invoice</code> records from tenancies; vendor-bill
+creation; commission QWeb report; partner search filters for agents.</li></ul>
+
+<h3>property_rent_report_ee</h3>
+<ul><li>Rent voucher QWeb report with computed payment status per schedule line.</li></ul>
+
+<h3>property_sale_purchase_ee</h3>
+<ul><li>Sale fields (customer, date, price, payment term) + <b>Generate Payment Entries</b>
+(installments from <code>payment.term._compute_terms()</code>), purchase installments
+(price, recurring rule, return period), invoice creation per installment.</li></ul>
+
+<h3>property_ee</h3>
+<ul><li>Umbrella manifest; no code &mdash; installs the full suite.</li></ul>
+
+<!-- ============================ 15 ============================ -->
+<h1 class="pagebreak">15. Integration with Other Odoo Modules</h1>
+<table>
+<tr><th>Odoo app</th><th>How the suite plugs in</th></tr>
+<tr><td><b>Accounting</b></td><td>Rent/maintenance/penalty/commission documents are real invoices &amp; vendor bills; payments carry tenancy/property context; everything is analytic-tagged per contract on the auto-created &ldquo;Property Management&rdquo; analytic plan</td></tr>
+<tr><td><b>Assets (Enterprise)</b></td><td>Properties <i>are</i> assets: original value, depreciation board, journal entries, sell/dispose flow available from Accounting &rarr; Assets for the same records</td></tr>
+<tr><td><b>CRM</b></td><td>Demand capture on leads; one-click conversion to quotation or tenancy contract</td></tr>
+<tr><td><b>Sales</b></td><td>Property attached to order lines; buy-deal quotations from CRM</td></tr>
+<tr><td><b>Maintenance</b></td><td>Teams, stages, kanban reused; property/tenant context and invoicing added</td></tr>
+<tr><td><b>Email / Discuss</b></td><td>Rent reminders, maintenance notifications, chatter &amp; followers on every key record</td></tr>
+<tr><td><b>Portal</b></td><td>Tenants/owners get portal logins scoped by record rules to their own data and invoices</td></tr>
+<tr><td><b>Documents (your instance)</b></td><td>Lease PDFs, certificates and IDs attached on records can be centralised into Documents workspaces with an automation rule</td></tr>
+<tr><td><b>Contacts</b></td><td>Tenants, landlords and agents are first-class partners &mdash; dedupe, merge and enrich as usual</td></tr>
+</table>
+
+<!-- ============================ 16 ============================ -->
+<h1>16. Scheduled Jobs &amp; Automatic Emails</h1>
+<table>
+<tr><th>Automation</th><th>Frequency</th><th>Action</th></tr>
+<tr><td>Scheduled Rent</td><td>Daily</td><td>Emails tenants whose rent schedule is due (rent reminder template)</td></tr>
+<tr><td>Property States Changed</td><td>Every 10 min</td><td>Reconciles property states with bookings/tenancies</td></tr>
+<tr><td>Maintenance stage mails</td><td>On stage change</td><td>In-progress &amp; done notifications to tenant and manager</td></tr>
+</table>
+
+<!-- ============================ 17 ============================ -->
+<h1 class="pagebreak">17. Suggested Enhancements (Roadmap)</h1>
+<h3>Quick wins</h3>
+<ul>
+<li><b>M-Pesa / payment-provider integration</b> &mdash; let tenants pay rent invoices online from the portal
+(Odoo payment providers; a Daraja/M-Pesa connector is the natural fit for the Kenyan market) with automatic
+reconciliation against the rent schedule.</li>
+<li><b>Automatic monthly invoicing</b> &mdash; extend the daily cron to also <i>create and email</i> the invoice when a
+schedule line falls due (today it reminds; invoicing is one click per line).</li>
+<li><b>Lease-renewal activity automation</b> &mdash; auto-schedule an activity to the property manager 60/30 days
+before contract expiry (data is already in the Contract Expiry report).</li>
+<li><b>WhatsApp/SMS notifications</b> &mdash; rent due &amp; receipt acknowledgements via Odoo&rsquo;s WhatsApp connector.</li>
+<li><b>Tighten the unused booking flow</b> if you don&rsquo;t pre-sell units, or expose it as a reservation+deposit flow if you do.</li>
+</ul>
+<h3>Medium term</h3>
+<ul>
+<li><b>Utility sub-metering &amp; billing</b> &mdash; water/electricity readings per unit with consumption lines added to
+the monthly invoice (new model + invoice-merge into the schedule cycle).</li>
+<li><b>Service-charge pools</b> &mdash; building-level costs (security, cleaning, lifts) apportioned to units by GFA or
+fixed share, reconciled annually.</li>
+<li><b>Owner statements</b> &mdash; one PDF per landlord per month: collected rent, fees retained, maintenance deducted,
+net payout (composition of existing data; a QWeb report away).</li>
+<li><b>Occupancy &amp; arrears dashboard</b> &mdash; spreadsheet/Studio dashboard: occupancy %, arrears aging, renewal
+funnel, maintenance SLA.</li>
+<li><b>Shared tenancies</b> &mdash; allow co-tenants (many2many) on one contract with split invoicing percentages.</li>
+</ul>
+<h3>Structural / housekeeping</h3>
+<ul>
+<li><b>Restore asset workflow buttons</b> (Sell/Dispose, Pause, Modify Depreciation) on the property form using your
+server&rsquo;s exact v18 Enterprise method names (removed during migration because the v15 names no longer exist).</li>
+<li><b>Test suite refresh</b> &mdash; the unit tests were partially modernised; full green tests under
+<code>--test-enable</code> would protect future upgrades.</li>
+<li><b>Replace the remaining legacy UI bits</b> &mdash; <code>terp-*</code> filter icons (ignored by v18), the
+<code>deprec_lines_reversed</code> widget column if it renders oddly.</li>
+<li><b>Localisation</b> &mdash; Swahili translations (<code>i18n/</code> .po files) for tenant-facing emails and the portal.</li>
+</ul>
+
+<!-- ============================ 18 ============================ -->
+<h1 class="pagebreak">18. Appendix A — Odoo 18 Migration Notes</h1>
+<p>The suite was migrated from Odoo 15 to Odoo 18 Enterprise (June 2026). Highlights of what changed
+(full detail in <code>CHANGES_LOG.md</code> in this folder):</p>
+<ul>
+<li>All view syntax modernised: <code>attrs/states</code> &rarr; Python expressions, <code>tree</code> &rarr;
+<code>list</code>, legacy chatter &rarr; <code>&lt;chatter/&gt;</code>, removed <code>field_parent</code>,
+<code>js_class</code>, <code>src_model</code>, empty modifier expressions.</li>
+<li>Cron records: removed <code>numbercall</code>/<code>doall</code>.</li>
+<li>Enterprise asset alignment: removed <code>asset_type</code>, <code>prorata</code>&rarr;<code>prorata_computation_type</code>,
+<code>account_analytic_id</code>/<code>analytic_tag_ids</code>&rarr;<code>analytic_distribution</code>,
+<code>reversal_move_id</code>&rarr;<code>reversal_move_ids</code>, removed dead buttons whose methods no longer exist.</li>
+<li>Accounting APIs: <code>payment_term.compute()</code> &rarr; <code>_compute_terms()</code>;
+payments use <code>payment_method_line_id</code>; analytic amounts via <code>analytic_distribution</code>;
+tenancy History tab now lists analytic items (move-line O2M no longer possible in v18).</li>
+<li>Python: <code>formatLang(env,&hellip;)</code> fix, <code>ustr</code>&rarr;<code>str</code>, selection
+<code>ondelete</code> policy fix, <code>furnished</code> field restored on CRM leads, view_mode
+<code>tree</code>&rarr;<code>list</code>.</li>
+</ul>
+
+<h1>19. Appendix B — Maintenance &amp; Upgrade Procedure</h1>
+<div class="step">
+<b>Deploying a code change:</b><br>
+1. Copy the changed module folder(s) to <code>/opt/odoo18/custom_addons/</code> on the server.<br>
+2. <code>sudo systemctl restart odoo18</code> (always needed for Python; cheap insurance for XML).<br>
+3. Apps <span class="arrow">&rarr;</span> module <span class="arrow">&rarr;</span> <b>Upgrade</b> (reloads views/data stored in DB), or from shell:
+<code>odoo -d &lt;db&gt; -u &lt;module&gt; --stop-after-init</code>.<br>
+4. Hard-refresh the browser (Ctrl-Shift-R) to bust the assets cache.
+</div>
+<div class="warn"><b>Before any upgrade:</b> take a database backup (Settings <span class="arrow">&rarr;</span>
+Database Manager or <code>pg_dump</code>). Property data = money data.</div>
+<div class="note"><b>Support workflow that worked well:</b> paste the full RPC traceback; the file and line in the
+<i>ParseError</i>/<i>view error context</i> identifies the offending record precisely.</div>
+
+<p style="margin-top:40px;color:#888;font-size:9pt;text-align:center;">
+Property Management Suite 18.0.1.0.0 &mdash; documentation generated June 4, 2026 &middot; Geronimo &middot; peterkamere@gmail.com</p>
+
+</body>
+</html>

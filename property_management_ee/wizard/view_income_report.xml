@@ -1,0 +1,37 @@
+<odoo>
+	<!-- Income Expenditure Report wizard Form View -->
+	<record id="income_expenditure_report" model="ir.ui.view">
+		<field name="name">Income Expenditure Report</field>
+		<field name="model">income.report</field>
+		<field name="arch" type="xml">
+			<form string="Income Expenditure Report">
+				<separator string="Income Expenditure Report" colspan="4"/>
+				<group>
+                    <label for="start_date" string="Dates"/>
+                    <div name="dates" class="o_row">
+                        <field name="start_date" widget="daterange" options='{"related_end_date": "end_date"}'/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow" invisible="not start_date and not end_date"/>
+                        <field name="end_date" widget="daterange" options='{"related_start_date": "start_date"}'/>
+                    </div>
+                </group>
+				<footer>
+					<button special="cancel" string="Cancel" icon="fa-times-circle" class="oe_highlight"/>
+					<button name="print_report" string="Print" type="object" icon="fa-print" class="oe_highlight"/>
+					<!-- <button name="open_income_report_tree" string="Open" type="object" icon="fa-table" class="oe_highlight"/-->
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<!--Action For Income Expenditure Report wizard -->
+	<record id="action_income_expenditure" model="ir.actions.act_window">
+		<field name="name">Income Expenditure Report</field>
+		<field name="res_model">income.report</field>
+		<field name="view_mode">form</field>
+		<field name="target">new</field>
+	</record>
+
+	<menuitem name="Income Expenditure" id="menu_income_expenditure" parent="menu_report_sub" action="action_income_expenditure"/>
+
+</odoo>

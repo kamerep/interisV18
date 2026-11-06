@@ -1,0 +1,31 @@
+<odoo>
+
+	<!-- Book Available Wizard Form View -->
+	<record model="ir.ui.view" id="wizard_book_available_form_view">
+		<field name="name">book.available.wiz.form</field>
+		<field name="model">book.available.wiz</field>
+		<field name="arch" type="xml">
+			<form string="Property Management System">
+				<group col="4" colspan="4">
+					<div>
+						<h3>Are you sure, you want to change the property status from Booked to Available ?</h3>
+					</div>
+				</group>
+				<footer>
+					<button name="print_yes" string="Yes" type="object" class="oe_highlight"/>
+					or
+					<button string="Cancel" class="oe_link" special="cancel"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<!--Action for Book Available Wizard -->
+	<record id="action_book_available" model="ir.actions.act_window">
+		<field name="name">Book Available</field>
+		<field name="res_model">book.available.wiz</field>
+		<field name="view_mode">form</field>
+		<field name="target">new</field>
+	</record>
+
+</odoo>

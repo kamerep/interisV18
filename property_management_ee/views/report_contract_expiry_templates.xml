@@ -1,0 +1,73 @@
+<odoo>
+	<!--Template For Tenancy Contract Expiry Report -->
+	<template id="report_contract_expiry">
+		<t t-call="web.html_container">
+			<!-- <t t-call="property_management_ee.property_external_layout"> -->
+			<t t-call="web.external_layout"><br/><br/>
+				<div class="page">
+						<h2>
+							<span>
+								<center>Tenancy Contract Expiry</center>
+							</span>
+						</h2>
+					<br/><br/>
+						<div class="text-center">
+							<strong>From:</strong>
+							<span t-esc="data['start_date']"/>&#160;&#160;&#160;
+							<strong>To:</strong>
+							<span t-esc="data['end_date']"/>
+						</div>
+					<br/>
+					<table style="border:solid 1px #000000" width="100%" class="table table-bordered">
+						<tr style="text-align:left;background-color:#e6e6e6;">
+							<th style="border: 1px solid #000000;">Tenancy Name</th>
+							<th style="border: 1px solid #000000;">Property Name</th>
+							<th style="border: 1px solid #000000;">Tenant Name</th>
+							<th style="border: 1px solid #000000;">Start Date</th>
+							<th style="border: 1px solid #000000;">End Date</th>
+							<th style="border: 1px solid #000000;">Rent</th>
+							<th style="border: 1px solid #000000;">Rent Type</th>
+							<th style="border: 1px solid #000000;">State</th>
+						</tr>
+						<tr t-foreach="get_details" t-as="t">
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('name', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('property_id', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('tenant_id', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('date_start', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('date', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('rent', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('rent_type_id', '')"/>&#160;<span t-esc="t.get('rent_type_month', '')"/>
+							</td>
+							<td class="text-left" style="border: 1px solid #000000;">
+								<span t-esc="t.get('state', '')"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</t>
+		</t>
+	</template>
+
+	<!--Report for account move -->
+	<record id="action_report_contract_expiry" model="ir.actions.report">
+		<field name="name">Contract Expiry</field>
+		<field name="model">account.asset</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">property_management_ee.report_contract_expiry</field>
+		<field name="report_file">property_management_ee.report_contract_expiry</field>
+	</record>
+
+</odoo>

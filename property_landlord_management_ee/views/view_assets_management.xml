@@ -1,0 +1,14 @@
+<odoo>
+
+    <record id="prop_sale_ext_view" model="ir.ui.view">
+        <field name="name">account.asset.form</field>
+        <field name="model">account.asset</field>
+        <field name="inherit_id" ref="property_management_ee.property_asset_form"/>
+        <field name="arch" type="xml">
+            <field name="property_manager" position="after">
+                <field name="property_owner" domain="[('is_owner','=','True')]"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

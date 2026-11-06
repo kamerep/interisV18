@@ -1,0 +1,10 @@
+<odoo>
+    <record id="maintenance_type6" model="recurring.maintenance.type">
+        <field name="name">Lift</field>
+        <field name="cost">250</field>
+    </record>
+    <record id="maintenance_type7" model="recurring.maintenance.type">
+        <field name="name">Pest Control</field>
+        <field name="cost">250</field>
+    </record>
+</odoo>

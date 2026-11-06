@@ -1,0 +1,142 @@
+<odoo>
+    <template id="property_external_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+
+        <t t-call="property_management.external_layout_header_p"/>
+        <t t-raw="0"/>
+        <t t-call="property_management.external_layout_footer_p"/>
+    </template>
+
+    <template id="external_layout_header_p">
+        <div class="header">
+            <div class="row">
+                <div class="col-xs-3">
+                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-left" style="max-height: 45px;"/>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3">
+                    <div t-field="company.partner_id"/>
+                    <div t-field="company.street"/>
+                    <div>
+                        <div t-field="company.city"/><div t-field="company.zip"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="external_layout_footer_p">
+        <div class="footer">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline">
+                    <li t-if="company.phone">Phone:
+                        <span t-field="company.phone"/></li>
+
+                    <li t-if="company.phone">&amp;bull;</li>
+
+                    <li t-if="company.email and company.phone">&amp;bull;</li>
+                    <li t-if="company.email">Email:
+                        <span t-field="company.email"/></li>
+
+                    <li t-if="company.website and company.email or company.website and company.phone">&amp;bull;</li>
+                    <li t-if="company.website">Website:
+                        <span t-field="company.website"/></li>
+                </ul>
+
+                <ul class="list-inline" name="financial_infos">
+                    <li t-if="company.vat">TIN:
+                        <span t-field="company.vat"/></li>
+                </ul>
+
+                <ul class="list-inline">
+                    <li>Page:</li>
+                    <li><span class="page"/></li>
+                    <li>/</li>
+                    <li><span class="topage"/></li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <!-- Commission Details Template -->
+    <template id="property_external_layout_commission">
+
+        <!-- Multicompany -->
+
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+
+        <t t-call="property_management.extenal_layout_header_q"/>
+        <t t-raw="0"/>
+        <t t-call="property_management.extenal_layout_footer_r"/>
+    </template>
+
+    <template id="extenal_layout_header_q">
+        <div class="header">
+            <div class="row">
+                <div class="col-xs-3">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="extenal_layout_footer_r">
+        <div class="footer">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline">
+                    <li t-if="company.phone">Phone:
+                        <span t-field="company.phone"/></li>
+
+                    <li t-if="company.phone">&amp;bull;</li>
+                    <li t-if="company.email and company.phone">&amp;bull;</li>
+                    <li t-if="company.email">Email:
+                        <span t-field="company.email"/></li>
+
+                    <li t-if="company.website and company.email or company.website and company.phone">&amp;bull;</li>
+                    <li t-if="company.website">Website:
+                        <span t-field="company.website"/></li>
+                </ul>
+
+                <ul class="list-inline" name="financial_infos">
+                    <li t-if="company.vat">TIN:
+                        <span t-field="company.vat"/></li>
+                </ul>
+
+                <ul class="list-inline">
+                    <li>Page:</li>
+                    <li><span class="page"/></li>
+                    <li>/</li>
+                    <li><span class="topage"/></li>
+                </ul>
+            </div>
+        </div>
+    </template>
+</odoo>

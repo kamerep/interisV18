@@ -1,0 +1,38 @@
+<odoo> 
+      <template id="commission_report_template2">
+          <t t-call="web.html_container">
+                   <div class="page">
+                      <br />
+                      <center><h3>Collected Commission</h3></center>
+                      <br />
+                      <t t-as="o" t-foreach="docs">
+                          <div class="row mt32 mb32">
+                                <div class="text-center">
+                                    <strong>From:</strong>
+                                    <span t-field="o.start_date" t-field-options="{&quot;format&quot;: &quot;dd-MM-yyyy&quot;}" /> &#160;&#160;&#160;
+                                    <strong>To:</strong>
+                                    <span t-field="o.end_date" t-options="{&quot;format&quot;: &quot;dd-MM-yyyy&quot;}" />
+                                </div>
+                           </div>
+                       </t>
+                       <br />
+                       <h5>Date:<span t-esc="datetime.datetime.now().strftime('%d-%m-%Y')" /></h5>
+                       <br />
+                        <table class="table table-bordered" style="border:solid 1px #000000" width="100%">
+                                <tr style="text-align:left;background-color:#e6e6e6;">
+                                  <th style="border: 1px solid #000000;">Property</th>
+                                  <th style="border: 1px solid #000000;">Agent</th>
+                                  <th style="border: 1px solid #000000;">Tenancy</th>
+                                  <th style="border: 1px solid #000000;">Commission</th>
+                                </tr>
+                                 <tr style="text-align:left;" t-as="p" t-foreach="get_datas">
+                                  <td style="border: 1px solid #000000;"><span t-esc="p.get('property','')" /></td>
+                                  <td style="border: 1px solid #000000;"><span t-esc="p.get('agent','')" /></td>
+                                  <td style="border: 1px solid #000000;"><span t-esc="p.get('tenancy','')" /></td>
+                                  <td style="border: 1px solid #000000;"><span t-esc="p.get('commission','')" /></td>
+                                </tr>
+                         </table>
+                   </div>
+               </t>
+       </template>
+ </odoo>

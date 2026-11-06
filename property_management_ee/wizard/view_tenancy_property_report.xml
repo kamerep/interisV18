@@ -1,0 +1,42 @@
+<odoo>
+
+	<!-- Tenancy Property Report wizard Form View -->
+	<record id="tenancy_property_report1" model="ir.ui.view">
+		<field name="name">Tenancy by Property</field>
+		<field name="model">tenancy.property.report</field>
+		<field name="arch" type="xml">
+			<form string="Tenancy by Property report">
+				<separator string="Tenancy By Property" colspan="4"/>
+				<group>
+					<field name="property_id" context="{'list_view_ref': 'property_management_ee.property_view_asset_tree', 'form_view_ref':'property_management_ee.property_asset_form'}"/>
+				</group>
+				<group>
+                    <label for="start_date" string="Dates"/>
+                    <div name="dates" class="o_row">
+                        <field name="start_date" widget="daterange" options='{"related_end_date": "end_date"}'/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow" invisible="not start_date and not end_date"/>
+                        <field name="end_date" widget="daterange" options='{"related_start_date": "start_date"}'/>
+                    </div>
+                </group>
+				<footer>
+					<button special="cancel" string="Cancel" icon="fa-times-circle" class="oe_highlight"/>
+					<button name="print_report" string="Print" icon="fa-print" type="object" class="oe_highlight"/>
+					<!-- <button name="open_tenancy_by_property_gantt" string="Gantt" icon="fa-th" type="object" class="oe_highlight"/-->
+					<button name="open_tenancy_by_property_tree" icon="fa-list-alt" string="Table View" type="object" class="oe_highlight"/>
+				</footer>
+			</form>
+		</field>
+	</record>
+
+	<!--Action for Tenancy Property Report wizard -->
+	<record id="action_property_report_tenancy" model="ir.actions.act_window">
+		<field name="name">Tenancy By Property</field>
+		<field name="res_model">tenancy.property.report</field>
+		<field name="view_mode">form</field>
+		<field name="target">new</field>
+	</record>
+
+	<menuitem name="Tenancy By Property" id="menu_tenancy_property" parent="menu_report_sub" action="action_property_report_tenancy"/>
+
+</odoo>
