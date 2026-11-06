@@ -416,7 +416,8 @@ passing) and a browser check of the main screens in light and dark mode.
 - Commission details and commission invoices reports (were disconnected).
 - Financial Performance Analysis graph (sale/purchase).
 - Odoo 18 kanban `card` templates in all modules; chatter on commission invoices.
-- New square app icons that work in light and dark mode.
+- App icons redrawn in the Odoo 18 style (flat SVG glyphs, Odoo palette,
+  transparent background) so they match core apps in light and dark mode.
 
 ### Deployment
 - `deploy/` scripts and config template; GitHub Actions static checks.

@@ -3,7 +3,7 @@
     <menuitem
         id="menu_property_main"
         name="Property Management"
-        web_icon="property_management_ee,static/description/icon1.png"
+        web_icon="property_management_ee,static/description/icon.png"
         groups="property_management_ee.group_property_user,property_management_ee.group_property_manager,property_management_ee.group_property_owner,property_management_ee.group_property_agent"/>
 
         <!--Property Menu -->
